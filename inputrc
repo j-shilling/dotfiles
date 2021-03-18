@@ -1,0 +1,21 @@
+# Set up Vim-style tab completion
+TAB: menu-complete
+set show-all-if-ambiguous on
+
+# If a tab-completed file is a symlink to a directory,
+# treat it like a directory not a file
+set mark-symlinked-directories on
+
+# Use GNU ls colors when tab-completing files
+set colored-stats on
+
+# Edit with Vi keybindings
+set editing-mode vi
+set keymap vi
+
+# Ignore case while completing
+set completion-ignore-case on
+# Make Bash 8bit clean
+set meta-flag on
+set convert-meta off
+set output-meta on
