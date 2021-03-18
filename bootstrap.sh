@@ -36,6 +36,9 @@ readonly dir=$(dirname $(readlink -f ${0}))
 [ -d "${HOME}/.emacs.d/" ] || install_doom
 [ -d "${HOME}/.doom.d/" ] || install_doom_conf
 
-for file in $(find "${dir}" -type f ! -name "${script}") ; do
-    [ -f "${HOME}/.$(basename ${file})" ] || ln -s "${file}" "${HOME}/.$(basename ${file})"
+pushd "${dir}" &>/dev/null
+for file in $(git ls-files | grep -v ${script}) ; do
+    dest="${HOME}/.$(basename ${file})"
+    [ -f "${dest}" ] || ln -vs "$(readlink -f ${file})" "${dest}"
 done
+popd &>/dev/null
