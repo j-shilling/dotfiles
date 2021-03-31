@@ -40,3 +40,4 @@ readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
 for file in ${files} ; do
     [ -f "${HOME}/.$(basename ${file})" ] || ln -vs "${dir}/${file}" "${HOME}/.$(basename ${file})"
 done
+popd &>/dev/null
