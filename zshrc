@@ -101,6 +101,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh
 
 export WSL_HOST_IP=$(awk '/nameserver/ { print $2 }' /etc/resolv.conf)
+export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 
 if type rg &> /dev/null; then
     export FZF_DEFAULT_COMMAND='rg --files'
@@ -111,6 +112,12 @@ if [ -f /usr/share/fzf/completion.zsh ] ; then
     source /usr/share/fzf/completion.zsh
 fi
 
-export PATH="${HOME}/.emacs.d/bin:${PATH}"
+if [ -d "${HOME}/.local/bin" ] ; then
+   export PATH="${HOME}/.local/bin:${PATH}"
+fi
+
+if [ -d "${HOME}/.emacs.d/bin" ] ; then
+   export PATH="${HOME}/.emacs.d/bin:${PATH}"
+fi
 
 alias ee="emacsclient -c -a emacs"

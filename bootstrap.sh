@@ -31,11 +31,12 @@ function install_doom_conf {
 
 readonly script=$(basename ${0})
 readonly dir=$(dirname $(readlink -f ${0}))
+readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
 
 [ -d "${HOME}/.oh-my-zsh/" ] || install_ohmyzsh
 [ -d "${HOME}/.emacs.d/" ] || install_doom
 [ -d "${HOME}/.doom.d/" ] || install_doom_conf
 
-for file in $(find "${dir}" -type f ! -name "${script}") ; do
-    [ -f "${HOME}/.$(basename ${file})" ] || ln -s "${file}" "${HOME}/.$(basename ${file})"
+for file in ${files} ; do
+    [ -f "${HOME}/.$(basename ${file})" ] || ln -vs "${dir}/${file}" "${HOME}/.$(basename ${file})"
 done
