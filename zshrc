@@ -121,3 +121,5 @@ if [ -d "${HOME}/.emacs.d/bin" ] ; then
 fi
 
 alias ee="emacsclient -c -a emacs"
+
+[ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
