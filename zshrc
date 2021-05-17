@@ -102,6 +102,8 @@ source $ZSH/oh-my-zsh.sh
 
 export WSL_HOST_IP=$(awk '/nameserver/ { print $2 }' /etc/resolv.conf)
 export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+export LIBGL_ALWAYS_INDIRECT=1
 
 if type rg &> /dev/null; then
     export FZF_DEFAULT_COMMAND='rg --files'
