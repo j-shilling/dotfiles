@@ -120,6 +120,11 @@ if [ -d "${HOME}/.emacs.d/bin" ] ; then
    export PATH="${HOME}/.emacs.d/bin:${PATH}"
 fi
 
+if [ -d "${HOME}/.cask/bin" ] ; then
+   export PATH="${HOME}/.cask/bin:${PATH}"
+fi
+
 alias ee="emacsclient -c -a emacs"
 
+# This is needed to make this file cooperate with TRAMP mode
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
