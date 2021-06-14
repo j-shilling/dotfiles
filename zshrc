@@ -126,6 +126,18 @@ if [ -d "${HOME}/.cask/bin" ] ; then
    export PATH="${HOME}/.cask/bin:${PATH}"
 fi
 
+if [ -d "${HOME}/.eldev/bin" ] ; then
+   export PATH="${HOME}/.eldev/bin:${PATH}"
+fi
+
+if [ -d "/var/lib/snapd/snap/bin" ] ; then
+  export PATH="/var/lib/snapd/snap/bin:${PATH}"
+fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 alias ee="emacsclient -c -a emacs"
 
 # This is needed to make this file cooperate with TRAMP mode
