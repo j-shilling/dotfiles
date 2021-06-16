@@ -27,6 +27,15 @@ set cmdheight=2
 set updatetime=300
 set shortmess+=c
 
+" Split Navigation
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+set splitbelow
+set splitright
+
 if has("patch-8.1.1564")
     " Recently vim can merge signcolumn and number column into one
     set signcolumn=number
@@ -42,10 +51,22 @@ call plug#begin('~/.vim/plugged')
     " Git Integration
     Plug 'tpope/vim-fugitive'
 
-    " LSP
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    " Tmux
+    Plug 'christoomey/vim-tmux-navigator'
+    Plug 'preservim/vimux'
+    Plug 'jpalardy/vim-slime'
+
+    " Clojure
+    Plug 'tpope/vim-fireplace'
+    Plug 'tpope/vim-salve'
+    Plug 'kien/rainbow_parentheses.vim'
 call plug#end()
 
 " Use Rg instead of Grep
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+
+" Slime
+
+let g:slime_target = "tmux"
+let g:slime_default_config = {"socket_name": "default", "target_pane":"{last}"}
 
