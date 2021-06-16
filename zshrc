@@ -100,34 +100,39 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh
 
-export WSL_HOST_IP=$(awk '/nameserver/ { print $2 }' /etc/resolv.conf)
-export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
-export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
-export LIBGL_ALWAYS_INDIRECT=1
-
-if type rg &> /dev/null; then
-    export FZF_DEFAULT_COMMAND='rg --files'
-    export FZF_DEFAULT_OPTS='-m --height 50% --border'
+# Check for WSL
+if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
+  export WSL_HOST_IP=$(awk '/nameserver/ { print $2 }' /etc/resolv.conf)
+  export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+  export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+  export LIBGL_ALWAYS_INDIRECT=1
 fi
 
+if type rg &> /dev/null; then
+  export FZF_DEFAULT_COMMAND='rg --files'
+  export FZF_DEFAULT_OPTS='-m --height 50% --border'
+fi
+
+# source "/usr/lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh"
+
 if [ -f /usr/share/fzf/completion.zsh ] ; then
-    source /usr/share/fzf/completion.zsh
+  source /usr/share/fzf/completion.zsh
 fi
 
 if [ -d "${HOME}/.local/bin" ] ; then
-   export PATH="${HOME}/.local/bin:${PATH}"
+  export PATH="${HOME}/.local/bin:${PATH}"
 fi
 
 if [ -d "${HOME}/.emacs.d/bin" ] ; then
-   export PATH="${HOME}/.emacs.d/bin:${PATH}"
+  export PATH="${HOME}/.emacs.d/bin:${PATH}"
 fi
 
 if [ -d "${HOME}/.cask/bin" ] ; then
-   export PATH="${HOME}/.cask/bin:${PATH}"
+  export PATH="${HOME}/.cask/bin:${PATH}"
 fi
 
 if [ -d "${HOME}/.eldev/bin" ] ; then
-   export PATH="${HOME}/.eldev/bin:${PATH}"
+  export PATH="${HOME}/.eldev/bin:${PATH}"
 fi
 
 if [ -d "/var/lib/snapd/snap/bin" ] ; then
@@ -138,7 +143,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-alias ee="emacsclient -c -a emacs"
+alias ee='emacsclient --create-frame --alternate-editor="" --no-wait'
 
 # This is needed to make this file cooperate with TRAMP mode
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
