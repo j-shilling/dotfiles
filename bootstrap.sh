@@ -44,7 +44,7 @@ readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
 [ -d "${HOME}/.oh-my-zsh/" ] || install_ohmyzsh
 [ -d "${HOME}/.emacs.d/" ] || install_doom
 [ -d "${HOME}/.doom.d/" ] || install_doom_conf
-[ -d "${HOME}/.tmux/pluginx/tpm" ] || install_tpm
+[ -d "${HOME}/.tmux/plugins/tpm" ] || install_tpm
 
 for file in ${files} ; do
     [ -f "${HOME}/.$(basename ${file})" ] || ln -vs "${dir}/${file}" "${HOME}/.$(basename ${file})"
