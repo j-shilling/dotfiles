@@ -29,6 +29,14 @@ function install_doom_conf {
     fi
 }
 
+function install_tpm {
+    if hash git 2>/dev/null ; then
+        git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
+    else
+        echo >&2 "Can't install TPM without git"
+    fi
+}
+
 readonly script=$(basename ${0})
 readonly dir=$(dirname $(readlink -f ${0}))
 readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
@@ -36,6 +44,7 @@ readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
 [ -d "${HOME}/.oh-my-zsh/" ] || install_ohmyzsh
 [ -d "${HOME}/.emacs.d/" ] || install_doom
 [ -d "${HOME}/.doom.d/" ] || install_doom_conf
+[ -d "${HOME}/.tmux/pluginx/tpm" ] || install_tpm
 
 for file in ${files} ; do
     [ -f "${HOME}/.$(basename ${file})" ] || ln -vs "${dir}/${file}" "${HOME}/.$(basename ${file})"
