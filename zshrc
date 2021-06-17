@@ -70,7 +70,14 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(colored-man-pages colorize command-not-found direnv emacs fd fzf git git-auto-fetch git-prompt man mvn npm vim-interaction vi-mode zsh-interactive-cd)
+plugins=(colored-man-pages colorize command-not-found direnv emacs fd fzf git git-auto-fetch git-prompt man mvn npm vim-interaction vi-mode zsh-interactive-cd tmux)
+
+ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_AUTOSTART_ONCE=true
+ZSH_TMUX_AUTOCONNECT=true
+ZSH_TMUX_AUTOQUIT=true
+ZSH_TMUX_FIXTERM=true
+ZSH_TMUX_UNICODE=true
 
 source $ZSH/oh-my-zsh.sh
 
