@@ -37,16 +37,35 @@ function install_tpm {
     fi
 }
 
+function install_vim_plug {
+    if hash curl 2>/dev/null ; then
+	curl -fLo "${HOME}/.vim/autoload/plug.vim" --create-dirs \
+	    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    else
+	echo >&2 "Can't install vim-plug without curl"
+    fi
+}
+
 readonly script=$(basename ${0})
-readonly dir=$(dirname $(readlink -f ${0}))
+readonly dir=$(dirname $(realpath ${0}))
 readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
 
 [ -d "${HOME}/.oh-my-zsh/" ] || install_ohmyzsh
 [ -d "${HOME}/.emacs.d/" ] || install_doom
 [ -d "${HOME}/.doom.d/" ] || install_doom_conf
 [ -d "${HOME}/.tmux/plugins/tpm" ] || install_tpm
+[ -e "${HOME}/.vim/autoload/plug.vim" ] || install_vim_plug
 
 for file in ${files} ; do
-    [ -f "${HOME}/.$(basename ${file})" ] || ln -vs "${dir}/${file}" "${HOME}/.$(basename ${file})"
+    name="$(basename ${file})"
+    target="${HOME}/.${name}"
+
+    echo -n "Checking for ${target}... "
+    if [ -f "${target}" ] ; then
+	echo "yes"
+    else
+	echo "no"
+	ln -vs "${dir}/${file}" "${target}"
+    fi
 done
 popd &>/dev/null
