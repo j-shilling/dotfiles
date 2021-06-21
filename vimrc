@@ -1,3 +1,5 @@
+let mapleader = ' '
+
 set number relativenumber
 set nowrap
 set showmatch
@@ -62,6 +64,12 @@ call plug#begin('~/.vim/plugged')
     Plug 'preservim/vimux'
     Plug 'jpalardy/vim-slime'
 
+    " LSP
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'mattn/vim-lsp-settings'
+    Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
     " Clojure
     Plug 'tpope/vim-fireplace'
     Plug 'tpope/vim-salve'
@@ -70,6 +78,26 @@ call plug#end()
 
 " Use Rg instead of Grep
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+
+" FZF
+nnoremap <C-x>f :Files<CR>
+nnoremap <C-x>b :Buffers<CR>
+nnoremap <leader>pf :GFiles<CR>
+nnoremap <leader>ss :Lines<CR>
+
+" LSP
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    nmap <buffer> <leader>cd <plug>(lsp-definition)
+    nmap <buffer> <leader>cD <plug>(lsp-references)
+endfunction
+
+augroup lsp_install
+    au!
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
 
 " Slime
 
