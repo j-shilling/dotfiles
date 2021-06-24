@@ -57,14 +57,17 @@ readonly files=$(git -C "${dir}" ls-files | grep -v "${script}")
 [ -e "${HOME}/.vim/autoload/plug.vim" ] || install_vim_plug
 
 for file in ${files} ; do
-    name="$(basename ${file})"
+    #name="$(basename ${file})"
+    name=${file}
     target="${HOME}/.${name}"
+    target_dir="$(dirname ${target})"
 
     echo -n "Checking for ${target}... "
     if [ -f "${target}" ] ; then
 	echo "yes"
     else
 	echo "no"
+	mkdir -p "${target_dir}"
 	ln -vs "${dir}/${file}" "${target}"
     fi
 done
