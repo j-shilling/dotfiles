@@ -69,9 +69,15 @@ call plug#begin('~/.vim/plugged')
 
     " LSP
     Plug 'prabirshrestha/vim-lsp'
+<<<<<<< HEAD
     Plug 'prabirshrestha/asyncomplete.vim'
     Plug 'prabirshrestha/asyncomplete-lsp.vim'
     Plug 'mattn/vim-lsp-settings'
+=======
+    Plug 'mattn/vim-lsp-settings'
+    Plug 'prabirshrestha/asyncomplete.vim'
+    Plug 'prabirshrestha/asyncomplete-lsp.vim'
+>>>>>>> a0a711ff0075c5a23c4ff4c49175de065527dcee
 
     " Clojure
     Plug 'tpope/vim-fireplace'
@@ -86,6 +92,7 @@ set background=dark
 " Use Rg instead of Grep
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 
+<<<<<<< HEAD
 nnoremap <C-x><C-f> :Files<CR>
 nnoremap <C-x>b :Buffers<CR>
 nnoremap <leader>ss :BLines<CR>
@@ -105,10 +112,20 @@ if executable('ccls')
 		\ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
 		\ })
 endif
+=======
+" FZF
+nnoremap <C-x>f :Files<CR>
+nnoremap <C-x>b :Buffers<CR>
+nnoremap <leader>pf :GFiles<CR>
+nnoremap <leader>ss :Lines<CR>
+
+" LSP
+>>>>>>> a0a711ff0075c5a23c4ff4c49175de065527dcee
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
     setlocal signcolumn=yes
+<<<<<<< HEAD
     if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
     nmap <buffer> <leader>cd <plug>(lsp-definition)
     nmap <buffer> <leader>cD <plug>(lsp-references)
@@ -117,6 +134,18 @@ function! s:on_lsp_buffer_enabled() abort
     let g:lsp_format_sync_timeout = 1000
     autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
 endfunction
+=======
+    nmap <buffer> <leader>cd <plug>(lsp-definition)
+    nmap <buffer> <leader>cD <plug>(lsp-references)
+endfunction
+
+augroup lsp_install
+    au!
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+" Slime
+>>>>>>> a0a711ff0075c5a23c4ff4c49175de065527dcee
 
 augroup lsp_install
     au!
