@@ -10,6 +10,9 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-fugitive'
     Plug 'airblade/vim-gitgutter'
 
+    " Async Commands
+    Plug 'tpope/vim-dispatch'
+
     " Tmux
     Plug 'christoomey/vim-tmux-navigator'
     Plug 'preservim/vimux'
