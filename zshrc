@@ -70,14 +70,79 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(colored-man-pages colorize command-not-found direnv emacs fd fzf git git-auto-fetch git-prompt man mvn npm vim-interaction vi-mode zsh-interactive-cd tmux)
+plugins=(
+  ag
+  alias
+  alias-finder
+  aws
+  colored-man-pages
+  colorize
+  command-not-found
+  common-aliases
+  copydir
+  copyfile
+  cp
+  direnv
+  docker
+  docker-compose
+  dotnet
+  emacs
+  fd
+  fzf
+  git
+  git-auto-fetch
+  git-extras
+  git-prompt
+  history
+  kubectl
+  lein
+  man
+  minikube
+  mvn
+  ng
+  node
+  npm
+  npx
+  nvm
+  ripgrep
+  safe-paste
+  shirnk-path
+  spring
+  sudo
+  systemadmin
+  systemd
+  vim-interaction
+  vi-mode
+  zsh-interactive-cd
+  tmux
+  tmux-cssh
+)
 
-ZSH_TMUX_AUTOSTART=true
-ZSH_TMUX_AUTOSTART_ONCE=true
-ZSH_TMUX_AUTOCONNECT=true
-ZSH_TMUX_AUTOQUIT=true
+mac_plugins=(
+  brew
+  gnu-utils
+  iterm2
+  osx
+)
+
+ZSH_TMUX_AUTOSTART=false
+ZSH_TMUX_AUTOSTART_ONCE=false
+ZSH_TMUX_AUTOCONNECT=false
+ZSH_TMUX_AUTOQUIT=false
 ZSH_TMUX_FIXTERM=true
 ZSH_TMUX_UNICODE=true
+
+if type fzf &> /dev/null; then
+  export FZF_BASE=$(dirname $(which fzf))
+fi
+
+if type rg &> /dev/null; then
+  export FZF_DEFAULT_COMMAND='rg --files'
+  export FZF_DEFAULT_OPTS='-m --height 50% --border'
+fi
+
+export DISABLE_FZF_AUTO_COMPLETION="false"
+export DISABLE_FZF_KEY_BINDINGS="false"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -115,10 +180,6 @@ if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   export LIBGL_ALWAYS_INDIRECT=1
 fi
 
-if type rg &> /dev/null; then
-  export FZF_DEFAULT_COMMAND='rg --files'
-  export FZF_DEFAULT_OPTS='-m --height 50% --border'
-fi
 
 # source "/usr/lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh"
 
@@ -144,6 +205,10 @@ fi
 
 if [ -d "/var/lib/snapd/snap/bin" ] ; then
   export PATH="/var/lib/snapd/snap/bin:${PATH}"
+fi
+
+if [ -d "${HOME}/.dotnet/tools" ] ; then
+  export PATH="${HOME}/.dotnet/tools:${PATH}"
 fi
 
 export NVM_DIR="$HOME/.nvm"
