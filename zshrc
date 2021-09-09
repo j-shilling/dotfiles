@@ -70,9 +70,20 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+
+ZSH_COMPLETIONS_DIR="${ZSH_CUSTOM:=${HOME}/.oh-my-zsh/custom}/plugins/zsh-completions"
+if [ ! -d ${ZSH_COMPLETIONS_DIR} ] ; then
+  git clone https://github.com/zsh-users/zsh-completions ${ZSH_COMPLETIONS_DIR}
+fi
+
+FZF_TAB_COMPLETION_DIR="${ZSH_CUSTOM:=${HOME}/.oh-my-zsh/custom}/plugins/fzf-tab-completion"
+if [ ! -d ${FZF_TAB_COMPLETION_DIR} ] ; then
+  git clone https://github.com/lincheney/fzf-tab-completion.git ${FZF_TAB_COMPLETION_DIR}
+fi
+
 plugins=(
   ag
-  alias
+  aliases
   alias-finder
   aws
   colored-man-pages
@@ -102,20 +113,20 @@ plugins=(
   ng
   node
   npm
-  npx
   nvm
   ripgrep
   safe-paste
-  shirnk-path
+  shrink-path
   spring
   sudo
   systemadmin
   systemd
   vim-interaction
   vi-mode
-  zsh-interactive-cd
   tmux
   tmux-cssh
+  zsh-interactive-cd
+  zsh-completions
 )
 
 mac_plugins=(
@@ -132,9 +143,7 @@ ZSH_TMUX_AUTOQUIT=false
 ZSH_TMUX_FIXTERM=true
 ZSH_TMUX_UNICODE=true
 
-if type fzf &> /dev/null; then
-  export FZF_BASE=$(dirname $(which fzf))
-fi
+export FZF_BASE=/usr/share/fzf
 
 if type rg &> /dev/null; then
   export FZF_DEFAULT_COMMAND='rg --files'
@@ -145,6 +154,7 @@ export DISABLE_FZF_AUTO_COMPLETION="false"
 export DISABLE_FZF_KEY_BINDINGS="false"
 
 source $ZSH/oh-my-zsh.sh
+source $FZF_TAB_COMPLETION_DIR/zsh/fzf-zsh-completion.sh
 
 # User configuration
 
@@ -180,13 +190,6 @@ if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   export LIBGL_ALWAYS_INDIRECT=1
 fi
 
-
-# source "/usr/lib/python3.9/site-packages/powerline/bindings/zsh/powerline.zsh"
-
-if [ -f /usr/share/fzf/completion.zsh ] ; then
-  source /usr/share/fzf/completion.zsh
-fi
-
 if [ -d "${HOME}/.local/bin" ] ; then
   export PATH="${HOME}/.local/bin:${PATH}"
 fi
@@ -214,8 +217,6 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-alias ee='emacsclient --create-frame --alternate-editor="" --no-wait'
 
 # This is needed to make this file cooperate with TRAMP mode
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
