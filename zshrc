@@ -144,8 +144,6 @@ ZSH_TMUX_AUTOQUIT=false
 ZSH_TMUX_FIXTERM=true
 ZSH_TMUX_UNICODE=true
 
-export FZF_BASE=/usr/share/fzf
-
 if type rg &> /dev/null; then
   export FZF_DEFAULT_COMMAND='rg --files'
   export FZF_DEFAULT_OPTS='-m --height 50% --border'
