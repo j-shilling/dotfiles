@@ -218,5 +218,15 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# This is needed to make this file cooperate with TRAMP mode
+# Look for emacs-vterm install directory to find files that help with vterm
+# integration in emacs
+
+if [[ "${INSIDE_EMACS}" = 'vterm' ]] ; then
+  if [[ -n "${EMACS_VTERM_PATH}" ]] && [[ -f "${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh" ]] ; then
+    source "${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh"
+  fi
+fi
+
+# This is needed to make this file cooperate with TRAMP
+# mode
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
