@@ -189,6 +189,7 @@ if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   export LIBGL_ALWAYS_INDIRECT=1
 fi
 
+# Build Path Based on Which Dirs Exist
 if [ -d "${HOME}/.local/bin" ] ; then
   export PATH="${HOME}/.local/bin:${PATH}"
 fi
