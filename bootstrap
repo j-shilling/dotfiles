@@ -105,7 +105,7 @@ using the `HOME' environment variable."
                "installed"))))
 
 (defun ensure-doom ()
-  (let ((emacs-dir (expand-file-name ".emacs.d2" (getenv "HOME"))))
+  (let ((emacs-dir (expand-file-name ".emacs.d" (getenv "HOME"))))
     (message "Checking for doom-emacs... %s"
              (if (file-exists-p emacs-dir)
                 "yes"
@@ -113,7 +113,7 @@ using the `HOME' environment variable."
                 (if (= 0 (process-git t "clone"
                                       "--depth"
                                       "1"
-                                      "ttps://github.com/hlissner/doom-emacs"
+                                      "https://github.com/hlissner/doom-emacs"
                                       emacs-dir))
                     "installed"
                   (error (buffer-string))))))))
