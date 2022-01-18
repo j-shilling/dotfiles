@@ -6,5 +6,3 @@ source $HOME/.vim/init/fzf.vimrc
 source $HOME/.vim/init/syntastic.vimrc
 source $HOME/.vim/init/vim-lsp.vimrc
 source $HOME/.vim/init/slime.vimrc
-source $HOME/.vim/init/fireplace.vimrc
-
