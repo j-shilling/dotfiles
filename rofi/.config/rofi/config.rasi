@@ -1,5 +1,7 @@
 // -*- comment-start: "/*"; comment-end: "*/"; -*-
 
+@import "~/.cache/wal/colors-rofi-dark"
+
 configuration {
 	modi: "window,run,ssh";
 /*	font: "mono 12";*/
@@ -145,4 +147,5 @@ configuration {
       directories-first: true;
       sorting-method:    "name";
   }
+
 }
