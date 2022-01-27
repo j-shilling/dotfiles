@@ -4,6 +4,7 @@ set number relativenumber
 set nowrap
 set showmatch
 set visualbell
+set noswapfile
 
 set hlsearch
 set smartcase
