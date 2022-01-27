@@ -4,8 +4,6 @@
 	signingkey = 47BBC0300141D21B
 [gitlab]
 	user = shilling.jake
-[git "api.BALT-GITLAB-02.securityevaluators.com/api/v4"]
-	user = jshilling
 [github]
 	user = j-shilling
 [core]
