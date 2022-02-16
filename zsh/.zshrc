@@ -232,3 +232,7 @@ fi
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '
 
 alias sysu="systemctl --user"
+
+if type lsd &> /dev/null ; then
+    alias ls='lsd'
+fi
