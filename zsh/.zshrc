@@ -181,6 +181,8 @@ source $FZF_TAB_COMPLETION_DIR/zsh/fzf-zsh-completion.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh
 
+export PASSDIR="${HOME}/passwords"
+
 # Check for WSL
 if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   export WSL_HOST_IP=$(awk '/nameserver/ { print $2 }' /etc/resolv.conf)
