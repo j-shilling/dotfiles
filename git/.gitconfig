@@ -13,7 +13,7 @@
 	autocrlf = input
 	whitespace = -trailing-space,-space-before-tab,-cr-at-eol
 [init]
-	defaultBranch = master
+	defaultBranch = main
 [merge]
 	ff = false
 	log = true
