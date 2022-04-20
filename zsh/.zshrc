@@ -91,7 +91,7 @@ plugins=(
   colorize
   command-not-found
   common-aliases
-  copydir
+  copypath
   copyfile
   cp
   direnv
