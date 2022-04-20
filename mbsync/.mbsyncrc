@@ -2,7 +2,7 @@
 IMAPAccount gmail
 Host imap.gmail.com
 User shilling.jake@gmail.com
-PassCmd "pass shilling.jake@gmail.com"
+PassCmd "gpg --decrypt ${PASSDIR}/gmail.gpg"
 SSLType IMAPS
 CertificateFile /etc/ssl/certs/ca-certificates.crt
 
