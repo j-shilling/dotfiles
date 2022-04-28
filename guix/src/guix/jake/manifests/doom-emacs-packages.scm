@@ -1,10 +1,11 @@
-(define-module (jake manifests)
+(define-module (jake manifests doom-emacs-packages)
   #:use-module (gnu packages)
   #:export (doom-emacs-packages))
 
 (define doom-emacs-packages
-  (specifications->manifest
-   `("emacs-native-comp"
+  (map
+   (lambda (spec) (specification->package spec))
+   '("emacs-native-comp"
      "ripgrep"
      "git"
      "fd"
@@ -32,6 +33,7 @@
      "node"
      "clojure"
      "clojure-tools"
-     "leiningen")))
+     "leiningen"
+     "emacs-guix")))
 
 doom-emacs-packages
