@@ -1,0 +1,3 @@
+dev-java/openjdk -gentoo-vm
+dev-java/openjdk-bin -gentoo-vm
+dev-java/oracle-jdk-bin -gentoo-vm

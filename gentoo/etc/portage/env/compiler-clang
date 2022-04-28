@@ -1,0 +1,3 @@
+CC="clang"
+CXX="clang++"
+LDFLAGS="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind"

@@ -1,0 +1,8 @@
+# required by gnome-extra/evolution-data-server-3.34.4::gentoo[vala]
+# required by dev-libs/folks-0.13.1::gentoo[eds]
+# required by gnome-extra/gnome-contacts-3.34.1::gentoo
+# required by gnome-base/gnome-core-apps-3.34.4::gentoo
+# required by gnome-base/gnome-3.34.4::gentoo
+# required by @selected
+# required by @world (argument)
+>=dev-libs/libical-3.0.8 vala

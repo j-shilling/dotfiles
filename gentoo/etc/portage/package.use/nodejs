@@ -1,0 +1,4 @@
+=net-libs/nodejs-16.13.0 -lto
+=net-libs/nodejs-16.13.1 -lto
+=net-libs/nodejs-16.14.1 -lto
+=net-libs/nodejs-18.0.0 -lto

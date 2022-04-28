@@ -1,0 +1,8 @@
+# required by dev-qt/qtgui-5.12.3-r1::gentoo
+# required by dev-qt/qtsvg-5.12.3::gentoo
+# required by net-wireless/wpa_supplicant-2.6-r10::gentoo[qt5]
+# required by net-misc/networkmanager-1.16.0::gentoo[wifi]
+# required by @selected
+# required by @world (argument)
+=media-libs/harfbuzz-2.5.3 ~amd64
+>=media-libs/harfbuzz-2.6.8:0= ~amd64

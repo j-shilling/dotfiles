@@ -1,0 +1,4 @@
+# required by www-client/firefox-67.0.4::gentoo[system-libvpx]
+# required by @selected
+# required by @world (argument)
+>=media-libs/libvpx-1.7.0 ~amd64

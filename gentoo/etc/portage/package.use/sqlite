@@ -1,0 +1,4 @@
+# required by www-client/firefox-67.0.3::gentoo[system-sqlite]
+# required by @selected
+# required by @world (argument)
+>=dev-db/sqlite-3.28.0 secure-delete

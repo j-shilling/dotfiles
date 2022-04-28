@@ -1,0 +1,16 @@
+# required by www-client/firefox-67.0.3::gentoo[system-libvpx]
+# required by @selected
+# required by @world (argument)
+>=media-libs/libvpx-1.8.0-r1 postproc
+# required by www-client/firefox-67.0.3::gentoo[system-libvpx]
+# required by @selected
+# required by @world (argument)
+=media-libs/libvpx-1.5.0 postproc
+# required by www-client/firefox-67.0.4::gentoo[system-libvpx]
+# required by @selected
+# required by @world (argument)
+=media-libs/libvpx-1.7.0 postproc
+# required by www-client/firefox-70.0.1::gentoo
+# required by @selected
+# required by @world (argument)
+>=media-libs/libvpx-1.7.0-r1 postproc

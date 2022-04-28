@@ -1,0 +1,4 @@
+# required by dev-python/PyQtWebEngine-5.14.0::gentoo
+# required by app-text/calibre-4.22.0::gentoo[python_single_target_python3_7]
+# required by calibre (argument)
+>=dev-python/PyQt5-5.14.2-r1 webchannel

@@ -1,0 +1,3 @@
+# required by media-sound/spotify-1.1.5-r1::gentoo
+# required by spotify (argument)
+=dev-util/patchelf-0.10 ~amd64
