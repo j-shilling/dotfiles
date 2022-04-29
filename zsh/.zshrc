@@ -189,6 +189,10 @@ if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   export BROWSER="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
   export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
   export LIBGL_ALWAYS_INDIRECT=1
+
+  if type guix &> /dev/null ; then
+     wsl.exe -u root service guix status || wsl.exe -u root service guix start
+  fi
 fi
 
 # Build Path Based on Which Dirs Exist
