@@ -191,7 +191,7 @@ if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   export LIBGL_ALWAYS_INDIRECT=1
 
   if type guix &> /dev/null ; then
-     wsl.exe -u root service guix status || wsl.exe -u root service guix start
+     wsl.exe -u root service guix-daemon status || wsl.exe -u root service guix-daemon start
   fi
 fi
 
@@ -227,6 +227,14 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+GUIX_PROFILE="/home/jake/.config/guix/current"
+. "$GUIX_PROFILE/etc/profile"
+export GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
+
+if [ -d "${HOME}/src/guix" ] ; then
+  export GUILE_LOAD_PATH="${HOME}/src/guix:${GUILE_LOAD_PATH}"
+fi
 
 # Look for emacs-vterm install directory to find files that help with vterm
 # integration in emacs
