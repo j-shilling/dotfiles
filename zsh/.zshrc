@@ -228,12 +228,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-GUIX_PROFILE="/home/jake/.config/guix/current"
+GUIX_PROFILE="${HOME}/.guix-profile/"
 . "$GUIX_PROFILE/etc/profile"
 export GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
 
-if [ -d "${HOME}/src/guix" ] ; then
-  export GUILE_LOAD_PATH="${HOME}/src/guix:${GUILE_LOAD_PATH}"
+if [ -d "${HOME}/.config/guix" ] ; then
+  export GUILE_LOAD_PATH="${HOME}/.config/guix:${GUILE_LOAD_PATH}"
 fi
 
 # Look for emacs-vterm install directory to find files that help with vterm
