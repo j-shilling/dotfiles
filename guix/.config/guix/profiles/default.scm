@@ -1,6 +1,6 @@
 (define-module (profiles default)
   #:use-module (guix profiles)
-  #:use-module (manifests doom-emacs-packages)
+  #:use-module (manifests doom-emacs)
   #:use-module (manifests media-packages)
   #:use-module (manifests core)
   #:export (default))
