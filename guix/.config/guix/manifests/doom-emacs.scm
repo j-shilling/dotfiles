@@ -27,12 +27,15 @@
   #:export (doom-emacs-packages
             doom-emacs-manifest))
 
+(when (resolve-module '(flat packages emacs) #:ensure #f)
+  (use-modules (flat packages emacs)))
+
 (define doom-emacs-packages
   (filter (negate unspecified?)
           (list
            ripgrep
-           (if (defined? 'emacs-with-native-comp)
-               emacs-with-native-comp
+           (if (defined? 'emacs-native-comp)
+               emacs-native-comp
                emacs)
            git
            fd
