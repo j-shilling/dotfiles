@@ -34,6 +34,7 @@ dev-java/openjdk
 dev-lang/mono
 dev-libs/libisoburn
 dev-python/pip
+dev-scheme/guile
 dev-util/ctags
 dev-util/git-delta
 dev-util/glslang
