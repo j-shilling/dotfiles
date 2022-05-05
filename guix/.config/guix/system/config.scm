@@ -1,7 +1,6 @@
-;; This is an operating system configuration generated
-;; by the graphical installer.
+(use-modules (gnu)
+             (manifests core))
 
-(use-modules (gnu))
 (use-service-modules desktop networking ssh xorg)
 
 (operating-system
@@ -10,16 +9,16 @@
   (keyboard-layout (keyboard-layout "us"))
   (host-name "mercurius")
   (users (cons* (user-account
-                  (name "jake")
-                  (comment "Jake Shilling")
-                  (group "users")
-                  (home-directory "/home/jake")
-                  (supplementary-groups
-                    '("wheel" "netdev" "audio" "video")))
+                 (name "jake")
+                 (comment "Jake Shilling")
+                 (group "users")
+                 (home-directory "/home/jake")
+                 (supplementary-groups
+                  '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
   (packages
     (append
-      (list (specification->package "nss-certs"))
+      core-packages
       %base-packages))
   (services
     (append
@@ -31,10 +30,12 @@
   (bootloader
     (bootloader-configuration
       (bootloader grub-bootloader)
-      (target "/dev/nvme0n1")
+      (targets '("/dev/nvme0n1"))
       (keyboard-layout keyboard-layout)))
   (swap-devices
-    (list (uuid "95111f96-068d-4cb7-b02b-1f1252e93d84")))
+   (list
+    (swap-space
+     (target (uuid "95111f96-068d-4cb7-b02b-1f1252e93d84")))))
   (file-systems
     (cons* (file-system
              (mount-point "/")
