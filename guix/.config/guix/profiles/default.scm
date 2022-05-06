@@ -5,6 +5,7 @@
   #:use-module (manifests media)
   #:use-module (manifests browsers)
   #:use-module (manifests shell)
+  #:use-module (manifests build-tools)
   #:export (default))
 
 
@@ -14,6 +15,7 @@
          core-manifest
          shell-manifest
          media-manifest
-         browsers-manifest)))
+         browsers-manifest
+         build-tools-manifest)))
 
 default
