@@ -25,4 +25,4 @@
 (define build-tools-manifest
   (packages->manifest build-tools-packages))
 
-build-tools-manifests
+build-tools-manifest
