@@ -6,16 +6,18 @@
   #:use-module (manifests browsers)
   #:use-module (manifests shell)
   #:use-module (manifests build-tools)
-  #:export (default))
+  #:export (default-manifest
+            default-packages))
 
+(define default-packages
+  (append doom-emacs-packages
+          core-packages
+          shell-packages
+          media-packages
+          browsers-packages
+          build-tools-packages))
 
-(define default
-  (concatenate-manifests
-   (list doom-emacs-manifest
-         core-manifest
-         shell-manifest
-         media-manifest
-         browsers-manifest
-         build-tools-manifest)))
+(define default-manifest
+  (packages->manifest default-packages))
 
-default
+default-manifest
