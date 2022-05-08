@@ -51,6 +51,9 @@ kde-apps/kdepim-meta
 kde-apps/kdeutils-meta
 kde-apps/spectacle
 kde-plasma/plasma-meta
+media-fonts/fira-code
+media-fonts/fira-mono
+media-fonts/fira-sans
 media-fonts/libertine
 media-fonts/noto-emoji
 media-fonts/powerline-symbols
