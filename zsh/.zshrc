@@ -152,8 +152,13 @@ fi
 export DISABLE_FZF_AUTO_COMPLETION="false"
 export DISABLE_FZF_KEY_BINDINGS="false"
 
-source $ZSH/oh-my-zsh.sh
-source $FZF_TAB_COMPLETION_DIR/zsh/fzf-zsh-completion.sh
+if [ -e $ZSH/oh-my-zsh.sh ] ; then
+  source $ZSH/oh-my-zsh.sh
+fi
+
+if [ -e $FZF_TAB_COMPLETION_DIR/zsh/fzf-zsh-completion.sh ] ; then
+  source $FZF_TAB_COMPLETION_DIR/zsh/fzf-zsh-completion.sh
+fi
 
 # User configuration
 
