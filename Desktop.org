@@ -1,0 +1,17 @@
+#+title: Desktop
+
+#+PROPERTY: header-args :mkdirp yes
+
+* Xsession
+
+#+begin_src sh :tangle ~/.xsession
+# -*- mode: sh; lexical-binding: t -*-
+source ~/.profile
+
+doom_conf_dir="${DOOMDIR:-${HOME}/.doom.d}"
+EXWM_INIT_FILE="${doom_conf_dir}/exwm.el"
+
+_JAVA_AWT_WM_NONREPARENTING=1 \
+exec dbus-launch --exit-with-session \
+    emacs -mm --load "${EXWM_INIT_FILE}"
+#+end_src

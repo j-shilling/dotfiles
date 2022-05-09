@@ -22,7 +22,7 @@
         curl
         emacs
         git
-        glibc-utf8-locales
+        glibc-locales
         gnupg
         nss-certs
         openssh
