@@ -7,11 +7,6 @@ fi
 
 source /etc/bashrc
 
-export GUIX_PROFILE="$HOME/.guix-profile/"
-if [ -e "$GUIX_PROFILE" ] ; then
-    . "$GUIX_PROFILE/etc/profile"
-fi
-
 if [ -d "$GUIX_PROFILE/etc/bash_completion.d" ] ; then
     for f in $GUIX_PROFILE/etc/bash_completion.d/* ; do
         source $f
