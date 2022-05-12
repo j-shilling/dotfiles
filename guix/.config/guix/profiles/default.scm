@@ -9,13 +9,19 @@
   #:export (default-manifest
             default-packages))
 
+(when (resolve-module '(manifests desktop) #:ensure #f)
+  (use-modules (manifests desktop)))
+
 (define default-packages
-  (append doom-emacs-packages
-          core-packages
-          shell-packages
-          media-packages
-          browsers-packages
-          build-tools-packages))
+  (filter (negate unspecified?)
+          (append doom-emacs-packages
+                  core-packages
+                  shell-packages
+                  media-packages
+                  browsers-packages
+                  build-tools-packages
+                  (when (defined? 'desktop-packages)
+                    desktop-packages))))
 
 (define default-manifest
   (packages->manifest default-packages))
