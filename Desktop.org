@@ -15,3 +15,694 @@ _JAVA_AWT_WM_NONREPARENTING=1 \
 exec dbus-launch --exit-with-session \
     emacs -mm --load "${EXWM_INIT_FILE}"
 #+end_src
+
+* XSettings
+
+#+begin_src conf :tangle ~/.config/xsettingsd/xsettingsd.conf
+#+end_src
+
+#+begin_src scheme :noweb-ref specifications :noweb-sep ""
+"xsettingsd"
+#+end_src
+* PyWal
+
+#+begin_src scheme :noweb-ref specifications :noweb-sep ""
+"python-pywal"
+#+end_src
+
+* Polybar
+#+begin_src conf :tangle ~/.config/polybar/config
+[settings]
+screenchange-reload = true
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+
+[colors]
+background = ${xrdb:color0:#222}
+foreground = ${xrdb:color7:#222}
+foreground-alt = ${xrdb:color7:#222}
+primary = ${xrdb:color1:#222}
+secondary = ${xrdb:color2:#222}
+alert = ${xrdb:color3:#222}
+
+[bar/panel]
+monitor = ${env:MONITOR:}
+width = 100%
+height = 35
+offset-x = 0
+offset-y = 0
+fixed-center = true
+enable-ipc = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 2
+line-color = #f00
+
+border-size = 0
+border-color = #00000000
+
+padding-top = 5
+padding-left = 1
+padding-right = 1
+
+module-margin = 1
+
+font-0 = "Cantarell:size=18:weight=bold;2"
+font-1 = "Font Awesome:size=14;2"
+font-2 = "Material Icons:size=20;5"
+font-3 = "Fira Mono:size=13;-3"
+
+modules-left = cpu memory network
+modules-right = date
+
+tray-position = right
+tray-padding = 2
+tray-maxsize = 28
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[module/cpu]
+type = internal/cpu
+interval = 0.1
+format = <label> <ramp-coreload>
+label = %percentage:2%%
+ramp-coreload-spacing = 0
+ramp-coreload-0 = ▁
+ramp-coreload-0-foreground = ${colors.foreground-alt}
+ramp-coreload-1 = ▂
+ramp-coreload-2 = ▃
+ramp-coreload-3 = ▄
+ramp-coreload-4 = ▅
+ramp-coreload-5 = ▆
+ramp-coreload-6 = ▇
+
+[module/memory]
+type = internal/memory
+interval = 0.1
+format = <label> <ramp-used>
+label = %percentage_used:2%%
+ramp-used-0 = ▁
+ramp-used-1 = ▂
+ramp-used-2 = ▃
+ramp-used-3 = ▄
+ramp-used-4 = ▅
+ramp-used-5 = ▆
+ramp-used-6 = ▇
+ramp-used-7 = █
+
+[module/network]
+type = internal/network
+interface = eno2
+label-connected = %upspeed% %downspeed%
+
+[module/date]
+type = internal/date
+interval = 5
+
+date = "%a %b %e"
+date-alt = "%A %B %d %Y"
+
+time = %l:%M %p
+time-alt = %H:%M:%S
+
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.underline-1}
+
+label = %date% %time%
+#+end_src
+
+#+begin_src scheme :noweb-ref specifications :noweb-sep ""
+"polybar"
+#+end_src
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+(let ((version "0.0.1")
+      (revision "0")
+      (commit "3889d3c23f22cb939ea0c34a97b77d3fe31fe7d0"))
+  (package
+   (name "emacs-polybar")
+   (version (git-version version revision commit))
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://gitlab.com/e4303/packages/polybar.el.git")
+                  (commit commit)))
+            (file-name (git-file-name name version))
+            (sha256
+             (base32
+              "1gpqbr9r5i1f51rmx4fvi65fyfyl480smcklxr7ijc964hw13hbb"))))
+   (build-system emacs-build-system)))
+#+end_src
+
+* Dunst
+
+#+begin_src conf :tangle ~/.config/dunst/dunstrc
+[global]
+    ### Display ###
+    monitor = 0
+
+    # The geometry of the window:
+    #   [{width}]x{height}[+/-{x}+/-{y}]
+    geometry = "500x10-10+50"
+
+    # Show how many messages are currently hidden (because of geometry).
+    indicate_hidden = yes
+
+    # Shrink window if it's smaller than the width.  Will be ignored if
+    # width is 0.
+    shrink = no
+
+    # The transparency of the window.  Range: [0; 100].
+    transparency = 10
+
+    # The height of the entire notification.  If the height is smaller
+    # than the font height and padding combined, it will be raised
+    # to the font height and padding.
+    notification_height = 0
+
+    # Draw a line of "separator_height" pixel height between two
+    # notifications.
+    # Set to 0 to disable.
+    separator_height = 1
+    separator_color = frame
+
+    # Padding between text and separator.
+    padding = 8
+
+    # Horizontal padding.
+    horizontal_padding = 8
+
+    # Defines width in pixels of frame around the notification window.
+    # Set to 0 to disable.
+    frame_width = 2
+
+    # Defines color of the frame around the notification window.
+    frame_color = "#89AAEB"
+
+    # Sort messages by urgency.
+    sort = yes
+
+    # Don't remove messages, if the user is idle (no mouse or keyboard input)
+    # for longer than idle_threshold seconds.
+    idle_threshold = 120
+
+    ### Text ###
+
+    font = Cantarell 20
+
+    # The spacing between lines.  If the height is smaller than the
+    # font height, it will get raised to the font height.
+    line_height = 0
+    markup = full
+
+    # The format of the message.  Possible variables are:
+    #   %a  appname
+    #   %s  summary
+    #   %b  body
+    #   %i  iconname (including its path)
+    #   %I  iconname (without its path)
+    #   %p  progress value if set ([  0%] to [100%]) or nothing
+    #   %n  progress value if set without any extra characters
+    #   %%  Literal %
+    # Markup is allowed
+    format = "<b>%s</b>\n%b"
+
+    # Alignment of message text.
+    # Possible values are "left", "center" and "right".
+    alignment = left
+
+    # Show age of message if message is older than show_age_threshold
+    # seconds.
+    # Set to -1 to disable.
+    show_age_threshold = 60
+
+    # Split notifications into multiple lines if they don't fit into
+    # geometry.
+    word_wrap = yes
+
+    # When word_wrap is set to no, specify where to make an ellipsis in long lines.
+    # Possible values are "start", "middle" and "end".
+    ellipsize = middle
+
+    # Ignore newlines '\n' in notifications.
+    ignore_newline = no
+
+    # Stack together notifications with the same content
+    stack_duplicates = true
+
+    # Hide the count of stacked notifications with the same content
+    hide_duplicate_count = false
+
+    # Display indicators for URLs (U) and actions (A).
+    show_indicators = yes
+
+    ### Icons ###
+
+    # Align icons left/right/off
+    icon_position = left
+
+    # Scale larger icons down to this size, set to 0 to disable
+    max_icon_size = 88
+
+    # Paths to default icons.
+    icon_path = /usr/share/icons/Adwaita/96x96/status:/usr/share/icons/Adwaita/96x96/emblems
+
+    ### History ###
+
+    # Should a notification popped up from history be sticky or timeout
+    # as if it would normally do.
+    sticky_history = no
+
+    # Maximum amount of notifications kept in history
+    history_length = 20
+
+    ### Misc/Advanced ###
+
+    # Browser for opening urls in context menu.
+    browser = qutebrowser
+
+    # Always run rule-defined scripts, even if the notification is suppressed
+    always_run_script = true
+
+    # Define the title of the windows spawned by dunst
+    title = Dunst
+
+    # Define the class of the windows spawned by dunst
+    class = Dunst
+
+    startup_notification = false
+    verbosity = mesg
+
+    # Define the corner radius of the notification window
+    # in pixel size. If the radius is 0, you have no rounded
+    # corners.
+    # The radius will be automatically lowered if it exceeds half of the
+    # notification height to avoid clipping text and/or icons.
+    corner_radius = 4
+
+    mouse_left_click = close_current
+    mouse_middle_click = do_action
+    mouse_right_click = close_all
+
+# Experimental features that may or may not work correctly. Do not expect them
+# to have a consistent behaviour across releases.
+[experimental]
+    # Calculate the dpi to use on a per-monitor basis.
+    # If this setting is enabled the Xft.dpi value will be ignored and instead
+    # dunst will attempt to calculate an appropriate dpi value for each monitor
+    # using the resolution and physical size. This might be useful in setups
+    # where there are multiple screens with very different dpi values.
+    per_monitor_dpi = false
+
+[shortcuts]
+
+    # Shortcuts are specified as [modifier+][modifier+]...key
+    # Available modifiers are "ctrl", "mod1" (the alt-key), "mod2",
+    # "mod3" and "mod4" (windows-key).
+    # Xev might be helpful to find names for keys.
+
+    # Close notification.
+    #close = ctrl+space
+
+    # Close all notifications.
+    #close_all = ctrl+shift+space
+
+    # Redisplay last message(s).
+    # On the US keyboard layout "grave" is normally above TAB and left
+    # of "1". Make sure this key actually exists on your keyboard layout,
+    # e.g. check output of 'xmodmap -pke'
+    history = ctrl+grave
+
+    # Context menu.
+    context = ctrl+shift+period
+
+[urgency_low]
+    # IMPORTANT: colors have to be defined in quotation marks.
+    # Otherwise the "#" and following would be interpreted as a comment.
+    background = "#222222"
+    foreground = "#888888"
+    timeout = 10
+    # Icon for notifications with low urgency, uncomment to enable
+    #icon = /path/to/icon
+
+[urgency_normal]
+    background = "#1c1f26"
+    foreground = "#ffffff"
+    timeout = 10
+    # Icon for notifications with normal urgency, uncomment to enable
+    #icon = /path/to/icon
+
+[urgency_critical]
+    background = "#900000"
+    foreground = "#ffffff"
+    frame_color = "#ff0000"
+    timeout = 0
+    # Icon for notifications with critical urgency, uncomment to enable
+    #icon = /path/to/icon
+#+end_src
+
+#+begin_src scheme :noweb-ref specifications :noweb-sep ""
+"dunst"
+"libnotify"
+#+end_src
+* Rofi
+
+#+begin_src conf :tangle ~/.config/rofi/config.rasi
+// -*- comment-start: "/*"; comment-end: "*/"; -*-
+
+@import "~/.cache/wal/colors-rofi-dark"
+
+configuration {
+	modi: "window,run,ssh";
+/*	font: "mono 12";*/
+/*	location: 0;*/
+/*	yoffset: 0;*/
+/*	xoffset: 0;*/
+/*	fixed-num-lines: true;*/
+	show-icons: true;
+/*	terminal: "rofi-sensible-terminal";*/
+/*	ssh-client: "ssh";*/
+/*	ssh-command: "{terminal} -e {ssh-client} {host} [-p {port}]";*/
+/*	run-command: "{cmd}";*/
+/*	run-list-command: "";*/
+/*	run-shell-command: "{terminal} -e {cmd}";*/
+/*	window-command: "wmctrl -i -R {window}";*/
+/*	window-match-fields: "all";*/
+/*	icon-theme: ;*/
+/*	drun-match-fields: "name,generic,exec,categories,keywords";*/
+/*	drun-categories: ;*/
+/*	drun-show-actions: false;*/
+/*	drun-display-format: "{name} [<span weight='light' size='small'><i>({generic})</i></span>]";*/
+/*	drun-url-launcher: "xdg-open";*/
+/*	disable-history: false;*/
+/*	ignored-prefixes: "";*/
+/*	sort: false;*/
+/*	sorting-method: "normal";*/
+/*	case-sensitive: false;*/
+/*	cycle: true;*/
+/*	sidebar-mode: false;*/
+/*	hover-select: false;*/
+/*	eh: 1;*/
+/*	auto-select: false;*/
+/*	parse-hosts: false;*/
+/*	parse-known-hosts: true;*/
+/*	combi-modi: "window,run";*/
+/*	matching: "normal";*/
+/*	tokenize: true;*/
+/*	m: "-5";*/
+/*	filter: ;*/
+/*	dpi: -1;*/
+/*	threads: 0;*/
+/*	scroll-method: 0;*/
+/*	window-format: "{w}    {c}   {t}";*/
+/*	click-to-exit: true;*/
+/*	max-history-size: 25;*/
+/*	combi-hide-mode-prefix: false;*/
+/*	matching-negate-char: '-' /* unsupported */;*/
+/*	cache-dir: ;*/
+/*	window-thumbnail: false;*/
+/*	drun-use-desktop-cache: false;*/
+/*	drun-reload-desktop-cache: false;*/
+/*	normalize-match: false;*/
+/*	steal-focus: false;*/
+/*	application-fallback-icon: ;*/
+/*	pid: "/run/user/1000/rofi.pid";*/
+/*	display-window: ;*/
+/*	display-windowcd: ;*/
+/*	display-run: ;*/
+/*	display-ssh: ;*/
+/*	display-drun: ;*/
+/*	display-combi: ;*/
+/*	display-keys: ;*/
+/*	display-filebrowser: ;*/
+/*	kb-primary-paste: "Control+V,Shift+Insert";*/
+/*	kb-secondary-paste: "Control+v,Insert";*/
+/*	kb-clear-line: "Control+w";*/
+/*	kb-move-front: "Control+a";*/
+/*	kb-move-end: "Control+e";*/
+/*	kb-move-word-back: "Alt+b,Control+Left";*/
+/*	kb-move-word-forward: "Alt+f,Control+Right";*/
+/*	kb-move-char-back: "Left,Control+b";*/
+/*	kb-move-char-forward: "Right,Control+f";*/
+/*	kb-remove-word-back: "Control+Alt+h,Control+BackSpace";*/
+/*	kb-remove-word-forward: "Control+Alt+d";*/
+/*	kb-remove-char-forward: "Delete,Control+d";*/
+/*	kb-remove-char-back: "BackSpace,Shift+BackSpace,Control+h";*/
+/*	kb-remove-to-eol: "Control+k";*/
+/*	kb-remove-to-sol: "Control+u";*/
+/*	kb-accept-entry: "Control+j,Control+m,Return,KP_Enter";*/
+/*	kb-accept-custom: "Control+Return";*/
+/*	kb-accept-custom-alt: "Control+Shift+Return";*/
+/*	kb-accept-alt: "Shift+Return";*/
+/*	kb-delete-entry: "Shift+Delete";*/
+/*	kb-mode-next: "Shift+Right,Control+Tab";*/
+/*	kb-mode-previous: "Shift+Left,Control+ISO_Left_Tab";*/
+/*	kb-mode-complete: "Control+l";*/
+/*	kb-row-left: "Control+Page_Up";*/
+/*	kb-row-right: "Control+Page_Down";*/
+/*	kb-row-up: "Up,Control+p,ISO_Left_Tab";*/
+/*	kb-row-down: "Down,Control+n";*/
+/*	kb-row-tab: "Tab";*/
+/*	kb-page-prev: "Page_Up";*/
+/*	kb-page-next: "Page_Down";*/
+/*	kb-row-first: "Home,KP_Home";*/
+/*	kb-row-last: "End,KP_End";*/
+/*	kb-row-select: "Control+space";*/
+/*	kb-screenshot: "Alt+S";*/
+/*	kb-ellipsize: "Alt+period";*/
+/*	kb-toggle-case-sensitivity: "grave,dead_grave";*/
+/*	kb-toggle-sort: "Alt+grave";*/
+/*	kb-cancel: "Escape,Control+g,Control+bracketleft";*/
+/*	kb-custom-1: "Alt+1";*/
+/*	kb-custom-2: "Alt+2";*/
+/*	kb-custom-3: "Alt+3";*/
+/*	kb-custom-4: "Alt+4";*/
+/*	kb-custom-5: "Alt+5";*/
+/*	kb-custom-6: "Alt+6";*/
+/*	kb-custom-7: "Alt+7";*/
+/*	kb-custom-8: "Alt+8";*/
+/*	kb-custom-9: "Alt+9";*/
+/*	kb-custom-10: "Alt+0";*/
+/*	kb-custom-11: "Alt+exclam";*/
+/*	kb-custom-12: "Alt+at";*/
+/*	kb-custom-13: "Alt+numbersign";*/
+/*	kb-custom-14: "Alt+dollar";*/
+/*	kb-custom-15: "Alt+percent";*/
+/*	kb-custom-16: "Alt+dead_circumflex";*/
+/*	kb-custom-17: "Alt+ampersand";*/
+/*	kb-custom-18: "Alt+asterisk";*/
+/*	kb-custom-19: "Alt+parenleft";*/
+/*	kb-select-1: "Super+1";*/
+/*	kb-select-2: "Super+2";*/
+/*	kb-select-3: "Super+3";*/
+/*	kb-select-4: "Super+4";*/
+/*	kb-select-5: "Super+5";*/
+/*	kb-select-6: "Super+6";*/
+/*	kb-select-7: "Super+7";*/
+/*	kb-select-8: "Super+8";*/
+/*	kb-select-9: "Super+9";*/
+/*	kb-select-10: "Super+0";*/
+/*	ml-row-left: "ScrollLeft";*/
+/*	ml-row-right: "ScrollRight";*/
+/*	ml-row-up: "ScrollUp";*/
+/*	ml-row-down: "ScrollDown";*/
+/*	me-select-entry: "MousePrimary";*/
+/*	me-accept-entry: "MouseDPrimary";*/
+/*	me-accept-custom: "Control+MouseDPrimary";*/
+  timeout {
+      action: "kb-cancel";
+      delay:  0;
+  }
+  filebrowser {
+      directories-first: true;
+      sorting-method:    "name";
+  }
+
+}
+#+end_src
+
+#+begin_src scheme :noweb-ref specifications :noweb-sep ""
+"rofi"
+#+end_src
+
+* EXWM
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle ~/.exwm
+:END:
+
+#+begin_src emacs-lisp
+;; -*- mode: emacs-lisp; lexical-binding: t -*-
+#+end_src
+
+** Wallpaper
+#+begin_src emacs-lisp
+(require 'map)
+
+(defvar my/wallpaper
+  "/home/jake/.doom.d/emacs-DG-2.png")
+(defvar my/active-alpha 95)
+(defvar my/inactive-alpha 90)
+
+(defun my/wallpaper-init ()
+  (when-let ((feh (executable-find "feh")))
+    (call-process feh nil nil nil "--bg-scale" my/wallpaper)
+
+    (let ((alpha (list my/active-alpha my/inactive-alpha)))
+      ;; Set alpha for existing frames
+      (dolist (frame (frame-list))
+        (set-frame-parameter frame 'alpha alpha))
+
+      ;; Set default alpha for new frames
+      (add-to-list 'default-frame-alist `(alpha ,alpha)))))
+#+end_src
+
+** Workspaces
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! monitors
+  :recipe (:host gitlab
+           :repo "e4303/packages/monitors"))
+#+end_src
+
+#+begin_src emacs-lisp
+(let ((setup-script (expand-file-name "xrandr-setup.sh" my/local-config-dir)))
+  (when (file-exists-p setup-script)
+    (start-file-process-shell-command "xrandr-setup" nil setup-script)))
+(let ((monitors (monitors-get-connected)))
+  (setq exwm-workspace-number (seq-length monitors)
+        exwm-randr-workspace-monitor-plist
+        (let ((workspace-id 1))
+          (cl-reduce (lambda (acc el)
+                       (let ((new-acc (plist-put acc workspace-id (monitors-monitor-name el))))
+                         (cl-incf workspace-id)
+                         new-acc))
+                     monitors
+                     :initial-value nil))))
+#+end_src
+** Polybar
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! polybar
+  :recipe (:host gitlab
+           :repo "e4303/packages/polybar.el"))
+#+end_src
+
+** Dunst
+*** Dunst Functions
+#+begin_src emacs-lisp
+;;
+;; Dunst Functions
+;;
+
+(defvar my/dunst--buffer nil)
+
+(defun my/dunst--kill ()
+  (when my/dunst--buffer
+    (kill-buffer my/dunst--buffer)
+    (setq my/dunst--buffer nil)))
+
+(defun my/dunst--start (&optional config)
+  (my/dunst--kill)
+  (let ((buffer (generate-new-buffer "*dunst*")))
+    (apply #'start-process "dunst" buffer "dunst"
+           (when config
+             '("-config" config)))
+    (setq my/dunst--buffer buffer)))
+#+end_src
+*** TODO set up lisp interface for dunstclt
+** Rofi
+#+begin_src emacs-lisp
+(map! "s-<f2>" #'rofi-run)
+(map! "M-<tab>" #'rofi-window)
+#+end_src
+** Init EXWM
+#+begin_src emacs-lisp
+(setq exwm-workspace-show-all-buffers t)
+(setq focus-follows-mouse t)
+
+(add-hook 'wal-success-hook
+          (lambda ()
+            (setq doom-theme 'ewal-doom-vibrant)
+            (doom/reload-theme)
+            (start-process "pywalfox" nil "pywalfox" "update")))
+
+(defun my/exwm-init-hook ()
+  (unless IS-KDE
+    (my/dunst--start)
+    (my/wallpaper-init)
+    (polybar-start-primary)
+    (wal-restore)
+    (dolist (prog '("nm-applet" "pasystray"))
+      (call-process prog nil 0 nil)))
+  (call-process "picom" nil 0 nil))
+
+(add-hook 'exwm-init-hook
+          #'my/exwm-init-hook)
+
+;; Make class name the buffer name
+(add-hook 'exwm-update-class-hook
+          (lambda ()
+            (exwm-workspace-rename-buffer exwm-class-name)))
+
+;; Global keybindings.
+(unless (get 'exwm-input-global-keys 'saved-value)
+  (setq exwm-input-global-keys
+        `(
+          ([?\M-x] . execute-extended-command)
+          ;; 's-r': Reset (to line-mode).
+          ([?\s-r] . exwm-reset)
+          ;; 's-w': Switch workspace.
+          ([?\s-w] . exwm-workspace-switch)
+          ;; 's-&': Launch application.
+          ([?\s-&] . (lambda (command)
+                       (interactive (list (read-shell-command "$ ")))
+                       (start-process-shell-command command nil command)))
+          ;; 's-N': Switch to certain workspace.
+          ,@(mapcar (lambda (i)
+                      `(,(kbd (format "s-%d" i)) .
+                        (lambda ()
+                          (interactive)
+                          (exwm-workspace-switch-create (- ,i 1)))))
+                    (number-sequence 1 exwm-workspace-number)))))
+
+(exwm-randr-enable)
+(exwm-enable)
+#+end_src
+
+** Package
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+"emacs-exwm"
+#+end_src
+
+* Guix Manifest
+
+#+begin_src scheme :tangle ~/.config/guix/manifests/desktop.scm :noweb yes
+(define-module (manifests desktop)
+  #:use-module (gnu packages)
+  #:use-module (guix profiles)
+  #:export (desktop-packages
+            desktop-manifest))
+
+(define desktop-specifications
+  '(
+    <<specifications>>
+    ))
+
+(define desktop-packages
+  (append
+   (map specification->package desktop-specifications)
+   (list
+    <<packages>>
+    )))
+
+(define desktop-manifest
+  (packages->manifest desktop-packages))
+
+desktop-manifest
+#+end_src
