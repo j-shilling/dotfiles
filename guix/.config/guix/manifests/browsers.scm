@@ -1,6 +1,5 @@
 (define-module (manifests browsers)
   #:use-module (gnu packages web-browsers)
-  #:use-module (gnu packages chromium)
   #:use-module (gnu packages gnuzilla)
   #:use-module (guix profiles)
   #:export (browsers-packages
@@ -11,7 +10,6 @@
 
 (define browsers-packages
   (list nyxt
-        ungoogled-chromium
         (if (defined? 'firefox)
             firefox
             icecat)))
