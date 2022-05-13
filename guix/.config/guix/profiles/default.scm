@@ -13,15 +13,15 @@
   (use-modules (manifests desktop)))
 
 (define default-packages
-  (filter (negate unspecified?)
-          (append doom-emacs-packages
-                  core-packages
-                  shell-packages
-                  media-packages
-                  browsers-packages
-                  build-tools-packages
-                  (when (defined? 'desktop-packages)
-                    desktop-packages))))
+  (append doom-emacs-packages
+          core-packages
+          shell-packages
+          media-packages
+          browsers-packages
+          build-tools-packages
+          (if (defined? 'desktop-packages)
+              desktop-packages
+              (list))))
 
 (define default-manifest
   (packages->manifest default-packages))
