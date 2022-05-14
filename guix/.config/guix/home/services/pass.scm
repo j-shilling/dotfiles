@@ -17,6 +17,7 @@
   (list
    (service
     home-password-store-service-type
-    (home-password-store-configuration))))
+    (home-password-store-configuration
+     (browserpass-native? #t)))))
 
 services
