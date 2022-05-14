@@ -17,7 +17,7 @@
    (service
     home-emacs-service-type
     (home-emacs-configuration
-     (package emacs-pgtk-native-comp)
+     (package emacs-native-comp)
      (rebuild-elisp-packages? #f)
      (server-mode? #t)))))
 
