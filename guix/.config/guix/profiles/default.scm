@@ -6,13 +6,13 @@
   #:use-module (manifests browsers)
   #:use-module (manifests shell)
   #:use-module (manifests build-tools)
-  #:export (default-manifest
-            default-packages))
+  #:export (manifest
+            packages))
 
-(when (resolve-module '(manifests desktop) #:ensure #f)
-  (use-modules (manifests desktop)))
+;; (when (resolve-module '(manifests desktop) #:ensure #f)
+;;   (use-modules (manifests desktop)))
 
-(define default-packages
+(define packages
   (append doom-emacs-packages
           core-packages
           shell-packages
@@ -23,7 +23,7 @@
               desktop-packages
               (list))))
 
-(define default-manifest
-  (packages->manifest default-packages))
+(define manifest
+  (packages->manifest packages))
 
-default-manifest
+manifest
