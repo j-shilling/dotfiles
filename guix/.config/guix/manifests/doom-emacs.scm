@@ -64,9 +64,7 @@
                 xdotool
                 xprop
                 xwininfo
-                (if (defined? 'emacs-native-comp)
-                    emacs-native-comp
-                    emacs)
+                emacs
                 (when (defined? 'leiningen)
                   leiningen))))
 

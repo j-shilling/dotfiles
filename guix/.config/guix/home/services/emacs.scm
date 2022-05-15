@@ -1,6 +1,6 @@
 (define-module (home services emacs)
   #:use-module (gnu services)
-  #:use-module (flat packages emacs)
+  #:use-module (gnu packages emacs)
   #:use-module (gnu home-services emacs)
   #:use-module (gnu home-services state)
   #:export (services
@@ -17,7 +17,7 @@
    (service
     home-emacs-service-type
     (home-emacs-configuration
-     (package emacs-native-comp)
+     (package emacs)
      (rebuild-elisp-packages? #f)
      (server-mode? #t)))))
 
