@@ -6,7 +6,6 @@
   #:use-module ((home services gpg) #:prefix gpg:)
   #:use-module ((home services shells) #:prefix shells:)
   #:use-module ((home services emacs) #:prefix emacs:)
-  #:use-module ((home services tmux) #:prefix tmux:)
   #:use-module ((profiles default) #:prefix default:)
   #:export (config))
 
@@ -15,8 +14,7 @@
    home-state-service-type
    (append pass:state
            emacs:state
-           shells:state
-           tmux:state)))
+           shells:state)))
 
 (define config
   (home-environment
@@ -25,7 +23,6 @@
                      pass:services
                      gpg:services
                      emacs:services
-                     shells:services
-                     tmux:services))))
+                     shells:services))))
 
 config
