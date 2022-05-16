@@ -9,19 +9,19 @@
   #:export (manifest
             packages))
 
-;; (when (resolve-module '(manifests desktop) #:ensure #f)
-;;   (use-modules (manifests desktop)))
+(when (resolve-module '(manifests desktop) #:ensure #f)
+  (use-modules (manifests desktop)))
 
 (define packages
-  (append doom-emacs-packages
-          core-packages
-          shell-packages
-          media-packages
-          browsers-packages
-          build-tools-packages
-          (if (defined? 'desktop-packages)
-              desktop-packages
-              (list))))
+  (filter (negate unspecified?)
+          (append doom-emacs-packages
+                  core-packages
+                  shell-packages
+                  media-packages
+                  browsers-packages
+                  build-tools-packages
+                  (when (defined? 'desktop-packages)
+                    desktop-packages))))
 
 (define manifest
   (packages->manifest packages))
