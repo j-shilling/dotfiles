@@ -2,7 +2,7 @@ image: silex/emacs:28.1
 
 pages:
   script:
-    - emacs -Q --script export-site.el
+    - emacs -Q --batch -l ./publish.el --funcall dw/publish
   artifacts:
     paths:
       - public
