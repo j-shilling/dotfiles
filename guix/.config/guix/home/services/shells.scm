@@ -20,14 +20,14 @@
     (home-bash-configuration
      (guix-defaults? #t)
      (bash-profile
-      '("source $HOME/dotfiles/bash/.bash_profile"))
+      '("source $HOME/dotfiles/shell/.bash_profile"))
      (bashrc
-      '("source $HOME/dotfiles/bash/.bashrc"))))
+      '("source $HOME/dotfiles/shell/.bashrc"))))
    (service
     home-zsh-service-type
     (home-zsh-configuration
      (zshrc
-      '("source $HOME/dotfiles/zsh/.zshrc"))))
+      '("source $HOME/dotfiles/shell/.zshrc"))))
    (service home-bash-direnv-service-type)
    (service home-zsh-direnv-service-type)
    (service home-zsh-autosuggestions-service-type)))

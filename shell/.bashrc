@@ -58,38 +58,4 @@ shopt -s autocd 2> /dev/null
 shopt -s dirspell 2> /dev/null
 shopt -s cdspell 2> /dev/null
 
-# Build Path Based on Which Dirs Exist
-if [ -d "${HOME}/.local/bin" ] ; then
-  export PATH="${HOME}/.local/bin:${PATH}"
-fi
-
-if [ -d "${HOME}/.emacs.d/bin" ] ; then
-  export PATH="${HOME}/.emacs.d/bin:${PATH}"
-fi
-
-if [ -d "${HOME}/.cask/bin" ] ; then
-  export PATH="${HOME}/.cask/bin:${PATH}"
-fi
-
-if [ -d "${HOME}/.eldev/bin" ] ; then
-  export PATH="${HOME}/.eldev/bin:${PATH}"
-fi
-
-if [ -d "/var/lib/snapd/snap/bin" ] ; then
-  export PATH="/var/lib/snapd/snap/bin:${PATH}"
-fi
-
-if [ -d "${HOME}/.dotnet/tools" ] ; then
-  export PATH="${HOME}/.dotnet/tools:${PATH}"
-fi
-
-if [ -d "/opt/piavpn/bin" ] ; then
-  export PATH="/opt/piavpn/bin:${PATH}"
-fi
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-alias ls='ls -p --color=auto'
-alias grep='grep --color=auto'
+source $HOME/dotfiles/shell/.common_profile
