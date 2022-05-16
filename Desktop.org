@@ -141,22 +141,7 @@ label = %date% %time%
 #+end_src
 
 #+begin_src scheme :noweb-ref packages :noweb-sep ""
-(let ((version "0.0.1")
-      (revision "0")
-      (commit "3889d3c23f22cb939ea0c34a97b77d3fe31fe7d0"))
-  (package
-   (name "emacs-polybar")
-   (version (git-version version revision commit))
-   (source (origin
-            (method git-fetch)
-            (uri (git-reference
-                  (url "https://gitlab.com/e4303/packages/polybar.el.git")
-                  (commit commit)))
-            (file-name (git-file-name name version))
-            (sha256
-             (base32
-              "1gpqbr9r5i1f51rmx4fvi65fyfyl480smcklxr7ijc964hw13hbb"))))
-   (build-system emacs-build-system)))
+(@ (packages emacs-polybar) emacs-polybar)
 #+end_src
 
 * Dunst
@@ -563,10 +548,8 @@ configuration {
 
 ** Workspaces
 
-#+begin_src emacs-lisp :tangle packages.el
-(package! monitors
-  :recipe (:host gitlab
-           :repo "e4303/packages/monitors"))
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+(@ (packages emacs-monitor) emacs-monitor)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -583,13 +566,6 @@ configuration {
                          new-acc))
                      monitors
                      :initial-value nil))))
-#+end_src
-** Polybar
-
-#+begin_src emacs-lisp :tangle packages.el
-(package! polybar
-  :recipe (:host gitlab
-           :repo "e4303/packages/polybar.el"))
 #+end_src
 
 ** Dunst
@@ -676,7 +652,7 @@ configuration {
 
 ** Package
 
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
+#+begin_src scheme :noweb-ref specifications :noweb-sep ""
 "emacs-exwm"
 #+end_src
 
