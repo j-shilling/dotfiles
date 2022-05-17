@@ -48,7 +48,7 @@
                 git
                 gnu-make
                 graphviz
-                grip
+                ;; grip ; Grip is failing do to a problem in its check phase
                 isync
                 libvterm
                 linux-libre-headers
