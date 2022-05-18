@@ -2,7 +2,7 @@
   #:use-module (gnu)
   #:use-module (manifests core)
   #:use-module ((keys nonguix) :prefix key:)
-  #:export (config))
+  #:export (base-config))
 
 (use-service-modules desktop networking ssh xorg)
 
@@ -17,12 +17,20 @@
                 (append (list key:nonguix)
                   %default-authorized-guix-keys))))))
 
-(define config
+(define base-config
   (operating-system
+
    (locale "en_US.utf8")
    (timezone "America/New_York")
    (keyboard-layout (keyboard-layout "us"))
+
    (host-name "mercurius")
+   (hosts-file
+    (plain-file "hosts"
+                (string-append
+                 (local-host-aliases host-name)
+                 "192.168.0.45 olympus\n")))
+
    (users (cons* (user-account
                   (name "jake")
                   (comment "Jake Shilling")
@@ -31,10 +39,12 @@
                   (supplementary-groups
                    '("wheel" "netdev" "audio" "video")))
                  %base-user-accounts))
+
    (packages
     (append
      core-packages
      %base-packages))
+
    (services
     (append
      (list (service gnome-desktop-service-type)
@@ -42,15 +52,36 @@
             (xorg-configuration
              (keyboard-layout keyboard-layout))))
      %modified-desktop-services))
+
    (bootloader
     (bootloader-configuration
      (bootloader grub-bootloader)
      (targets '("/dev/nvme0n1"))
      (keyboard-layout keyboard-layout)))
+
+   (swap-devices
+    (list))
+
+   (file-systems
+    %base-file-systems)))
+
+(define mercurius-config
+  (operating-system
+   (inherit base-config)
+
+   (host-name "mercurius")
+
+   (bootloader
+    (bootloader-configuration
+     (bootloader grub-bootloader)
+     (targets '("/dev/nvme0n1"))
+     (keyboard-layout (keyboard-layout "us"))))
+
    (swap-devices
     (list
      (swap-space
       (target (uuid "95111f96-068d-4cb7-b02b-1f1252e93d84")))))
+
    (file-systems
     (cons* (file-system
             (mount-point "/")
@@ -60,4 +91,4 @@
             (type "ext4"))
            %base-file-systems))))
 
-config
+mercurius-config
