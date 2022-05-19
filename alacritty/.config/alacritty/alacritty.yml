@@ -1,3 +1,4 @@
 font:
   size: 18
-background_opacity: 0.9
+window:
+  opacity: 0.9
