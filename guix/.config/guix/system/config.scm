@@ -1,6 +1,8 @@
 (define-module (system config)
   #:use-module (gnu)
   #:use-module (manifests core)
+  #:use-module (gnu packages wm)
+  #:use-module (gnu packages emacs-xyz)
   #:use-module ((keys nonguix) :prefix key:)
   #:export (base-config))
 
@@ -15,7 +17,10 @@
                   %default-substitute-urls))
                (authorized-keys
                 (append (list key:nonguix)
-                  %default-authorized-guix-keys))))))
+                        %default-authorized-guix-keys))))
+             (gdm-service-type config => (gdm-configuration
+                                          (inherit config)
+                                          (wayland? #t)))))
 
 (define base-config
   (operating-system
@@ -43,6 +48,8 @@
    (packages
     (append
      core-packages
+     (list emacs-exwm
+           sway)
      %base-packages))
 
    (services
