@@ -27,9 +27,6 @@
   #:export (doom-emacs-packages
             doom-emacs-manifest))
 
-(when (resolve-module '(flat packages emacs) #:ensure #f)
-  (use-modules (flat packages emacs)))
-
 (when (resolve-module '(nongnu packages clojure) #:ensure #f)
   (use-modules (nongnu packages clojure)))
 
@@ -64,7 +61,7 @@
                 xdotool
                 xprop
                 xwininfo
-                emacs
+                emacs-next-pgtk
                 (when (defined? 'leiningen)
                   leiningen))))
 
