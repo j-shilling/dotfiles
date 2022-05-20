@@ -4,6 +4,7 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages terminals)
+  #:use-module (gnu packages linux)
   #:export (manifest
             packages))
 
@@ -14,7 +15,9 @@
         font-fira-mono
         bemenu
         waybar
-        alacritty))
+        alacritty
+        mako
+        brightnessctl))
 
 (define manifest
   (packages->manifest packages))

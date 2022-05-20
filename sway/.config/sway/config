@@ -16,6 +16,9 @@ set $right l
 # Your preferred terminal emulator
 set $term alacritty
 
+exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK
+exec_always --no-startup-id mako
+
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
