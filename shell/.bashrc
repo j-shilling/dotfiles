@@ -7,6 +7,13 @@ fi
 
 source /etc/bashrc
 
+export GUIX_PROFILE=$HOME/.guix-profile
+
+if [ -d $GUIX_PROFILE ] ; then
+    source "$GUIX_PROFILE/etc/profile"
+    export GUILE_LOAD_PATH="$HOME/.config/guix:$GUILE_LOAD_PATH"
+fi
+
 if [ -d "$GUIX_PROFILE/etc/bash_completion.d" ] ; then
     for f in $GUIX_PROFILE/etc/bash_completion.d/* ; do
         source $f
