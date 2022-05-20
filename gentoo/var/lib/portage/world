@@ -32,7 +32,6 @@ dev-java/leiningen-bin
 dev-java/maven-bin
 dev-java/openjdk
 dev-lang/mono
-dev-libs/bemenu
 dev-libs/libisoburn
 dev-python/pip
 dev-scheme/guile
@@ -44,7 +43,7 @@ dev-util/shellcheck-bin
 dev-util/valgrind
 games-action/minecraft-launcher
 gnome-extra/nm-applet
-gui-wm/sway
+gui-apps/mako
 kde-apps/kdeadmin-meta
 kde-apps/kdecore-meta
 kde-apps/kdemultimedia-meta
@@ -53,9 +52,6 @@ kde-apps/kdepim-meta
 kde-apps/kdeutils-meta
 kde-apps/spectacle
 kde-plasma/plasma-meta
-media-fonts/fira-code
-media-fonts/fira-mono
-media-fonts/fira-sans
 media-fonts/libertine
 media-fonts/noto-emoji
 media-fonts/powerline-symbols
@@ -117,5 +113,4 @@ x11-misc/unclutter
 x11-misc/wmctrl
 x11-misc/xdotool
 x11-misc/xsel
-x11-terms/alacritty
 x11-themes/gentoo10-backgrounds
