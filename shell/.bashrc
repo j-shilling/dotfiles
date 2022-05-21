@@ -6,13 +6,7 @@ if [[ $- != *i* ]] ; then
 fi
 
 source /etc/bashrc
-
-export GUIX_PROFILE=$HOME/.guix-profile
-
-if [ -d $GUIX_PROFILE ] ; then
-    source "$GUIX_PROFILE/etc/profile"
-    export GUILE_LOAD_PATH="$HOME/.config/guix:$GUILE_LOAD_PATH"
-fi
+source $HOME/dotfiles/shell/.common_profile
 
 if [ -d "$GUIX_PROFILE/etc/bash_completion.d" ] ; then
     for f in $GUIX_PROFILE/etc/bash_completion.d/* ; do
@@ -64,5 +58,3 @@ bind '"\e[D": backward-char'
 shopt -s autocd 2> /dev/null
 shopt -s dirspell 2> /dev/null
 shopt -s cdspell 2> /dev/null
-
-source $HOME/dotfiles/shell/.common_profile

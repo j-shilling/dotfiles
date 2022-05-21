@@ -1,4 +1,14 @@
-export PASSDIR="${HOME}/passwords"
+# -*- mode: sh -*-
+
+# Maybe init GUIX
+export GUIX_PROFILE=$HOME/.guix-profile
+export EDITOR=emacsclient -a '' -c
+
+if [ -d $GUIX_PROFILE ] ; then
+    source "$GUIX_PROFILE/etc/profile"
+    export GUILE_LOAD_PATH="$HOME/.config/guix:$GUILE_LOAD_PATH"
+fi
+
 
 # Check for WSL
 if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
@@ -10,6 +20,12 @@ if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
   if type guix &> /dev/null ; then
      wsl.exe -u root service guix-daemon status || wsl.exe -u root service guix-daemon start
   fi
+fi
+
+# General Env Vars
+export PASSDIR="${HOME}/passwords"
+if type gpgconf &> /dev/null ; then
+  export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
 fi
 
 # Build Path Based on Which Dirs Exist
