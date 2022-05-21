@@ -2,7 +2,7 @@
 
 # Maybe init GUIX
 export GUIX_PROFILE=$HOME/.guix-profile
-export EDITOR=emacsclient -a '' -c
+export EDITOR="emacsclient -a '' -c"
 
 if [ -d $GUIX_PROFILE ] ; then
     source "$GUIX_PROFILE/etc/profile"
