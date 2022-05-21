@@ -1,0 +1,12 @@
+app-admin/stow
+app-misc/rlwrap
+app-misc/tmux
+app-shells/bash-completion
+app-shells/powerline
+app-shells/zsh-completions
+dev-util/git-delta
+dev-vcs/git
+sys-apps/lsd
+app-shells/zsh-syntax-highlighting
+app-shells/fzf
+app-shells/gentoo-zsh-completions
