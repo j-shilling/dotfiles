@@ -18,13 +18,15 @@ set $term alacritty
 
 exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK
 exec_always --no-startup-id mako
+exec gpgconf --launch gpg-agent
+exec emacs --bg-daemon
 
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 # set $menu bemenu-run --fn $uifont -b -p "▶" --tf "$prompt" --hf "$highlight" --sf "$highlight" --scf "$highlight" | xargs swaymsg exec
 
-set $menu bemenu-run -l 10 -fn 'Fira Sans' -p run
+set $menu bemenu-run -l 10 --fn 'Fira Sans 18' -p run
 
 ### Output configuration
 #
