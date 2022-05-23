@@ -7,6 +7,7 @@
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages package-management)
+  #:use-module (gnu packages password-utils)
   #:use-module (gnu packages shells)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages version-control)
@@ -19,6 +20,7 @@
 
 (define core-packages
   (list bash
+        coreutils
         curl
         emacs
         git
@@ -26,13 +28,13 @@
         gnupg
         nss-certs
         openssh
+        password-store
         pinentry
         stow
         vim
         wget
         which
-        zsh
-        coreutils))
+        zsh))
 
 (define core-manifest
   (packages->manifest core-packages))
