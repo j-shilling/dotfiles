@@ -5,14 +5,9 @@
   #:export (browsers-packages
             browsers-manifest))
 
-(when (resolve-module '(nongnu packages mozilla) #:ensure #f)
-  (use-modules (nongnu packages mozilla)))
-
 (define browsers-packages
   (list nyxt
-        (if (defined? 'firefox)
-            firefox
-            icecat)))
+        icecat))
 
 (define browsers-manifest
   (packages->manifest browsers-packages))
