@@ -1,19 +1,38 @@
-;; [[file:config.org::*File Header][File Header:1]]
+#+AUTHOR: Jake Shilling
+#+LANG: en
+#+STARTUP: overview
+#+PROPERTY: header-args :cache yes :mkdirp yes :padline yes :comments link :tangle init.el
+
+* File Header
+#+begin_src emacs-lisp
 ;;;  init.el --- emacs startup file -*- lexical-binding: t; -*-
-;; File Header:1 ends here
+#+end_src
 
-;; [[file:config.org::*Initialize Benchmarking][Initialize Benchmarking:1]]
+* Initialize Benchmarking
+#+begin_src emacs-lisp
 (defvar init-start-time (current-time))
-;; Initialize Benchmarking:1 ends here
+#+end_src
 
-;; [[file:config.org::*Environment constants][Environment constants:1]]
+* Environment constants
+
+Copy environment constants over from Doom Emacs.
+
+#+begin_src emacs-lisp
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
-;; Environment constants:1 ends here
+#+end_src
 
-;; [[file:config.org::*Custom Initialization Hooks][Custom Initialization Hooks:1]]
+* Custom Initialization Hooks
+
+Take Doom's fancy-dancy startup hooks to make initialization very
+lazy. First we need to copy over =doom-run-hook-on=, which schedules
+a hook to be run after certain triggers. This is like =add-hook=
+except that it takes into account whether Emacs has finished starting
+up and whether it's being run as a daemon.
+
+#+begin_src emacs-lisp
 ;; Doom Style Init Hooks
 (require 'nadvice)
 (defun init-run-hook-on (hook-var trigger-hooks)
@@ -39,9 +58,11 @@ TRIGGER-HOOKS is a list of quoted hooks."
              (advice-add 'after-find-file :before fn '((depth . -101))))
             ((add-hook hook fn -101)))
       fn)))
-;; Custom Initialization Hooks:1 ends here
+#+end_src
 
-;; [[file:config.org::*Custom Initialization Hooks][Custom Initialization Hooks:2]]
+Then we need to create the hook variables themselves.
+
+#+begin_src emacs-lisp
 (defvar init-first-input-hook nil
   "Transient hooks run before the first user input.")
 (put 'init-first-input-hook 'permanent-local t)
@@ -53,16 +74,27 @@ TRIGGER-HOOKS is a list of quoted hooks."
 (defvar init-first-buffer-hook nil
   "Transient hooks run before the first interactively opened buffer.")
 (put 'init-first-buffer-hook 'permanent-local t)
-;; Custom Initialization Hooks:2 ends here
+#+end_src
 
-;; [[file:config.org::*Custom Initialization Hooks][Custom Initialization Hooks:3]]
+Finally, we can schedule each of these to go off at the proper time.
+
+#+begin_src emacs-lisp
 (unless noninteractive
   (init-run-hook-on 'init-first-buffer-hook '(find-file-hook window-buffer-change-functions))
   (init-run-hook-on 'init-first-file-hook '(find-file-hook dired-initial-position-hook))
   (init-run-hook-on 'init-first-input-hook '(pre-command-hook)))
-;; Custom Initialization Hooks:3 ends here
+#+end_src
 
-;; [[file:config.org::*XDG Directories][XDG Directories:1]]
+* XDG Directories
+
+I want to save files in places that make sense with the XDG
+specification, but I also want to use locations that make sense on
+Windows.
+
+First define locations to pick the right folder based on the
+environment:
+
+#+begin_src emacs-lisp
 ;; Config Directories
 (require 'xdg)
 (defun init-data-home ()
@@ -91,9 +123,12 @@ the ones in `init-data-home'."
    (if IS-WINDOWS
        (getenv "LOCALAPPDATA")
      (xdg-cache-home))))
-;; XDG Directories:1 ends here
+#+end_src
 
-;; [[file:config.org::*XDG Directories][XDG Directories:2]]
+Next, I define some convenients functions to build paths to these
+standard locations.
+
+#+begin_src emacs-lisp
 (require 'cl-lib)
 (defun init-path (&rest segments)
   "Assemble SEGMENTS into a complete path string."
@@ -112,9 +147,15 @@ the ones in `init-data-home'."
 (defun init-cache-path (&rest segments)
   "Assemble SEGMENTS into a path relative to `init-cache-home'."
   (apply #'init-path (init-cache-home) segments))
-;; XDG Directories:2 ends here
+#+end_src
 
-;; [[file:config.org::*Package Management][Package Management:1]]
+* Package Management
+
+I want to try to use built in packages where-ever reasonable and to
+initialize external packages in a lazy way.
+
+I need a function to initialize straight when I need it:
+#+begin_src emacs-lisp
 (eval-when-compile
   (defvar straight-base-dir)
   (defvar straight-use-package-by-default))
@@ -134,27 +175,33 @@ the ones in `init-data-home'."
           (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage)
       (provide 'init-straight))))
-;; Package Management:1 ends here
+#+end_src
 
-;; [[file:config.org::*Package Management][Package Management:2]]
+Then I'll need a function to install a package when I need to:
+#+begin_src emacs-lisp
 (eval-when-compile
   (defun straight-use-package (&rest _)))
 (defun init-ensure-package (package)
   "Install PACKAGE if necessary."
   (init-ensure-straight)
   (straight-use-package package))
-;; Package Management:2 ends here
+#+end_src
 
-;; [[file:config.org::*Startup UI][Startup UI:1]]
+* Core Emacs Configuration
+** Startup UI
+
+#+begin_src emacs-lisp
 (setq-default
  inhibit-startup-screen t
  inhibit-startup-message t
  inhibit-startup-echo-area-message t
  initial-scratch-message ""
  initial-buffer-choice t)
-;; Startup UI:1 ends here
+#+end_src
 
-;; [[file:config.org::*Encoding][Encoding:1]]
+** Encoding
+
+#+begin_src emacs-lisp
 (require 'seq)
 (seq-doseq (fn '(set-default-coding-systems
                  prefer-coding-system
@@ -166,9 +213,11 @@ the ones in `init-data-home'."
                       'utf-8-dos
                     'utf-8-unix))))
 (set-language-environment "English")
-;; Encoding:1 ends here
+#+end_src
 
-;; [[file:config.org::*Recovery][Recovery:1]]
+** Recovery
+
+#+begin_src emacs-lisp
 (setq auto-save-list-file-prefix
       (file-name-as-directory
        (init-cache-path "autosave")))
@@ -176,9 +225,11 @@ the ones in `init-data-home'."
 (setq auto-save-default t
       auto-save-timeout 20
       auto-save-interval 200)
-;; Recovery:1 ends here
+#+end_src
 
-;; [[file:config.org::*Backups][Backups:1]]
+** Backups
+
+#+begin_src emacs-lisp
 (setq backup-directory-alist
       `(("." . ,(init-cache-path "backups"))))
 
@@ -189,26 +240,31 @@ the ones in `init-data-home'."
       kept-old-versions 6
       kept-new-versions 9
       delete-by-moving-to-trash t)
-;; Backups:1 ends here
+#+end_src
 
-;; [[file:config.org::*Bookmarks][Bookmarks:1]]
+** Bookmarks
+
+#+begin_src emacs-lisp
 (eval-when-compile
     (defvar bookmark-default-file))
 (eval-after-load 'bookmark
   (setq bookmark-default-file
         (init-cache-path "bookmark")))
-;; Bookmarks:1 ends here
+#+end_src
 
-;; [[file:config.org::*Recent Files][Recent Files:1]]
+** Recent Files
+
+#+begin_src emacs-lisp
 ;; Recentf
 (eval-when-compile
   (defvar recentf-max-menu-items))
 (eval-after-load 'recentf
   (setq recentf-max-menu-items 50))
 (add-hook 'init-first-file-hook #'recentf-mode)
-;; Recent Files:1 ends here
+#+end_src
 
-;; [[file:config.org::*Save History][Save History:1]]
+** Save History
+#+begin_src emacs-lisp
 ;; https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 (defun unpropertize-kill-ring ()
   "Remove properties from `kill-ring'."
@@ -242,9 +298,10 @@ the ones in `init-data-home'."
     (put 'bookmark-history 'history-length 25)
     (setq history-delete-duplicates t)))
 (add-hook 'init-first-input-hook #'savehist-mode)
-;; Save History:1 ends here
+#+end_src
 
-;; [[file:config.org::*Save Place in File][Save Place in File:1]]
+** Save Place in File
+#+begin_src emacs-lisp
 (eval-when-compile
   (defvar save-place-file)
   (defvar save-place-forget-unreadable-files))
@@ -252,115 +309,125 @@ the ones in `init-data-home'."
   (setq save-place-file (init-cache-path "saveplace")
         save-place-forget-unreadable-files t))
 (add-hook 'init-first-input-hook #'save-place-mode)
-;; Save Place in File:1 ends here
+#+end_src
 
-;; [[file:config.org::*Start Server][Start Server:1]]
+** Start Server
+#+begin_src emacs-lisp
 (require 'server)
 (unless (server-running-p)
   (server-start))
-;; Start Server:1 ends here
+#+end_src
 
-;; [[file:config.org::*Emacs UI][Emacs UI:1]]
-(defun init-font-exists-p (font-name)
-  "Returns `t' if FONT-NAME is a valid font family."
-  (member font-name (font-family-list)))
+* Emacs UI
 
-(defun init-find-font ()
-  (cond ((init-font-exists-p "Fira Code")
-	 (font-spec :family "Fira Code" :size 18))
-	(t nil)))
+#+begin_src emacs-lisp
+  (defun init-font-exists-p (font-name)
+    "Returns `t' if FONT-NAME is a valid font family."
+    (member font-name (font-family-list)))
 
-(defun init-variable-pitch-font ()
-  (cond ((init-font-exists-p "Fira Sans")
-	 (font-spec :family "Fira Sans" :size 18))
-	(t nil)))
+  (defun init-find-font ()
+    (cond ((init-font-exists-p "Fira Code")
+	   (font-spec :family "Fira Code" :size 18))
+	  (t nil)))
 
-(defvar init-font (init-find-font)
-  "The default font to use.
+  (defun init-variable-pitch-font ()
+    (cond ((init-font-exists-p "Fira Sans")
+	   (font-spec :family "Fira Sans" :size 18))
+	  (t nil)))
 
-Inspired by the way Doom Emacs handles `doom-font'.")
+  (defvar init-font (init-find-font)
+    "The default font to use.
 
-(defvar init-variable-pitch-font (init-variable-pitch-font))
-(defvar init-serif-font nil)
+  Inspired by the way Doom Emacs handles `doom-font'.")
 
-(defun init-load-fonts ()
-  "Loads `init-font'."
-  (dolist (pair `((default . ,init-font)
-		  (fixed-pitch . ,init-font)
-		  (fixed-pitch-serif . ,init-serif-font)
-		  (variable-pitch . ,init-variable-pitch-font)))
-    (when-let* ((face (car pair))
-		(font (cdr pair)))
-        (set-face-attribute face nil
-			  :width 'normal :weight 'normal
-			  :slant 'normal :font font))))
+  (defvar init-variable-pitch-font (init-variable-pitch-font))
+  (defvar init-serif-font nil)
 
-(setq hscroll-margin 2
-      hscroll-step 1
-      scroll-conservatively 101
-      scroll-margin 0
-      scroll-preserve-screen-position t
-      auto-window-vscroll nil
-      mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
-      mouse-wheel-scroll-amount-horizontal 2)
+  (defun init-load-fonts ()
+    "Loads `init-font'."
+    (dolist (pair `((default . ,init-font)
+		    (fixed-pitch . ,init-font)
+		    (fixed-pitch-serif . ,init-serif-font)
+		    (variable-pitch . ,init-variable-pitch-font)))
+      (when-let* ((face (car pair))
+		  (font (cdr pair)))
+	  (set-face-attribute face nil
+			    :width 'normal :weight 'normal
+			    :slant 'normal :font font))))
+  (add-hook 'init-first-buffer-hook
+	    #'init-load-fonts)
 
-(blink-cursor-mode -1)
-(setq x-stretch-cursor nil)
+  (setq hscroll-margin 2
+	hscroll-step 1
+	scroll-conservatively 101
+	scroll-margin 0
+	scroll-preserve-screen-position t
+	auto-window-vscroll nil
+	mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
+	mouse-wheel-scroll-amount-horizontal 2)
 
-(setq indicate-buffer-boundaries nil
-      indicate-empty-lines nil)
+  (blink-cursor-mode -1)
+  (setq x-stretch-cursor nil)
 
-(setq frame-resize-pixelwise t)
+  (setq indicate-buffer-boundaries nil
+	indicate-empty-lines nil)
 
-(setq window-resize-pixelwise nil)
+  (setq frame-resize-pixelwise t)
 
-;; Doom says this is faster than calling the corresponding functions. See
-;; core-ui.el
-(push '(menu-bar-lines . 0)   default-frame-alist)
-(push '(tool-bar-lines . 0)   default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+  (setq window-resize-pixelwise nil)
 
-(setq window-divider-default-places t
-      window-divider-default-bottom-width 1
-      window-divider-default-right-width 1)
+  ;; Doom says this is faster than calling the corresponding functions. See
+  ;; core-ui.el
+  (push '(menu-bar-lines . 0)   default-frame-alist)
+  (push '(tool-bar-lines . 0)   default-frame-alist)
+  (push '(vertical-scroll-bars) default-frame-alist)
 
-(add-hook 'init-first-buffer-hook
-          #'window-divider-mode)
+  (setq window-divider-default-places t
+	window-divider-default-bottom-width 1
+	window-divider-default-right-width 1)
 
-;; Avoid inconsistent GUIs
-(setq use-dialog-box nil)
-(when (bound-and-true-p tooltip-mode)
-  (tooltip-mode -1))
-(when IS-LINUX
-  (setq x-gtk-use-system-tooltips nil))
+  (add-hook 'init-first-buffer-hook
+	    #'window-divider-mode)
 
-(setq split-width-threshold 160
-      split-height-threshold nil)
+  ;; Avoid inconsistent GUIs
+  (setq use-dialog-box nil)
+  (when (bound-and-true-p tooltip-mode)
+    (tooltip-mode -1))
+  (when IS-LINUX
+    (setq x-gtk-use-system-tooltips nil))
 
-(setq enable-recursive-minibuffers t)
-(setq echo-keystrokes 0.02)
-(setq resize-mini-windows 'grow-only)
-(advice-add #'yes-or-no-p :override #'y-or-n-p)
+  (setq split-width-threshold 160
+	split-height-threshold nil)
 
-(setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
-(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-;; Emacs UI:1 ends here
+  (setq enable-recursive-minibuffers t)
+  (setq echo-keystrokes 0.02)
+  (setq resize-mini-windows 'grow-only)
+  (advice-add #'yes-or-no-p :override #'y-or-n-p)
 
-;; [[file:config.org::*Lisp][Lisp:1]]
+  (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+#+end_src
+
+* Lisp
+
+#+begin_src emacs-lisp
 (add-hook 'emacs-lisp-mode-hook
 	  (lambda ()
 	    (init-ensure-package 'lispy)
 	    (lispy-mode)))
-;; Lisp:1 ends here
+#+end_src
 
-;; [[file:config.org::*Show Benchmarking][Show Benchmarking:1]]
+* Show Benchmarking
+
+#+begin_src emacs-lisp
 (let ((init-time (float-time (time-subtract (current-time) init-start-time)))
       (total-time (string-to-number (emacs-init-time "%f"))))
   (message "Initialization time %.2fs (+ %.2f system time)"
            init-time (- total-time init-time)))
-;; Show Benchmarking:1 ends here
+#+end_src
 
-;; [[file:config.org::*Finalize][Finalize:1]]
+* Finalize
+#+begin_src emacs-lisp
 (provide 'init)
 ;;; init.el ends here
-;; Finalize:1 ends here
+#+end_src
