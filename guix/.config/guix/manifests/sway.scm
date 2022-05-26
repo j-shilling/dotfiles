@@ -1,23 +1,25 @@
 (define-module (manifests sway)
   #:use-module (guix profiles)
+  #:use-module (gnu packages fonts)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages pulseaudio)
+  #:use-module (gnu packages terminals)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
-  #:use-module (gnu packages fonts)
-  #:use-module (gnu packages terminals)
-  #:use-module (gnu packages linux)
   #:export (manifest
             packages))
 
 (define packages
-  (list sway
-        font-fira-sans
+  (list alacritty
+        bemenu
+        brightnessctl
         font-fira-code
         font-fira-mono
-        bemenu
-        waybar
-        alacritty
+        font-fira-sans
         mako
-        brightnessctl))
+        pavucontrol
+        sway
+        waybar))
 
 (define manifest
   (packages->manifest packages))
