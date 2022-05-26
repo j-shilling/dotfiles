@@ -22,45 +22,53 @@ Copy environment constants over from Doom Emacs.
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+
+(defconst LINUX-DISTRIBUTION
+  (when IS-LINUX
+    (or (when (file-exists-p "/etc/os-release")
+          (with-temp-buffer
+            (insert-file-contents "/etc/os-release")
+            (goto-char (point-min) )
+            (when-let ((pos (search-forward "NAME" nil t)))
+              (goto-char pos)
+              (string-trim
+               (cadr
+                (split-string
+                 (string-trim (thing-at-point 'line))
+                 "="))
+               "\""
+               "\""))))
+        (string-trim (shell-command-to-string "uname -o")))))
+
+(defconst IS-GUIX
+  (string= LINUX-DISTRIBUTION "Guix System"))
 #+end_src
 
 * Custom Initialization Hooks
 
-Take Doom's fancy-dancy startup hooks to make initialization very
-lazy. First we need to copy over =doom-run-hook-on=, which schedules
-a hook to be run after certain triggers. This is like =add-hook=
-except that it takes into account whether Emacs has finished starting
-up and whether it's being run as a daemon.
-
 #+begin_src emacs-lisp
-;; Doom Style Init Hooks
-(require 'nadvice)
-(defun init-run-hook-on (hook-var trigger-hooks)
-  "Configure HOOK-VAR to be invoked exactly once after any TRIGGER-HOOKS.
+  (defun init-first-buffer-h (&rest _)
+    (run-hooks 'init-first-buffer-hook)
+    (set 'init-first-buffer-hook nil))
+  (add-hook 'window-buffer-change-functions
+	    #'init-first-buffer-h)
+  (advice-add 'after-find-file :before
+	      #'init-first-buffer-h)
 
-This is a simplified version of `doom-run-hook-on' from Doom Emacs.
+  (defun init-first-file-h  (&rest _)
+    (run-hooks 'init-first-file-hook)
+    (set 'init-first-file-hook nil))
+  (add-hook 'dired-initial-position-hook
+	    #'init-first-file-h)
+  (advice-add 'after-find-file :before
+	      #'init-first-file-h)
 
-HOOK-VAR is a quoted hook.
-TRIGGER-HOOKS is a list of quoted hooks."
-  (dolist (hook trigger-hooks)
-    (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
-      (fset
-       fn (lambda (&rest _)
-            (when (and after-init-time
-                       (or (daemonp)
-                           (and (boundp hook)
-                                (symbol-value hook))))
-              (run-hooks hook-var)
-              (set hook-var nil))))
-      (cond ((daemonp)
-             (add-hook 'after-init-hook fn 'append))
-            ((eq hook 'find-file-hook)
-             (advice-add 'after-find-file :before fn '((depth . -101))))
-            ((add-hook hook fn -101)))
-      fn)))
+  (defun init-first-input-h (&rest _)
+    (run-hooks 'init-first-input-hook)
+    (set 'init-first-input-hook nil))
+  (add-hook 'pre-command-hook
+	    #'init-first-input-h)
 #+end_src
-
-Then we need to create the hook variables themselves.
 
 #+begin_src emacs-lisp
 (defvar init-first-input-hook nil
@@ -74,15 +82,6 @@ Then we need to create the hook variables themselves.
 (defvar init-first-buffer-hook nil
   "Transient hooks run before the first interactively opened buffer.")
 (put 'init-first-buffer-hook 'permanent-local t)
-#+end_src
-
-Finally, we can schedule each of these to go off at the proper time.
-
-#+begin_src emacs-lisp
-(unless noninteractive
-  (init-run-hook-on 'init-first-buffer-hook '(find-file-hook window-buffer-change-functions))
-  (init-run-hook-on 'init-first-file-hook '(find-file-hook dired-initial-position-hook))
-  (init-run-hook-on 'init-first-input-hook '(pre-command-hook)))
 #+end_src
 
 * XDG Directories
@@ -183,8 +182,9 @@ Then I'll need a function to install a package when I need to:
   (defun straight-use-package (&rest _)))
 (defun init-ensure-package (package)
   "Install PACKAGE if necessary."
-  (init-ensure-straight)
-  (straight-use-package package))
+  (unless IS-GUIX
+    (init-ensure-straight)
+    (straight-use-package package)))
 #+end_src
 
 * Core Emacs Configuration
@@ -408,13 +408,32 @@ Then I'll need a function to install a package when I need to:
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 #+end_src
 
+* General Programming
+
+** Git
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :bind ("C-x g" . #'magit-status))
+#+end_src
+
 * Lisp
 
 #+begin_src emacs-lisp
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    (init-ensure-package 'lispy)
-	    (lispy-mode)))
+  (defun init-lispy-on ()
+    (lispy-mode 1))
+
+  (use-package lispy
+    :hook ((emacs-lisp-mode . init-lispy-on)
+	   (scheme-mode . init-lispy-on)
+	   (clojure-mode . init-lispy-on)))
+#+end_src
+
+** Clojure
+
+#+begin_src emacs-lisp
+  (use-package cider
+    :hook ((cider-mode . eldoc-mode)))
 #+end_src
 
 * Show Benchmarking
