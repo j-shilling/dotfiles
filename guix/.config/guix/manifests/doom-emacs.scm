@@ -51,7 +51,7 @@
                 linux-libre-headers
                 mu
                 node
-                openjdk14
+                openjdk17
                 plantuml
                 ripgrep
                 sbcl

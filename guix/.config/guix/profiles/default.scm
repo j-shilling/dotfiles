@@ -7,6 +7,7 @@
   #:use-module (manifests shell)
   #:use-module (manifests build-tools)
   #:use-module ((manifests sway) :prefix sway:)
+  #:use-module ((manifests devel-tools) :prefix devel:)
   #:export (manifest
             packages))
 
@@ -22,6 +23,7 @@
                   browsers-packages
                   build-tools-packages
                   sway:packages
+                  devel:packages
                   (when (defined? 'desktop-packages)
                     desktop-packages))))
 
