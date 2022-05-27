@@ -1,2 +1,0 @@
-# move app-emulation/snapd app-containers/snapd
-app-containers/snapd ~amd64

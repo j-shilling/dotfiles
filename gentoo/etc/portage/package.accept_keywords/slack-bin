@@ -1,3 +1,0 @@
-# required by slack-bin (argument)
-# move net-im/slack-bin net-im/slack
-net-im/slack ~amd64

@@ -1,3 +1,0 @@
-# required by dev-java/openjdk-11.0.3_p7-r3::gentoo
-# required by dev-java/openjdk (argument)
-=sys-apps/baselayout-java-0.1.0-r1 ~amd64

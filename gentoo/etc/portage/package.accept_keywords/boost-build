@@ -1,7 +1,0 @@
-# required by dev-libs/boost-1.70.0::gentoo
-# required by dev-util/mdds-1.4.3::gentoo
-# required by dev-libs/libixion-0.14.1::gentoo
-# required by dev-libs/liborcus-0.14.1::gentoo[spreadsheet-model]
-# required by app-office/libreoffice-bin-6.2.5.2::gentoo
-# required by @__auto_slot_operator_replace_installed__ (argument)
-=dev-util/boost-build-1.70.0 ~amd64
