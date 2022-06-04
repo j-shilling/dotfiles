@@ -1,5 +1,6 @@
 (define-module (manifests devel-tools)
   #:use-module (guix profiles)
+  #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages clojure)
   #:use-module (gnu packages cmake)
@@ -25,7 +26,7 @@
                 git
                 gnu-make
                 mysql
-                openjdk17
+                (specification->package+output "openjdk:jdk")
                 sbcl
                 (when (defined? 'leiningen)
                   leiningen))))
