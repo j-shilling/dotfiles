@@ -3,6 +3,7 @@
   #:use-module (manifests core)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu services docker)
   #:use-module ((keys nonguix) :prefix key:)
   #:export (base-config))
 
@@ -42,14 +43,14 @@
                   (group "users")
                   (home-directory "/home/jake")
                   (supplementary-groups
-                   '("wheel" "netdev" "audio" "video")))
+                   '("wheel" "netdev" "audio" "video" "docker")))
                  %base-user-accounts))
 
    (packages
     (append
      core-packages
-     (list emacs-exwm
-           sway)
+     (list sway
+           i3-gaps)
      %base-packages))
 
    (services
@@ -57,7 +58,8 @@
      (list (service gnome-desktop-service-type)
            (set-xorg-configuration
             (xorg-configuration
-             (keyboard-layout keyboard-layout))))
+             (keyboard-layout keyboard-layout)))
+           (service docker-service-type))
      %modified-desktop-services))
 
    (bootloader
