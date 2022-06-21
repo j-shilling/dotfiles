@@ -17,8 +17,9 @@ dev-scheme/guile
 dev-util/lldb
 dev-util/valgrind
 games-action/minecraft-launcher
+games-action/multimc-bin
+gnome-base/gdm
 gnome-extra/nm-applet
-gui-apps/gtkgreet
 gui-apps/mako
 media-fonts/libertine
 media-fonts/noto-emoji
@@ -62,6 +63,7 @@ www-client/firefox-bin
 www-client/google-chrome
 www-client/nyxt
 x11-apps/mesa-progs
+x11-apps/xinit
 x11-misc/alacarte
 x11-misc/arandr
 x11-misc/dunst
@@ -73,3 +75,4 @@ x11-misc/unclutter
 x11-misc/wmctrl
 x11-misc/xsel
 x11-themes/gentoo10-backgrounds
+x11-wm/i3-gaps
