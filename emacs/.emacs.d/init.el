@@ -27,17 +27,17 @@ TRIGGER-HOOKS is a list of quoted hooks."
     (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
       (fset
        fn (lambda (&rest _)
-            (when (and after-init-time
-                       (or (daemonp)
-                           (and (boundp hook)
-                                (symbol-value hook))))
-              (run-hooks hook-var)
-              (set hook-var nil))))
+	    (when (and after-init-time
+		       (or (daemonp)
+			   (and (boundp hook)
+				(symbol-value hook))))
+	      (run-hooks hook-var)
+	      (set hook-var nil))))
       (cond ((daemonp)
-             (add-hook 'after-init-hook fn 'append))
-            ((eq hook 'find-file-hook)
-             (advice-add 'after-find-file :before fn '((depth . -101))))
-            ((add-hook hook fn -101)))
+	     (add-hook 'after-init-hook fn 'append))
+	    ((eq hook 'find-file-hook)
+	     (advice-add 'after-find-file :before fn '((depth . -101))))
+	    ((add-hook hook fn -101)))
       fn)))
 ;; Custom Initialization Hooks:1 ends here
 
@@ -61,6 +61,31 @@ TRIGGER-HOOKS is a list of quoted hooks."
   (init-run-hook-on 'init-first-file-hook '(find-file-hook dired-initial-position-hook))
   (init-run-hook-on 'init-first-input-hook '(pre-command-hook)))
 ;; Custom Initialization Hooks:3 ends here
+
+;; [[file:config.org::*Lazy Evaluation Macros][Lazy Evaluation Macros:1]]
+(require 'cl-lib)
+(defmacro after! (package &rest body)
+  "Evaluate BODY after PACKAGE has loaded.
+
+This is a port of doom's `after!' function which itself is a is a
+wrapper around `eval-after-load'."
+  (declare (indent defun) (debug t))
+  (if (symbolp pckage)
+      (list (if (or (not (bound-and-true-p byte-compile-current-file))
+		    (require package nil 'noerror))
+		#'progn
+	      #'with-no-warnings)
+	    `(eval-after-load ',package ',(macroexp-progn body)))
+    (let ((p (car package)))
+      (cond ((memq p '(:or :any))
+	     (macroexp-progn
+	      (cl-loop for next in (cdr package)
+		       collect `(after! ,next ,@body))))
+	    ((memq p '(:and :all))
+	     (dolist (next (reverse (cdr package)) (car body))
+	       (setq body `((after! ,next ,@body)))))
+	    (`(after! (:and ,@package) ,@body))))))
+;; Lazy Evaluation Macros:1 ends here
 
 ;; [[file:config.org::*XDG Directories][XDG Directories:1]]
 ;; Config Directories
@@ -291,9 +316,11 @@ Inspired by the way Doom Emacs handles `doom-font'.")
 		  (variable-pitch . ,init-variable-pitch-font)))
     (when-let* ((face (car pair))
 		(font (cdr pair)))
-        (set-face-attribute face nil
+	(set-face-attribute face nil
 			  :width 'normal :weight 'normal
 			  :slant 'normal :font font))))
+(add-hook 'init-first-buffer-hook
+	  #'init-load-fonts)
 
 (setq hscroll-margin 2
       hscroll-step 1
@@ -325,7 +352,7 @@ Inspired by the way Doom Emacs handles `doom-font'.")
       window-divider-default-right-width 1)
 
 (add-hook 'init-first-buffer-hook
-          #'window-divider-mode)
+	  #'window-divider-mode)
 
 ;; Avoid inconsistent GUIs
 (setq use-dialog-box nil)

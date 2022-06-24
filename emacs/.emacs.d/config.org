@@ -1,7 +1,7 @@
 #+AUTHOR: Jake Shilling
 #+LANG: en
 #+STARTUP: overview
-#+PROPERTY: header-args :cache yes :mkdirp yes :padline yes :comments link :tangle init.el
+#+PROPERTY: header-args :cache yes :mkdirp yes :padline yes :tangle init.el
 
 * File Header
 #+begin_src emacs-lisp
@@ -47,27 +47,31 @@ Copy environment constants over from Doom Emacs.
 * Custom Initialization Hooks
 
 #+begin_src emacs-lisp
-  (defun init-first-buffer-h (&rest _)
-    (run-hooks 'init-first-buffer-hook)
-    (set 'init-first-buffer-hook nil))
-  (add-hook 'window-buffer-change-functions
-	    #'init-first-buffer-h)
-  (advice-add 'after-find-file :before
-	      #'init-first-buffer-h)
+  ;; Doom Style Init Hooks
+  (require 'nadvice)
+  (defun init-run-hook-on (hook-var trigger-hooks)
+    "Configure HOOK-VAR to be invoked exactly once after any TRIGGER-HOOKS.
 
-  (defun init-first-file-h  (&rest _)
-    (run-hooks 'init-first-file-hook)
-    (set 'init-first-file-hook nil))
-  (add-hook 'dired-initial-position-hook
-	    #'init-first-file-h)
-  (advice-add 'after-find-file :before
-	      #'init-first-file-h)
+  This is a simplified version of `doom-run-hook-on' from Doom Emacs.
 
-  (defun init-first-input-h (&rest _)
-    (run-hooks 'init-first-input-hook)
-    (set 'init-first-input-hook nil))
-  (add-hook 'pre-command-hook
-	    #'init-first-input-h)
+  HOOK-VAR is a quoted hook.
+  TRIGGER-HOOKS is a list of quoted hooks."
+    (dolist (hook trigger-hooks)
+      (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
+	(fset
+	 fn (lambda (&rest _)
+	      (when (and after-init-time
+			 (or (daemonp)
+			     (and (boundp hook)
+				  (symbol-value hook))))
+		(run-hooks hook-var)
+		(set hook-var nil))))
+	(cond ((daemonp)
+	       (add-hook 'after-init-hook fn 'append))
+	      ((eq hook 'find-file-hook)
+	       (advice-add 'after-find-file :before fn '((depth . -101))))
+	      ((add-hook hook fn -101)))
+	fn)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -84,6 +88,43 @@ Copy environment constants over from Doom Emacs.
 (put 'init-first-buffer-hook 'permanent-local t)
 #+end_src
 
+<<<<<<< HEAD
+=======
+Finally, we can schedule each of these to go off at the proper time.
+
+#+begin_src emacs-lisp
+(unless noninteractive
+  (init-run-hook-on 'init-first-buffer-hook '(find-file-hook window-buffer-change-functions))
+  (init-run-hook-on 'init-first-file-hook '(find-file-hook dired-initial-position-hook))
+  (init-run-hook-on 'init-first-input-hook '(pre-command-hook)))
+#+end_src
+
+* Lazy Evaluation Macros
+#+begin_src emacs-lisp
+  (require 'cl-lib)
+  (defmacro after! (package &rest body)
+    "Evaluate BODY after PACKAGE has loaded.
+
+  This is a port of doom's `after!' function which itself is a is a
+  wrapper around `eval-after-load'."
+    (declare (indent defun) (debug t))
+    (if (symbolp pckage)
+	(list (if (or (not (bound-and-true-p byte-compile-current-file))
+		      (require package nil 'noerror))
+		  #'progn
+		#'with-no-warnings)
+	      `(eval-after-load ',package ',(macroexp-progn body)))
+      (let ((p (car package)))
+	(cond ((memq p '(:or :any))
+	       (macroexp-progn
+		(cl-loop for next in (cdr package)
+			 collect `(after! ,next ,@body))))
+	      ((memq p '(:and :all))
+	       (dolist (next (reverse (cdr package)) (car body))
+		 (setq body `((after! ,next ,@body)))))
+	      (`(after! (:and ,@package) ,@body))))))
+#+end_src
+>>>>>>> 40713a8 (Clean up)
 * XDG Directories
 
 I want to save files in places that make sense with the XDG
@@ -245,70 +286,61 @@ Then I'll need a function to install a package when I need to:
 ** Bookmarks
 
 #+begin_src emacs-lisp
-(eval-when-compile
-    (defvar bookmark-default-file))
-(eval-after-load 'bookmark
-  (setq bookmark-default-file
-        (init-cache-path "bookmark")))
+  (after! bookmark
+    (eval-after-load 'bookmark
+      (setq bookmark-default-file
+	    (init-cache-path "bookmark"))))
 #+end_src
 
 ** Recent Files
 
 #+begin_src emacs-lisp
-;; Recentf
-(eval-when-compile
-  (defvar recentf-max-menu-items))
-(eval-after-load 'recentf
-  (setq recentf-max-menu-items 50))
-(add-hook 'init-first-file-hook #'recentf-mode)
+  (after! recentf
+    (setq recentf-max-menu-items 50))
+  (add-hook 'init-first-file-hook #'recentf-mode)
 #+end_src
 
 ** Save History
 #+begin_src emacs-lisp
-;; https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
-(defun unpropertize-kill-ring ()
-  "Remove properties from `kill-ring'."
-  (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
-(add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
+  ;; https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
+  (defun unpropertize-kill-ring ()
+    "Remove properties from `kill-ring'."
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+  (add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
 
-(eval-when-compile
-  (defvar savehist-additional-variables))
-(eval-after-load 'savehist
-  (progn
-    (setq kill-ring-max 50
-          history-length 50)
-    (setq savehist-additional-variables
-          '(kill-ring
-            command-history
-            set-variable-value-history
-            query-replace-history
-            read-expression-history
-            minibuffer-history
-            read-char-history
-            face-name-history
-            bookmark-history
-            file-name-history))
-    (put 'minibuffer-history 'history-length 50)
-    (put 'file-name-history 'history-length 50)
-    (put 'set-variable-value-history 'history-length 25)
-    (put 'query-replace-history 'history-length 25)
-    (put 'read-expression-history 'history-length 25)
-    (put 'read-char-history 'history-length 25)
-    (put 'face-name-history 'history-length 25)
-    (put 'bookmark-history 'history-length 25)
-    (setq history-delete-duplicates t)))
-(add-hook 'init-first-input-hook #'savehist-mode)
+  (after! savehist
+    (progn
+      (setq kill-ring-max 50
+	    history-length 50)
+      (setq savehist-additional-variables
+	    '(kill-ring
+	      command-history
+	      set-variable-value-history
+	      query-replace-history
+	      read-expression-history
+	      minibuffer-history
+	      read-char-history
+	      face-name-history
+	      bookmark-history
+	      file-name-history))
+      (put 'minibuffer-history 'history-length 50)
+      (put 'file-name-history 'history-length 50)
+      (put 'set-variable-value-history 'history-length 25)
+      (put 'query-replace-history 'history-length 25)
+      (put 'read-expression-history 'history-length 25)
+      (put 'read-char-history 'history-length 25)
+      (put 'face-name-history 'history-length 25)
+      (put 'bookmark-history 'history-length 25)
+      (setq history-delete-duplicates t)))
+  (add-hook 'init-first-input-hook #'savehist-mode)
 #+end_src
 
 ** Save Place in File
 #+begin_src emacs-lisp
-(eval-when-compile
-  (defvar save-place-file)
-  (defvar save-place-forget-unreadable-files))
-(eval-after-load 'saveplace
-  (setq save-place-file (init-cache-path "saveplace")
-        save-place-forget-unreadable-files t))
-(add-hook 'init-first-input-hook #'save-place-mode)
+  (after! 'saveplace
+    (setq save-place-file (init-cache-path "saveplace")
+	  save-place-forget-unreadable-files t))
+  (add-hook 'init-first-input-hook #'save-place-mode)
 #+end_src
 
 ** Start Server
