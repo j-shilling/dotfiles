@@ -124,7 +124,6 @@ Finally, we can schedule each of these to go off at the proper time.
 		 (setq body `((after! ,next ,@body)))))
 	      (`(after! (:and ,@package) ,@body))))))
 #+end_src
->>>>>>> 40713a8 (Clean up)
 * XDG Directories
 
 I want to save files in places that make sense with the XDG
