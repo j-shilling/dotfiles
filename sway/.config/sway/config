@@ -202,7 +202,8 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-for_window [class="^.*"] opacity set 0.9
+for_window [app_id="pavucontrol"] floating enable
+
 default_border pixel 1
 default_floating_border normal
 hide_edge_borders smart
