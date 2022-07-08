@@ -21,6 +21,7 @@ games-action/multimc-bin
 gnome-base/gdm
 gnome-extra/nm-applet
 gui-apps/mako
+gui-apps/waybar
 media-fonts/libertine
 media-fonts/noto-emoji
 media-fonts/powerline-symbols
@@ -30,6 +31,7 @@ media-gfx/feh
 media-gfx/scrot
 media-plugins/gst-plugins-bluez
 media-plugins/gst-plugins-meta
+media-sound/paprefs
 media-sound/pasystray
 media-sound/pavucontrol
 media-sound/spotify
@@ -67,10 +69,12 @@ x11-apps/xinit
 x11-misc/alacarte
 x11-misc/arandr
 x11-misc/dunst
+x11-misc/i3status
 x11-misc/numlockx
 x11-misc/picom
 x11-misc/polybar
 x11-misc/rofi
+x11-misc/trayer-srg
 x11-misc/unclutter
 x11-misc/wmctrl
 x11-misc/xsel
