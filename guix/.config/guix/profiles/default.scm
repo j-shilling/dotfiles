@@ -8,11 +8,9 @@
   #:use-module (manifests build-tools)
   #:use-module ((manifests sway) :prefix sway:)
   #:use-module ((manifests devel-tools) :prefix devel:)
+  #:use-module ((manifests games) :prefix games:)
   #:export (manifest
             packages))
-
-(when (resolve-module '(manifests desktop) #:ensure #f)
-  (use-modules (manifests desktop)))
 
 (define packages
   (filter (negate unspecified?)
@@ -24,8 +22,7 @@
                   build-tools-packages
                   sway:packages
                   devel:packages
-                  (when (defined? 'desktop-packages)
-                    desktop-packages))))
+                  games:packages)))
 
 (define manifest
   (packages->manifest packages))
