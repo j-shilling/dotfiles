@@ -108,7 +108,7 @@ Finally, we can schedule each of these to go off at the proper time.
   This is a port of doom's `after!' function which itself is a is a
   wrapper around `eval-after-load'."
     (declare (indent defun) (debug t))
-    (if (symbolp pckage)
+    (if (symbolp package)
 	(list (if (or (not (bound-and-true-p byte-compile-current-file))
 		      (require package nil 'noerror))
 		  #'progn
@@ -195,38 +195,36 @@ initialize external packages in a lazy way.
 
 I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
-(eval-when-compile
-  (defvar straight-base-dir)
-  (defvar straight-use-package-by-default))
-(defun init-ensure-straight ()
-  "Ensure that straight is installed."
-  (unless (featurep 'init-straight)
-    (setq straight-base-dir (init-state-path)
-          straight-use-package-by-default t)
-    (let ((bootstrap-file
-           (init-state-path "straight" "repos" "straight.el" "bootstrap.el")))
-      (unless (file-exists-p bootstrap-file)
-        (with-current-buffer
-            (url-retrieve-synchronously
-             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-             'silent 'inhibit-cookies)
-          (goto-char (point-max))
-          (eval-print-last-sexp)))
-      (load bootstrap-file nil 'nomessage)
-      (provide 'init-straight))))
-#+end_src
-
-Then I'll need a function to install a package when I need to:
-#+begin_src emacs-lisp
-(eval-when-compile
-  (defun straight-use-package (&rest _)))
-(defun init-ensure-package (package)
-  "Install PACKAGE if necessary."
   (unless IS-GUIX
-    (init-ensure-straight)
-    (straight-use-package package)))
+    (setq straight-base-dir (init-state-path)
+	  straight-use-package-by-default t)
+    (let ((bootstrap-file
+	   (init-state-path "straight" "repos" "straight.el" "bootstrap.el")))
+      (unless (file-exists-p bootstrap-file)
+	(with-current-buffer
+	    (url-retrieve-synchronously
+	     "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	     'silent 'inhibit-cookies)
+	  (goto-char (point-max))
+	  (eval-print-last-sexp)))
+      (load bootstrap-file nil 'nomessage))
+
+    ;; install use-package
+    (straight-use-package 'use-package)
+    
+    (setq use-package-always-ensure t
+	  use-package-always-defer t))
 #+end_src
 
+#+begin_src emacs-lisp
+  (defconst NATIVECOMP
+    (when (fboundp 'native-comp-available-p)
+      (native-comp-available-p)))
+
+  (when NATIVECOMP
+    (setq native-comp-deferred-compilation nil
+	  native-comp-eln-load-path `(,(init-cache-path "eln/"))))
+#+end_src
 * Core Emacs Configuration
 ** Startup UI
 
@@ -294,8 +292,8 @@ Then I'll need a function to install a package when I need to:
 ** Recent Files
 
 #+begin_src emacs-lisp
-  (after! recentf
-    (setq recentf-max-menu-items 50))
+  (setq recentf-max-menu-items 50
+	recentf-save-file (init-cache-path "recentf"))
   (add-hook 'init-first-file-hook #'recentf-mode)
 #+end_src
 
@@ -307,38 +305,37 @@ Then I'll need a function to install a package when I need to:
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
   (add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
 
-  (after! savehist
-    (progn
-      (setq kill-ring-max 50
-	    history-length 50)
-      (setq savehist-additional-variables
-	    '(kill-ring
-	      command-history
-	      set-variable-value-history
-	      query-replace-history
-	      read-expression-history
-	      minibuffer-history
-	      read-char-history
-	      face-name-history
-	      bookmark-history
-	      file-name-history))
-      (put 'minibuffer-history 'history-length 50)
-      (put 'file-name-history 'history-length 50)
-      (put 'set-variable-value-history 'history-length 25)
-      (put 'query-replace-history 'history-length 25)
-      (put 'read-expression-history 'history-length 25)
-      (put 'read-char-history 'history-length 25)
-      (put 'face-name-history 'history-length 25)
-      (put 'bookmark-history 'history-length 25)
-      (setq history-delete-duplicates t)))
+  (setq kill-ring-max 50
+	history-length 50
+	savehist-file (init-cache-path "history"))
+  (setq savehist-additional-variables
+	'(kill-ring
+	  command-history
+	  set-variable-value-history
+	  query-replace-history
+	  read-expression-history
+	  minibuffer-history
+	  read-char-history
+	  face-name-history
+	  bookmark-history
+	  file-name-history))
+  (put 'minibuffer-history 'history-length 50)
+  (put 'file-name-history 'history-length 50)
+  (put 'set-variable-value-history 'history-length 25)
+  (put 'query-replace-history 'history-length 25)
+  (put 'read-expression-history 'history-length 25)
+  (put 'read-char-history 'history-length 25)
+  (put 'face-name-history 'history-length 25)
+  (put 'bookmark-history 'history-length 25)
+  (setq history-delete-duplicates t)
+
   (add-hook 'init-first-input-hook #'savehist-mode)
 #+end_src
 
 ** Save Place in File
 #+begin_src emacs-lisp
-  (after! 'saveplace
-    (setq save-place-file (init-cache-path "saveplace")
-	  save-place-forget-unreadable-files t))
+  (setq save-place-file (init-cache-path "places")
+	save-place-forget-unreadable-files t)
   (add-hook 'init-first-input-hook #'save-place-mode)
 #+end_src
 
@@ -451,20 +448,26 @@ Then I'll need a function to install a package when I need to:
 * Lisp
 
 #+begin_src emacs-lisp
-  (defun init-lispy-on ()
-    (lispy-mode 1))
-
-  (use-package lispy
-    :hook ((emacs-lisp-mode . init-lispy-on)
-	   (scheme-mode . init-lispy-on)
-	   (clojure-mode . init-lispy-on)))
+  (use-package paredit
+    :init
+    (autoload 'enable-paredit-mode
+      "paredit" "Turn on paredit." t)
+    :hook
+    ((emacs-lisp-mode . enable-paredit-mode)
+     (eval-expression-minibuffer-setup . enable-paredit-mode)
+     (ielm-mode . enable-paredit-mode)
+     (lisp-mode . enable-paredit-mode)
+     (scheme-mode . enable-paredit-mode)))
 #+end_src
 
 ** Clojure
 
 #+begin_src emacs-lisp
+  (use-package clojure-mode)
   (use-package cider
     :hook ((cider-mode . eldoc-mode)))
+  (use-package clj-refactor)
+  (use-package flycheck-clj-kondo)
 #+end_src
 
 * Show Benchmarking
