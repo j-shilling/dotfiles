@@ -8,7 +8,7 @@
 (define packages
   (list
    emacs-next-pgtk
-   emacs-lispy
+   emacs-paredit
    emacs-guix
    emacs-geiser-guile
    emacs-use-package
