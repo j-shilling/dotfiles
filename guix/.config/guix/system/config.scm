@@ -4,6 +4,8 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu services docker)
+  #:use-module (nongnu packages linux)
+  #:use-module (nongnu system linux-initrd)
   #:use-module ((keys nonguix) :prefix key:)
   #:export (base-config))
 
@@ -25,6 +27,8 @@
 
 (define base-config
   (operating-system
+   (kernel linux)
+   (initrd microcode-initrd)
 
    (locale "en_US.utf8")
    (timezone "America/New_York")
