@@ -11,34 +11,50 @@
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
 (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
 (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+
+(defconst LINUX-DISTRIBUTION
+  (when IS-LINUX
+    (or (when (file-exists-p "/etc/os-release")
+          (with-temp-buffer
+            (insert-file-contents "/etc/os-release")
+            (goto-char (point-min) )
+            (when-let ((pos (search-forward "NAME" nil t)))
+              (goto-char pos)
+              (string-trim
+               (cadr
+                (split-string
+                 (string-trim (thing-at-point 'line))
+                 "="))
+               "\""
+               "\""))))
+        (string-trim (shell-command-to-string "uname -o")))))
+
+(defconst IS-GUIX
+  (string= LINUX-DISTRIBUTION "Guix System"))
 ;; Environment constants:1 ends here
 
 ;; [[file:config.org::*Custom Initialization Hooks][Custom Initialization Hooks:1]]
-;; Doom Style Init Hooks
-(require 'nadvice)
-(defun init-run-hook-on (hook-var trigger-hooks)
-  "Configure HOOK-VAR to be invoked exactly once after any TRIGGER-HOOKS.
+(defun init-first-buffer-h (&rest _)
+  (run-hooks 'init-first-buffer-hook)
+  (set 'init-first-buffer-hook nil))
+(add-hook 'window-buffer-change-functions
+	  #'init-first-buffer-h)
+(advice-add 'after-find-file :before
+	    #'init-first-buffer-h)
 
-This is a simplified version of `doom-run-hook-on' from Doom Emacs.
+(defun init-first-file-h  (&rest _)
+  (run-hooks 'init-first-file-hook)
+  (set 'init-first-file-hook nil))
+(add-hook 'dired-initial-position-hook
+	  #'init-first-file-h)
+(advice-add 'after-find-file :before
+	    #'init-first-file-h)
 
-HOOK-VAR is a quoted hook.
-TRIGGER-HOOKS is a list of quoted hooks."
-  (dolist (hook trigger-hooks)
-    (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
-      (fset
-       fn (lambda (&rest _)
-	    (when (and after-init-time
-		       (or (daemonp)
-			   (and (boundp hook)
-				(symbol-value hook))))
-	      (run-hooks hook-var)
-	      (set hook-var nil))))
-      (cond ((daemonp)
-	     (add-hook 'after-init-hook fn 'append))
-	    ((eq hook 'find-file-hook)
-	     (advice-add 'after-find-file :before fn '((depth . -101))))
-	    ((add-hook hook fn -101)))
-      fn)))
+(defun init-first-input-h (&rest _)
+  (run-hooks 'init-first-input-hook)
+  (set 'init-first-input-hook nil))
+(add-hook 'pre-command-hook
+	  #'init-first-input-h)
 ;; Custom Initialization Hooks:1 ends here
 
 ;; [[file:config.org::*Custom Initialization Hooks][Custom Initialization Hooks:2]]
@@ -56,36 +72,13 @@ TRIGGER-HOOKS is a list of quoted hooks."
 ;; Custom Initialization Hooks:2 ends here
 
 ;; [[file:config.org::*Custom Initialization Hooks][Custom Initialization Hooks:3]]
-(unless noninteractive
-  (init-run-hook-on 'init-first-buffer-hook '(find-file-hook window-buffer-change-functions))
-  (init-run-hook-on 'init-first-file-hook '(find-file-hook dired-initial-position-hook))
-  (init-run-hook-on 'init-first-input-hook '(pre-command-hook)))
+(add-hook 'init-first-buffer-hook
+	  (lambda () (message "first buffer hook")))
+(add-hook 'init-first-file-hook
+	  (lambda ()  (message "first file hook")))
+(add-hook 'init-first-input-hook
+	  (lambda () "first input hook"))
 ;; Custom Initialization Hooks:3 ends here
-
-;; [[file:config.org::*Lazy Evaluation Macros][Lazy Evaluation Macros:1]]
-(require 'cl-lib)
-(defmacro after! (package &rest body)
-  "Evaluate BODY after PACKAGE has loaded.
-
-This is a port of doom's `after!' function which itself is a is a
-wrapper around `eval-after-load'."
-  (declare (indent defun) (debug t))
-  (if (symbolp pckage)
-      (list (if (or (not (bound-and-true-p byte-compile-current-file))
-		    (require package nil 'noerror))
-		#'progn
-	      #'with-no-warnings)
-	    `(eval-after-load ',package ',(macroexp-progn body)))
-    (let ((p (car package)))
-      (cond ((memq p '(:or :any))
-	     (macroexp-progn
-	      (cl-loop for next in (cdr package)
-		       collect `(after! ,next ,@body))))
-	    ((memq p '(:and :all))
-	     (dolist (next (reverse (cdr package)) (car body))
-	       (setq body `((after! ,next ,@body)))))
-	    (`(after! (:and ,@package) ,@body))))))
-;; Lazy Evaluation Macros:1 ends here
 
 ;; [[file:config.org::*XDG Directories][XDG Directories:1]]
 ;; Config Directories
@@ -166,8 +159,9 @@ the ones in `init-data-home'."
   (defun straight-use-package (&rest _)))
 (defun init-ensure-package (package)
   "Install PACKAGE if necessary."
-  (init-ensure-straight)
-  (straight-use-package package))
+  (unless IS-GUIX
+    (init-ensure-straight)
+    (straight-use-package package)))
 ;; Package Management:2 ends here
 
 ;; [[file:config.org::*Startup UI][Startup UI:1]]
@@ -373,12 +367,25 @@ Inspired by the way Doom Emacs handles `doom-font'.")
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 ;; Emacs UI:1 ends here
 
+;; [[file:config.org::*Git][Git:1]]
+(use-package magit
+  :bind ("C-x g" . #'magit-status))
+;; Git:1 ends here
+
 ;; [[file:config.org::*Lisp][Lisp:1]]
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    (init-ensure-package 'lispy)
-	    (lispy-mode)))
+(defun init-lispy-on ()
+  (lispy-mode 1))
+
+(use-package lispy
+  :hook ((emacs-lisp-mode . init-lispy-on)
+	 (scheme-mode . init-lispy-on)
+	 (clojure-mode . init-lispy-on)))
 ;; Lisp:1 ends here
+
+;; [[file:config.org::*Clojure][Clojure:1]]
+(use-package cider
+  :hook ((cider-mode . eldoc-mode)))
+;; Clojure:1 ends here
 
 ;; [[file:config.org::*Show Benchmarking][Show Benchmarking:1]]
 (let ((init-time (float-time (time-subtract (current-time) init-start-time)))
