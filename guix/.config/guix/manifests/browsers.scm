@@ -1,13 +1,13 @@
 (define-module (manifests browsers)
   #:use-module (gnu packages web-browsers)
-  #:use-module (gnu packages gnuzilla)
+  #:use-module (nongnu packages mozilla)
   #:use-module (guix profiles)
   #:export (browsers-packages
             browsers-manifest))
 
 (define browsers-packages
   (list nyxt
-        icecat))
+        firefox))
 
 (define browsers-manifest
   (packages->manifest browsers-packages))
