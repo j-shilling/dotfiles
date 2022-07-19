@@ -3,48 +3,78 @@
 #+STARTUP: overview
 #+PROPERTY: header-args :cache yes :mkdirp yes :padline yes :tangle init.el
 
-* File Header
+* Early Init
+:PROPERTIES:
+:header-args: :tangle early-init.el
+:END:
+
+#+begin_src emacs-lisp
+  ;;; early-init.el -*- lexical-binding: t; -*-
+
+  (setq gc-cons-threshold most-positive-fixnum)
+  (add-hook 'after-init-hook
+	    (lambda ()
+	      (setq gc-cons-threshold (* 1025 10))))
+
+  (setq package-enable-at-startup nil)
+
+  (setq load-prefer-newer noninteractive)
+
+  ;; Doom says this is faster than calling the corresponding functions. See
+  ;; core-ui.el
+  (push '(menu-bar-lines . 0)   default-frame-alist)
+  (push '(tool-bar-lines . 0)   default-frame-alist)
+  (push '(vertical-scroll-bars) default-frame-alist)
+
+  (when (featurep 'native-compile)
+    (setq native-comp-async-report-warnings-errors nil
+	  native-comp-deferred-compilation t))
+
+  ;;; early-init.el ends here
+#+end_src
+
+* Init
+:PROPERTIES:
+:header-args: :tangle init.el
+:END:
+
+** File Header
 #+begin_src emacs-lisp
 ;;;  init.el --- emacs startup file -*- lexical-binding: t; -*-
 #+end_src
 
-* Initialize Benchmarking
+** Initialize Benchmarking
+
 #+begin_src emacs-lisp
-(defvar init-start-time (current-time))
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (message "Emacs loaded in %s."
+		       (emacs-init-time))))
 #+end_src
 
-* Environment constants
+** System Information
 
 Copy environment constants over from Doom Emacs.
 
 #+begin_src emacs-lisp
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
-(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
-
-(defconst LINUX-DISTRIBUTION
-  (when IS-LINUX
-    (or (when (file-exists-p "/etc/os-release")
-          (with-temp-buffer
-            (insert-file-contents "/etc/os-release")
-            (goto-char (point-min) )
-            (when-let ((pos (search-forward "NAME" nil t)))
-              (goto-char pos)
-              (string-trim
-               (cadr
-                (split-string
-                 (string-trim (thing-at-point 'line))
-                 "="))
-               "\""
-               "\""))))
-        (string-trim (shell-command-to-string "uname -o")))))
-
-(defconst IS-GUIX
-  (string= LINUX-DISTRIBUTION "Guix System"))
+  (defconst IS-MAC     (eq system-type 'darwin))
+  (defconst IS-LINUX   (eq system-type 'gnu/linux))
+  (defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+  (defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
 #+end_src
 
-* Custom Initialization Hooks
+Copied from crafted emacs
+
+#+begin_src emacs-lisp
+  (defun init-using-guix-emacs-p ()
+    (unless IS-WINDOWS
+      (string-prefix-p "/gnu/store"
+		       (file-truename (executable-find
+				       (car command-line-args))))))
+  (defconst IS-GUIX (init-using-guix-emacs-p))
+#+end_src
+
+** Custom Initialization Hooks
 
 #+begin_src emacs-lisp
   ;; Doom Style Init Hooks
@@ -88,8 +118,6 @@ Copy environment constants over from Doom Emacs.
 (put 'init-first-buffer-hook 'permanent-local t)
 #+end_src
 
-<<<<<<< HEAD
-=======
 Finally, we can schedule each of these to go off at the proper time.
 
 #+begin_src emacs-lisp
@@ -99,7 +127,7 @@ Finally, we can schedule each of these to go off at the proper time.
   (init-run-hook-on 'init-first-input-hook '(pre-command-hook)))
 #+end_src
 
-* Lazy Evaluation Macros
+** Lazy Evaluation Macros
 #+begin_src emacs-lisp
   (require 'cl-lib)
   (defmacro after! (package &rest body)
@@ -124,7 +152,7 @@ Finally, we can schedule each of these to go off at the proper time.
 		 (setq body `((after! ,next ,@body)))))
 	      (`(after! (:and ,@package) ,@body))))))
 #+end_src
-* XDG Directories
+** XDG Directories
 
 I want to save files in places that make sense with the XDG
 specification, but I also want to use locations that make sense on
@@ -188,14 +216,14 @@ standard locations.
   (apply #'init-path (init-cache-home) segments))
 #+end_src
 
-* Package Management
+** Package Management
 
 I want to try to use built in packages where-ever reasonable and to
 initialize external packages in a lazy way.
 
 I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
-  (unless IS-GUIX
+  (defun init-bootstrap-straight ()
     (setq straight-base-dir (init-state-path)
 	  straight-use-package-by-default t)
     (let ((bootstrap-file
@@ -211,11 +239,21 @@ I need a function to initialize straight when I need it:
 
     ;; install use-package
     (straight-use-package 'use-package)
-    
-    (setq use-package-always-ensure t
-	  use-package-always-defer t))
+
+    (setq use-package-always-ensure nil
+	  use-package-always-defer t)
+
+    (provide 'init-straight))
 #+end_src
 
+#+begin_src emacs-lisp
+  (defun init-ensure-package (package)
+    (unless IS-GUIX
+      (unless (featurep 'init-straight)
+	(init-bootstrap-straight))
+      (straight-use-package package)))
+#+end_src
+ 
 #+begin_src emacs-lisp
   (defconst NATIVECOMP
     (when (fboundp 'native-comp-available-p)
@@ -225,7 +263,51 @@ I need a function to initialize straight when I need it:
     (setq native-comp-deferred-compilation nil
 	  native-comp-eln-load-path `(,(init-cache-path "eln/"))))
 #+end_src
-* Core Emacs Configuration
+
+** Load Modules
+
+#+begin_src emacs-lisp
+  (defconst MODULES-DIR
+    (expand-file-name "modules/" user-emacs-directory))
+  (when (file-directory-p MODULES-DIR)
+    (let ((modules (directory-files MODULES-DIR t ".el$")))
+      (dolist (module modules)
+	(load-file module))))
+#+end_src
+
+* Modules
+
+** Lisp
+:PROPERTIES:
+:header-args: :tangle modules/init-lisp.el :mkdirp yes
+:END:
+
+#+begin_src emacs-lisp
+  (init-ensure-package 'paredit)
+  (autoload 'enable-paredit-mode
+    "paredit" "Turn on paredit." t)
+
+  (add-hook 'emacs-lisp-mode #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'ielm-mode #'enable-paredit-mode)
+  (add-hook 'lisp-mode #'enable-paredit-mode)
+  (add-hook 'scheme-mode #'enable-paredit-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+  (init-ensure-package 'geiser)
+  (init-ensure-package 'geiser-guile)
+#+end_src
+
+*** Clojure
+
+#+begin_src emacs-lisp
+  (init-ensure-package 'clojure-mode)
+  (init-ensure-package 'cider)
+  (init-ensure-package 'clj-refactor)
+#+end_src
+
+* COMMENT Core Emacs Configuration
 ** Startup UI
 
 #+begin_src emacs-lisp
@@ -346,7 +428,7 @@ I need a function to initialize straight when I need it:
   (server-start))
 #+end_src
 
-* Emacs UI
+* COMMENT Emacs UI
 
 #+begin_src emacs-lisp
   (defun init-font-exists-p (font-name)
@@ -436,47 +518,13 @@ I need a function to initialize straight when I need it:
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 #+end_src
 
-* General Programming
+* COMMENT General Programming
 
 ** Git
 
 #+begin_src emacs-lisp
   (use-package magit
     :bind ("C-x g" . #'magit-status))
-#+end_src
-
-* Lisp
-
-#+begin_src emacs-lisp
-  (use-package paredit
-    :init
-    (autoload 'enable-paredit-mode
-      "paredit" "Turn on paredit." t)
-    :hook
-    ((emacs-lisp-mode . enable-paredit-mode)
-     (eval-expression-minibuffer-setup . enable-paredit-mode)
-     (ielm-mode . enable-paredit-mode)
-     (lisp-mode . enable-paredit-mode)
-     (scheme-mode . enable-paredit-mode)))
-#+end_src
-
-** Clojure
-
-#+begin_src emacs-lisp
-  (use-package clojure-mode)
-  (use-package cider
-    :hook ((cider-mode . eldoc-mode)))
-  (use-package clj-refactor)
-  (use-package flycheck-clj-kondo)
-#+end_src
-
-* Show Benchmarking
-
-#+begin_src emacs-lisp
-(let ((init-time (float-time (time-subtract (current-time) init-start-time)))
-      (total-time (string-to-number (emacs-init-time "%f"))))
-  (message "Initialization time %.2fs (+ %.2f system time)"
-           init-time (- total-time init-time)))
 #+end_src
 
 * Finalize
