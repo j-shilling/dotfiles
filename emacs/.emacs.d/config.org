@@ -69,12 +69,48 @@ Copied from crafted emacs
   (defun init-using-guix-emacs-p ()
     (unless IS-WINDOWS
       (string-prefix-p "/gnu/store"
-		       (file-truename (executable-find
-				       (car command-line-args))))))
+		       (file-truename (or (executable-find
+					   (car command-line-args))
+					  (car command-line-args))))))
   (defconst IS-GUIX (init-using-guix-emacs-p))
 #+end_src
 
 ** Custom Initialization Hooks
+
+#+begin_src emacs-lisp
+  (defun init-unquote (exp)
+    (while (memq (car-safe exp) '(quote function))
+      (setq exp (cadr exp)))
+    exp)
+  (defmacro add-transient-hook! (hook-or-function &rest forms)
+    "Attaches a self-removing function to HOOK-OR-FUNCTION.
+
+  FORMS are evaluated once, when the hook is first invoked, then
+  never again.
+
+  HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function.
+
+  This is taken from Doom Emacs."
+    (declare (indent 1))
+    (let ((append (if (eq (car forms) :after) (pop forms)))
+	  (fn (intern (format "init--transient-%d-h"
+			      (put 'add-transient-hook! 'counter
+				   (1+ (or (get 'add-transient-hook! 'counter)
+					   0)))))))
+      `(let ((sym ,hook-or-function))
+	 (defun ,fn (&rest _)
+	   ,(format "Transient hook for %S" (init-unquote hook-or-function))
+	   ,@forms
+	   (let ((sym ,hook-or-function))
+	     (cond ((functionp sym) (advice-remove sym #',fn))
+		   ((symbolp sym)   (remove-hook sym #',fn))))
+	   (unintern ',fn nil))
+	 (cond ((functionp sym)
+		(advice-add ,hook-or-function ,(if append :after :before) #',fn))
+	       ((symbolp sym)
+		(put ',fn 'permanent-local-hook t)
+		(add-hook sym #',fn ,append))))))
+#+end_src
 
 #+begin_src emacs-lisp
   ;; Doom Style Init Hooks
@@ -224,7 +260,7 @@ initialize external packages in a lazy way.
 I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
   (defun init-bootstrap-straight ()
-    (setq straight-base-dir (init-state-path)
+    (setq straight-base-dir (init-state-path "./")
 	  straight-use-package-by-default t)
     (let ((bootstrap-file
 	   (init-state-path "straight" "repos" "straight.el" "bootstrap.el")))

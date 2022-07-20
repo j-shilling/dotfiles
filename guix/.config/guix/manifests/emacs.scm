@@ -10,7 +10,7 @@
    emacs-next-pgtk
    emacs-paredit
    emacs-guix
-   emacs-geiser-guile
+   emacs-geiser
    emacs-use-package
    emacs-magit
    emacs-cider
