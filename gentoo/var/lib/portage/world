@@ -7,6 +7,7 @@ app-emulation/qemu
 app-emulation/virtualbox
 app-emulation/virtualbox-additions
 app-eselect/eselect-repository
+app-office/libreoffice-bin
 app-portage/eix
 app-portage/gentoolkit
 app-portage/layman
