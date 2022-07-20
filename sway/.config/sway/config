@@ -18,6 +18,7 @@ set $term alacritty
 
 exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK
 exec_always --no-startup-id mako
+exec_always --no-startup-id signal-desktop --start-in-tray
 
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
