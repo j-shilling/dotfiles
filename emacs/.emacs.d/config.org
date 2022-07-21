@@ -312,6 +312,25 @@ I need a function to initialize straight when I need it:
 #+end_src
 
 * Modules
+** Completion
+:PROPERTIES:
+:header-args: :tangle modules/init-completion.el :mkdirp t
+:END:
+
+#+begin_src emacs-lisp
+  ;;; init-completion.el -- completion -*- lexical-binding t; -*-
+
+  (add-hook 'init-first-input-hook #'icomplete-mode)
+  (with-eval-after-load 'icomplete
+    (add-hook 'icomplete-mode-hook #'icomplete-vertical-mode)
+    (customize-set-value 'completion-styles '(paritial-completion substring flex))
+    (customize-set-value 'read-file-name-completion-ignore-case t)
+    (customize-set-value 'read-buffer-completion-ignore-case t)
+    (customize-set-value 'completion-ignore-case t))
+
+  (provide 'init-completion)
+  ;;; init-completion.el ends here
+#+end_src
 
 ** Lisp
 :PROPERTIES:
