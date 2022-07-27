@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
-guix shell -C --no-cwd \
-    -E "^DISPLAY$" \
-    -E "^XAUTHORITY$" \
-    --expose="$XAUTHORITY" \
+guix environment \
+    --pure \
+    --no-cwd \
+    --container \
+    --preserve="^DISPLAY$" \
     --share=/tmp/.X11-unix/ \
-    --share=$HOME/dotfiles/emacs=$HOME \
-    -m $HOME/.config/guix/manifests/core.scm \
-    -m $HOME/.config/guix/manifests/emacs.scm 
-    -- emacs
+    --share="$HOME/dotfiles/emacs/.emacs.d/=$HOME/.emacs.d" \
+    --manifest="$HOME/.config/guix/manifests/emacs.scm" -- emacs
