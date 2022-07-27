@@ -17,6 +17,8 @@ set $right l
 set $term alacritty
 
 exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK
+exec_always dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec_always systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 exec_always --no-startup-id mako
 exec_always --no-startup-id signal-desktop --start-in-tray
 
