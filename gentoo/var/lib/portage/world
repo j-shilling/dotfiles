@@ -11,6 +11,7 @@ app-office/libreoffice-bin
 app-portage/eix
 app-portage/gentoolkit
 app-portage/layman
+dev-db/mysql
 dev-java/openjdk:11
 dev-lang/mono
 dev-libs/libisoburn
