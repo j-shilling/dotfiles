@@ -7,4 +7,5 @@ guix environment \
     --preserve="^DISPLAY$" \
     --share=/tmp/.X11-unix/ \
     --share="$HOME/dotfiles/emacs/.emacs.d/=$HOME/.emacs.d" \
+    --share="$HOME/.config/guix/=$HOME/.config/guix" \
     --manifest="$HOME/.config/guix/manifests/emacs.scm" -- emacs
