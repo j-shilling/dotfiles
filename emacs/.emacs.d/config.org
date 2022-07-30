@@ -283,6 +283,18 @@ I need a function to initialize straight when I need it:
 #+end_src
 
 #+begin_src emacs-lisp
+  (defun init-package-installed-p (package)
+    (unless (or IS-GUIX (featurep 'init-straight))
+      (init-bootstrap-straight))
+    (condition-case nil
+	(when (find-library-name (if (symbolp package)
+				     (symbol-name package)
+				   package))
+	  t)
+      (error nil)))
+#+end_src
+
+#+begin_src emacs-lisp
   (defun init-ensure-package (package)
     (unless IS-GUIX
       (unless (featurep 'init-straight)
@@ -449,7 +461,7 @@ I need a function to initialize straight when I need it:
 		       (fixed-pitch . ,init-font)
 		       (fixed-pitch-serif . ,init-serif-font)
 		       (variable-pitch . ,init-variable-pitch-font)))
-	 (when-let* ((face (car pair))
+	 (when-let ((face (car pair))
 		     (font (cdr pair)))
 	   (set-face-attribute face nil
 			       :width 'normal :weight 'normal
@@ -481,7 +493,7 @@ I need a function to initialize straight when I need it:
      (push '(menu-bar-lines . 0)   default-frame-alist)
      (push '(tool-bar-lines . 0)   default-frame-alist)
      (push '(vertical-scroll-bars) default-frame-alist)
-
+t
      (setq window-divider-default-places t
 	   window-divider-default-bottom-width 1
 	   window-divider-default-right-width 1)
@@ -506,6 +518,9 @@ I need a function to initialize straight when I need it:
 
      (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
      (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+     (setq display-line-numbers-type 'relative)
+     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
      (provide 'init-ui)
      ;;; init-ui.el ends here
@@ -575,21 +590,31 @@ I need a function to initialize straight when I need it:
    #+begin_src emacs-lisp
      ;;; init-lisp.el -- General Configuration -*- lexical-binding t; -*-
 
-     (init-ensure-package 'paredit)
-     (autoload 'enable-paredit-mode
-       "paredit" "Turn on paredit." t)
+     (when (init-package-installed-p 'paredit)
+       (autoload 'enable-paredit-mode
+	 "paredit" "Turn on paredit." t)
 
-     (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-     (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-     (add-hook 'ielm-mode-hook #'enable-paredit-mode)
-     (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-     (add-hook 'scheme-mode-hook #'enable-paredit-mode)
-     (init-ensure-package 'geiser)
-     (init-ensure-package 'geiser-guile)
+       (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
+       (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+       (add-hook 'ielm-mode-hook #'enable-paredit-mode)
+       (add-hook 'lisp-mode-hook #'enable-paredit-mode)
+       (add-hook 'scheme-mode-hook #'enable-paredit-mode))
 
-     (init-ensure-package 'clojure-mode)
-     (init-ensure-package 'cider)
-     (init-ensure-package 'clj-refactor)
+     (when (init-package-installed-p 'geiser-guile)
+       (after! geiser-guile
+	 (add-to-list 'geiser-guile-load-path "~/.config/guix")))
+
+     (when (and (init-package-installed-p 'clojure-mode)
+		(init-package-installed-p 'paredit))
+       (add-hook 'clojure-mode-hook #'enable-paredit-mode)
+       (add-hook 'clojurec-mode-hook #'enable-paredit-mode)
+       (add-hook 'clojurescript-mode-hook #'enable-paredit-mode))
+
+     (when (init-package-installed-p 'cider)
+       nil)
+
+     (when (init-package-installed-p 'clj-refactor)
+       nil)
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
