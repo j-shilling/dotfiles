@@ -312,15 +312,39 @@ I need a function to initialize straight when I need it:
 	  native-comp-eln-load-path `(,(init-cache-path "eln/"))))
 #+end_src
 
+** Logging
+
+   #+begin_src emacs-lisp
+     (defmacro init-log (output &rest args)
+       "Copy of `doom-log'."
+       `(when (or init-file-debug noninteractive)
+	  (let ((inhibit-message t))
+	    (message
+	     (format
+	      "* [%s] %s"
+	      ,(let ((time `(format "%.06f" (float-time (time-subtract (current-time) before-init-time)))))
+		 (cond (noninteractive time)
+		       ((bound-and-true-p init--current-module)
+			init--current-module)
+		       (time)))
+	      ,output)
+	     ,@args))))
+
+   #+end_src
+
 ** Load Modules
 
 #+begin_src emacs-lisp
+  (defvar init--current-module nil)
+
   (defconst MODULES-DIR
     (expand-file-name "modules/" user-emacs-directory))
+
   (when (file-directory-p MODULES-DIR)
     (let ((modules (directory-files MODULES-DIR t ".el$")))
       (dolist (module modules)
-	(load-file module))))
+	(let ((init--current-module module))
+	  (load-file module)))))
 #+end_src
 
 ** Finalize
@@ -590,31 +614,36 @@ t
    #+begin_src emacs-lisp
      ;;; init-lisp.el -- General Configuration -*- lexical-binding t; -*-
 
-     (when (init-package-installed-p 'paredit)
-       (autoload 'enable-paredit-mode
-	 "paredit" "Turn on paredit." t)
+     (defvar init-lisp-hooks
+       `(emacs-lisp-mode-hook
+	 eval-expression-minibuffer-setup-hook
+	 ielm-mode-hook
+	 lisp-mode-hook
+	 scheme-mode-hook
+	 ,@(when (init-package-installed-p 'clojure-mode)
+	     '(clojure-mode-hook
+	       clojurec-mode-hook
+	       clojurescrope-mode-hook))))
 
-       (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
-       (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-       (add-hook 'ielm-mode-hook #'enable-paredit-mode)
-       (add-hook 'lisp-mode-hook #'enable-paredit-mode)
-       (add-hook 'scheme-mode-hook #'enable-paredit-mode))
+     (defvar init-first-lisp-mode-hook nil)
 
-     (when (init-package-installed-p 'geiser-guile)
-       (after! geiser-guile
-	 (add-to-list 'geiser-guile-load-path "~/.config/guix")))
+     (unless noninteractive
+       (init-run-hook-on 'init-first-lisp-mode-hook init-lisp-hooks))
 
-     (when (and (init-package-installed-p 'clojure-mode)
-		(init-package-installed-p 'paredit))
-       (add-hook 'clojure-mode-hook #'enable-paredit-mode)
-       (add-hook 'clojurec-mode-hook #'enable-paredit-mode)
-       (add-hook 'clojurescript-mode-hook #'enable-paredit-mode))
+     (defun init-lisp-initialize-module (&rest _)
+       (dolist (hook init-lisp-hooks)
+	 (init-log "Setting up %s" hook)
+	 (init-log "Has paredit? %s"
+		   (init-package-installed-p 'paredit))
 
-     (when (init-package-installed-p 'cider)
-       nil)
+	 (when (init-package-installed-p 'paredit)
+	   (add-hook hook #'enable-paredit-mode))
+	 (add-hook hook #'show-paren-mode)))
 
-     (when (init-package-installed-p 'clj-refactor)
-       nil)
+     (add-hook 'init-first-lisp-mode-hook #'init-lisp-initialize-module)
+
+     (after! geiser-guile
+       (add-to-list 'geiser-guile-load-path "~/.config/guix"))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here

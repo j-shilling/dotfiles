@@ -6,6 +6,7 @@
   #:use-module (gnu packages curl)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages guile)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages shells)
@@ -14,11 +15,10 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages wget)
   #:use-module (guix profiles)
-  #:export (core-specifications
-            core-packages
-            core-manifest))
+  #:export (packages
+	    manifest))
 
-(define core-packages
+(define packages
   (list bash
         coreutils
         curl
@@ -26,6 +26,7 @@
         git
         glibc-locales
         gnupg
+	guile
         nss-certs
         openssh
         password-store
@@ -36,7 +37,7 @@
         which
         zsh))
 
-(define core-manifest
+(define manifest
   (packages->manifest core-packages))
 
-core-manifest
+manifest

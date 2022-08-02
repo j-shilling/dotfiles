@@ -4,6 +4,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages guile)
   #:use-module (guix profiles)
   #:export (packages
             manifest))
@@ -13,15 +14,12 @@
    coreutils
    bash
    gzip
+   guile-3.0-latest
+   glibc-locales
    emacs-next-pgtk
    emacs-paredit
    emacs-guix
-   emacs-geiser
-   emacs-use-package
-   emacs-magit
-   emacs-cider
-   emacs-helpful
-   emacs-macrostep))
+   emacs-geiser))
 
 (define manifest
   (packages->manifest packages))
