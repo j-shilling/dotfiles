@@ -1,12 +1,20 @@
 # -*- mode: sh -*-
 
-# Maybe init GUIX
 export XDG_STATE_HOME="${HOME}/.local/var/lib"
 export PASSWORD_STORE_DIR="${XDG_STATE_HOME}/password-store"
 export GUIX_PROFILE="${HOME}/.guix-profile"
 export EDITOR="emacsclient -a '' -c"
 export BROWSER="nyxt"
 
+if [ -d "/var/lib/flatpak/exports/share" ] ; then
+    export XDG_DATA_DIRS="${XDG_DATA_DIRS}:/var/lib/flatpak/exports/share"
+fi
+
+if [ -d "${HOME}/.local/share/flatpak/exports/share" ] ; then
+    export XDG_DATA_DIRS="${XDG_DATA_DIRS}:${HOME}/.local/share/flatpak/exports/share"
+fi
+
+# Maybe init GUIX
 if [ -d $GUIX_PROFILE ] ; then
     source "$GUIX_PROFILE/etc/profile"
     export GUILE_LOAD_PATH="$HOME/.config/guix:$GUILE_LOAD_PATH"
