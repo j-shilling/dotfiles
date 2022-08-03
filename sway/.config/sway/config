@@ -16,19 +16,23 @@ set $right l
 # Your preferred terminal emulator
 set $term alacritty
 
-exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK
+exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK XDG_DATA_DIRS
 exec_always dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 exec_always systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 exec_always --no-startup-id mako
-exec_always --no-startup-id signal-desktop --start-in-tray
+exec --no-startup-id signal-desktop --start-in-tray
+exec gentoo-pipewire-launcher
+exec /usr/libexec/xdg-desktop-portal-gtk -r
+exec /usr/libexec/xdg-desktop-portal-wlr -r
+exec "sh -c 'sleep 5;exec /usr/libexec/xdg-desktop-portal -r'"
 
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 # set $menu bemenu-run --fn $uifont -b -p "▶" --tf "$prompt" --hf "$highlight" --sf "$highlight" --scf "$highlight" | xargs swaymsg exec
 
-set $menu bemenu-run -l 10 --fn 'Fira Sans 18' -p run
-
+# set $menu bemenu-run -l 10 --fn 'Fira Sans 18' -p run
+set $menu fuzzel
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
@@ -188,16 +192,16 @@ mode "resize" {
     # right will grow the containers width
     # up will shrink the containers height
     # down will grow the containers height
-    bindsym $left resize shrink width 10px
+    bindsym $right resize shrink width 10px
     bindsym $down resize grow height 10px
     bindsym $up resize shrink height 10px
-    bindsym $right resize grow width 10px
+    bindsym $left resize grow width 10px
 
     # Ditto, with arrow keys
-    bindsym Left resize shrink width 10px
+    bindsym Right resize shrink width 10px
     bindsym Down resize grow height 10px
     bindsym Up resize shrink height 10px
-    bindsym Right resize grow width 10px
+    bindsym Left resize grow width 10px
 
     # Return to default mode
     bindsym Return mode "default"

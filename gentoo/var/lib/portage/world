@@ -21,6 +21,7 @@ games-action/minecraft-launcher
 games-action/multimc-bin
 gnome-base/gdm
 gnome-extra/nm-applet
+gui-apps/fuzzel
 gui-apps/grim
 gui-apps/mako
 gui-apps/slurp
