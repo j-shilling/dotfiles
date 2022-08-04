@@ -284,14 +284,27 @@ I need a function to initialize straight when I need it:
 
 #+begin_src emacs-lisp
   (defun init-package-installed-p (package)
-    (unless (or IS-GUIX (featurep 'init-straight))
-      (init-bootstrap-straight))
-    (condition-case nil
-	(when (find-library-name (if (symbolp package)
-				     (symbol-name package)
-				   package))
-	  t)
-      (error nil)))
+    (if IS-GUIX
+	(progn
+	  (let ((autoload-name (format "%s-autoloads" package)))
+	    (featurep (intern autoload-name))))
+      (progn
+	(unless (featurep 'init-straight)
+	  (error "Not implemented")))))
+
+  (unless (featurep 'testing)
+    (dolist (hook '(init-first-file-hook
+		    init-first-buffer-hook
+		    init-first-input-hook
+		    after-init-hook
+		    emacs-startup-hook
+		    window-setup-hook))
+      (add-hook hook
+		(lambda ()
+		  (init-log "%s: (init-package-installed-p 'paredit) %s"
+			    hook
+			    (init-package-installed-p 'paredit)))))
+    (provide 'testing))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -357,7 +370,7 @@ I need a function to initialize straight when I need it:
 
 ** Defaults
    :PROPERTIES:
-   :header-args: :tangle modules/init-defaults.el
+   :header-args: :tangle modules/init-defaults.el :mkdirp t
    :END:
 
    #+begin_src emacs-lisp
@@ -642,10 +655,15 @@ t
 
      (add-hook 'init-first-lisp-mode-hook #'init-lisp-initialize-module)
 
-     (after! geiser-guile
-       (add-to-list 'geiser-guile-load-path "~/.config/guix"))
+     ;; (after! geiser-guile
+     ;;   (setq geiser-guile-load-path
+     ;; 	'("~/.config/guix" "/home/jake/.config/guix/current/share/guile/site/3.0")
+     ;; 	;; (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+     ;; 	;;   (split-string guile-load-path ":"))
+     ;; 	))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
    #+end_src
+   
    
