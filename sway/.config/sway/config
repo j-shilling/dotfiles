@@ -14,7 +14,7 @@ set $up k
 set $right l
 
 # Your preferred terminal emulator
-set $term alacritty
+set $term emacsclient -a '' -c -e "(eshell t)"
 
 exec_always dbus-update-activation-environment DBUS_SESSION_BUS_ADDRESS DISPLAY XAUTHORITY WAYLAND_DISPLAY SWAYSOCK XDG_DATA_DIRS
 exec_always dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
