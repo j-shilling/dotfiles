@@ -597,6 +597,32 @@ I need a function to initialize straight when I need it:
      (setq frame-resize-pixelwise t)
 
      (setq window-resize-pixelwise nil)
+
+     ;; Doom says this is faster than calling the corresponding functions. See
+     ;; core-ui.el
+     (push '(menu-bar-lines . 0)   default-frame-alist)
+     (push '(tool-bar-lines . 0)   default-frame-alist)
+     (push '(vertical-scroll-bars) default-frame-alist)
+     t
+     (setq window-divider-default-places t
+	   window-divider-default-bottom-width 1
+	   window-divider-default-right-width 1)
+
+     (add-hook 'init-first-buffer-hook
+	       #'window-divider-mode)
+
+     ;; Avoid inconsistent GUIs
+     (setq use-dialog-box nil)
+     (when (bound-and-true-p tooltip-mode)
+       (tooltip-mode -1))
+     (when IS-LINUX
+       (setq x-gtk-use-system-tooltips nil))
+
+     (setq split-width-threshold 160
+	   split-height-threshold nil)
+
+     (setq enable-recursive-minibuffers t)
+     (setq echo-keystrokes 0.02)
      (setq resize-mini-windows 'grow-only)
 #+end_src
 
@@ -639,6 +665,37 @@ I need a function to initialize straight when I need it:
 
    #+begin_src emacs-lisp
      ;;; init-org.el -- General Configuration -*- lexical-binding t; -*-
+
+     (after! org
+       (setq org-special-ctrl-a/e t
+             org-special-ctrl-k t
+             org-startup-indented t
+             org-log-done t
+             org-src-fontify-natively t
+             org-src-tab-acts-natively t
+             org-confirm-babel-evaluate nil
+             org-hide-emphasis-markers t
+             org-pretty-entities t
+             org-log-into-drawer t
+             org-clock-report-include-clocking-task t
+             org-clock-out-when-done t
+             org-clock-out-remove-zero-time-clocks t
+             org-clock-persist t
+             org-clock-in-resume t
+             org-clock-persist-query-resume nil
+             org-modules '(org-habit)))
+
+     (after! org
+       (setq org-ellipsis " ↓ "
+             org-pretty-entities t
+             org-fontify-whole-heading-line t
+             org-fontify-done-headline t
+             org-fontify-quote-and-verse-blocks t
+             org-hide-emphasis-markers t))
+
+     (when (init-package-installed-p 'org-appear)
+       (after! org
+         (add-hook 'org-mode #'org-appear-mode)))
 
      (provide 'init-org)
      ;;; init-org.el ends here
@@ -725,33 +782,15 @@ I need a function to initialize straight when I need it:
 	       clojurec-mode-hook
 	       clojurescrope-mode-hook))))
 
-     (defvar init-first-lisp-mode-hook nil)
-
-     (unless noninteractive
-       (init-run-hook-on 'init-first-lisp-mode-hook init-lisp-hooks))
-
-     (defun init-lisp-initialize-module (&rest _)
-       (dolist (hook init-lisp-hooks)
-	 (init-log "Setting up %s" hook)
-	 (init-log "Has paredit? %s"
-		   (init-package-installed-p 'paredit))
-
-	 (when (init-package-installed-p 'paredit)
-	   (add-hook hook #'enable-paredit-mode))
-	 (add-hook hook #'show-paren-mode)))
-
-     (add-hook 'init-first-lisp-mode-hook #'init-lisp-initialize-module)
+     (dolist (hook init-lisp-hooks)
+       (when (init-package-installed-p 'paredit)
+	 (add-hook hook #'enable-paredit-mode))
+       (add-hook hook #'show-paren-mode))
 
      (after! geiser-guile
-       (setq geiser-guile-load-path
-	     (let ((system-load-path (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
-				       (split-string guile-load-path ":"))))
-	       (if (seq-find (lambda (path)
-			       (string-equal (file-truename path)
-					     (file-truename "~/.config/guix")))
-			     system-load-path)
-		   system-load-path
-		 (cons "~/.config/guix" system-load-path)))))
+       (setq geiser-guile-load-path	
+	     (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+	       (split-string guile-load-path ":")))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
