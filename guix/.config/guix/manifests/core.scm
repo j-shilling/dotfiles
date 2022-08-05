@@ -26,7 +26,7 @@
         git
         glibc-locales
         gnupg
-	guile
+	guile-3.0-latest
         nss-certs
         openssh
         password-store
@@ -38,6 +38,6 @@
         zsh))
 
 (define manifest
-  (packages->manifest core-packages))
+  (packages->manifest packages))
 
 manifest
