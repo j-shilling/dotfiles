@@ -459,6 +459,13 @@ I need a function to initialize straight when I need it:
 	     save-place-forget-unreadable-files t)
        (add-hook 'init-first-input-hook #'save-place-mode)
 
+
+     (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
+
+     (setq display-line-numbers-type 'relative)
+     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
+
      (provide 'init-defaults)
      ;;; init-defaults.el ends here
    #+end_src
@@ -468,100 +475,135 @@ I need a function to initialize straight when I need it:
    :header-args: :tangle modules/init-ui.el
    :END:
 
-   #+begin_src emacs-lisp
-     ;;; init-ui.el -- General Configuration -*- lexical-binding t; -*-
-     (defun init-font-exists-p (font-name)
-       "Returns `t' if FONT-NAME is a valid font family."
-       (member font-name (font-family-list)))
+*** Header
+#+begin_src emacs-lisp
+;;; init-ui.el -- General Configuration -*- lexical-binding t; -*-
+#+end_src
 
-     (defun init-find-font ()
-       (cond ((init-font-exists-p "Fira Code")
-	      (font-spec :family "Fira Code" :size 18))
-	     (t nil)))
+*** Frame defaults
+#+begin_src emacs-lisp
+     ;; frame defaults
+     (setq default-frame-alist
+	   '((min-heigt . 1)
+	     (height . 45)
+	     (min-width . 1)
+	     (width . 81)
+	     (vertical-scroll-bars . nil)
+	     (internal-border-width . 14)
+	     (left-fringe . 1)
+	     (right-fringe . 1)
+	     (tool-bar-lines . 0)
+	     (menu-bar-lines . 0)))
+#+end_src
 
-     (defun init-variable-pitch-font ()
-       (cond ((init-font-exists-p "Fira Sans")
-	      (font-spec :family "Fira Sans" :size 18))
-	     (t nil)))
+*** Cleanup UI
 
-     (defvar init-font (init-find-font)
-       "The default font to use.
+#+begin_src emacs-lisp
+  ;; Turn of decorations
+  (setq inhibit-startup-screen t
+	inhibit-startup-message t
+	inhibit-startup-echo-area-message t
+	initial-scratch-message nil)
 
-       Inspired by the way Doom Emacs handles `doom-font'.")
+  (setq indicate-buffer-boundaries nil
+	indicate-empty-lines nil)
 
-     (defvar init-variable-pitch-font (init-variable-pitch-font))
-     (defvar init-serif-font nil)
+  ;; Avoid inconsistent GUIs
+  (setq use-dialog-box nil)
+  (when (bound-and-true-p tooltip-mode)
+    (tooltip-mode -1))
+  (when IS-LINUX
+    (setq x-gtk-use-system-tooltips nil))
+#+end_src
 
-     (defun init-load-fonts ()
-       "Loads `init-font'."
-       (dolist (pair `((default . ,init-font)
-		       (fixed-pitch . ,init-font)
-		       (fixed-pitch-serif . ,init-serif-font)
-		       (variable-pitch . ,init-variable-pitch-font)))
-	 (when-let ((face (car pair))
-		     (font (cdr pair)))
-	   (set-face-attribute face nil
-			       :width 'normal :weight 'normal
-			       :slant 'normal :font font))))
-     (add-hook 'init-first-buffer-hook
-	       #'init-load-fonts)
+*** Font
+#+begin_src emacs-lisp
+  ;; Fonts
+  (defun init-font-exists-p (font-name)
+    "Returns `t' if FONT-NAME is a valid font family."
+    (member font-name (font-family-list)))
 
-     (setq hscroll-margin 2
-	   hscroll-step 1
-	   scroll-conservatively 101
-	   scroll-margin 0
-	   scroll-preserve-screen-position t
-	   auto-window-vscroll nil
-	   mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
-	   mouse-wheel-scroll-amount-horizontal 2)
+  (defun init-find-font ()
+    (cond ((init-font-exists-p "Fira Code")
+	   (font-spec :family "Fira Code" :size 18))
+	  (t nil)))
 
-     (blink-cursor-mode -1)
-     (setq x-stretch-cursor nil)
+  (defun init-variable-pitch-font ()
+    (cond ((init-font-exists-p "Fira Sans")
+	   (font-spec :family "Fira Sans" :size 18))
+	  (t nil)))
 
-     (setq indicate-buffer-boundaries nil
-	   indicate-empty-lines nil)
+  (defvar init-font (init-find-font)
+    "The default font to use.
 
+	 Inspired by the way Doom Emacs handles `doom-font'.")
+
+  (defvar init-variable-pitch-font (init-variable-pitch-font))
+  (defvar init-serif-font nil)
+
+  (defun init-load-fonts ()
+    "Loads `init-font'."
+    (dolist (pair `((default . ,init-font)
+		    (fixed-pitch . ,init-font)
+		    (fixed-pitch-serif . ,init-serif-font)
+		    (variable-pitch . ,init-variable-pitch-font)))
+      (when-let ((face (car pair))
+		 (font (cdr pair)))
+	(set-face-attribute face nil
+			    :width 'normal :weight 'normal
+			    :slant 'normal :font font))))
+
+  (add-hook 'init-first-buffer-hook
+	    #'init-load-fonts)
+#+end_src
+
+*** Scrolling
+#+begin_src emacs-lisp
+  (setq hscroll-margin 2
+	hscroll-step 1
+	scroll-conservatively 101
+	scroll-margin 0
+	scroll-preserve-screen-position t
+	auto-window-vscroll nil
+	mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
+	mouse-wheel-scroll-amount-horizontal 2)
+#+end_src
+
+*** Window Splitting
+#+begin_src emacs-lisp
+  (setq window-divider-default-places t
+	window-divider-default-bottom-width 1
+	window-divider-default-right-width 1)
+
+  (setq split-width-threshold 160
+	split-height-threshold nil)
+
+  (add-hook 'init-first-buffer-hook
+	    #'window-divider-mode)
+#+end_src
+
+*** Cursor
+#+begin_src emacs-lisp
+  (setq x-stretch-cursor nil)
+
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (add-hook 'init-first-buffer-hook (lambda ()
+				      (blink-cursor-mode -1)))
+#+end_src
+
+*** Resizing
+#+begin_src emacs-lisp
      (setq frame-resize-pixelwise t)
 
      (setq window-resize-pixelwise nil)
-
-     ;; Doom says this is faster than calling the corresponding functions. See
-     ;; core-ui.el
-     (push '(menu-bar-lines . 0)   default-frame-alist)
-     (push '(tool-bar-lines . 0)   default-frame-alist)
-     (push '(vertical-scroll-bars) default-frame-alist)
-t
-     (setq window-divider-default-places t
-	   window-divider-default-bottom-width 1
-	   window-divider-default-right-width 1)
-
-     (add-hook 'init-first-buffer-hook
-	       #'window-divider-mode)
-
-     ;; Avoid inconsistent GUIs
-     (setq use-dialog-box nil)
-     (when (bound-and-true-p tooltip-mode)
-       (tooltip-mode -1))
-     (when IS-LINUX
-       (setq x-gtk-use-system-tooltips nil))
-
-     (setq split-width-threshold 160
-	   split-height-threshold nil)
-
-     (setq enable-recursive-minibuffers t)
-     (setq echo-keystrokes 0.02)
      (setq resize-mini-windows 'grow-only)
-     (advice-add #'yes-or-no-p :override #'y-or-n-p)
+#+end_src
 
-     (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
-     (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-     (setq display-line-numbers-type 'relative)
-     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-     (provide 'init-ui)
-     ;;; init-ui.el ends here
-   #+end_src
+*** Footer
+#+begin_src emacs-lisp
+  (provide 'init-ui)
+  ;;; init-ui.el ends here
+#+end_src
 
 ** Org
    :PROPERTIES:
@@ -602,6 +644,8 @@ t
 
    #+begin_src emacs-lisp
      ;;; init-project.el -- General Configuration -*- lexical-binding t; -*-
+     (when (init-package-installed-p 'magit)
+       (global-set-key (kbd "C-x g") #'magit-status))
 
      (provide 'init-project)
      ;;; init-project.el ends here
@@ -655,12 +699,10 @@ t
 
      (add-hook 'init-first-lisp-mode-hook #'init-lisp-initialize-module)
 
-     ;; (after! geiser-guile
-     ;;   (setq geiser-guile-load-path
-     ;; 	'("~/.config/guix" "/home/jake/.config/guix/current/share/guile/site/3.0")
-     ;; 	;; (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
-     ;; 	;;   (split-string guile-load-path ":"))
-     ;; 	))
+     (after! geiser-guile
+       (setq geiser-guile-load-path
+	     (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+	       (split-string guile-load-path ":"))))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
