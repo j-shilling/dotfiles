@@ -728,8 +728,14 @@ I need a function to initialize straight when I need it:
 
      (after! geiser-guile
        (setq geiser-guile-load-path
-	     (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
-	       (split-string guile-load-path ":"))))
+	     (let ((system-load-path (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+				       (split-string guile-load-path ":"))))
+	       (if (seq-find (lambda (path)
+			       (string-equal (file-truename path)
+					     (file-truename "~/.config/guix")))
+			     system-load-path)
+		   system-load-path
+		 (cons "~/.config/guix" system-load-path)))))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
