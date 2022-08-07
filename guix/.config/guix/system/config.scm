@@ -1,6 +1,6 @@
 (define-module (system config)
   #:use-module (gnu)
-  #:use-module (manifests core)
+  #:use-module ((manifests core) :prefix core:)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu services docker)
@@ -52,7 +52,7 @@
 
    (packages
     (append
-     core-packages
+     core:packages
      (list sway
            i3-gaps)
      %base-packages))
