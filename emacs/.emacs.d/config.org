@@ -666,36 +666,34 @@ I need a function to initialize straight when I need it:
    #+begin_src emacs-lisp
      ;;; init-org.el -- General Configuration -*- lexical-binding t; -*-
 
-     (after! org
-       (setq org-special-ctrl-a/e t
-             org-special-ctrl-k t
-             org-startup-indented t
-             org-log-done t
-             org-src-fontify-natively t
-             org-src-tab-acts-natively t
-             org-confirm-babel-evaluate nil
-             org-hide-emphasis-markers t
-             org-pretty-entities t
-             org-log-into-drawer t
-             org-clock-report-include-clocking-task t
-             org-clock-out-when-done t
-             org-clock-out-remove-zero-time-clocks t
-             org-clock-persist t
-             org-clock-in-resume t
-             org-clock-persist-query-resume nil
-             org-modules '(org-habit)))
+     (setq org-special-ctrl-a/e t
+	   org-special-ctrl-k t
+	   org-startup-indented t
+	   org-log-done t
+	   org-src-fontify-natively t
+	   org-src-tab-acts-natively t
+	   org-confirm-babel-evaluate nil
+	   org-hide-emphasis-markers t
+	   org-pretty-entities t
+	   org-log-into-drawer t
+	   org-clock-report-include-clocking-task t
+	   org-clock-out-when-done t
+	   org-clock-out-remove-zero-time-clocks t
+	   org-clock-persist t
+	   org-clock-in-resume t
+	   org-clock-persist-query-resume nil
+	   org-modules '(org-habit))
 
-     (after! org
-       (setq org-ellipsis " ↓ "
-             org-pretty-entities t
-             org-fontify-whole-heading-line t
-             org-fontify-done-headline t
-             org-fontify-quote-and-verse-blocks t
-             org-hide-emphasis-markers t))
+     (setq org-ellipsis " ↓ "
+	   org-pretty-entities t
+	   org-fontify-whole-heading-line t
+	   org-fontify-done-headline t
+	   org-fontify-quote-and-verse-blocks t
+	   org-hide-emphasis-markers t)
 
      (when (init-package-installed-p 'org-appear)
        (after! org
-         (add-hook 'org-mode #'org-appear-mode)))
+	 (add-hook 'org-mode #'org-appear-mode)))
 
      (provide 'init-org)
      ;;; init-org.el ends here
@@ -753,7 +751,7 @@ I need a function to initialize straight when I need it:
 
 ** LSP
    :PROPERTIES:
-   :header-args: :tangle modules/init-lisp.el :mkdirp yes
+   :header-args: :tangle modules/init-lsp.el :mkdirp yes
    :END:
 
    #+begin_src emacs-lisp
@@ -790,7 +788,7 @@ I need a function to initialize straight when I need it:
      (after! geiser-guile
        (setq geiser-guile-load-path	
 	     (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
-	       (split-string guile-load-path ":")))
+	       (split-string guile-load-path ":"))))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
