@@ -19,7 +19,8 @@
    emacs-next-pgtk
    emacs-paredit
    emacs-guix
-   emacs-geiser))
+   emacs-geiser
+   emacs-pinentry))
 
 (define manifest
   (packages->manifest packages))

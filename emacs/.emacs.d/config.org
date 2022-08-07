@@ -664,6 +664,22 @@ I need a function to initialize straight when I need it:
   ;;; init-completion.el ends here
 #+end_src
 
+** Gpg and Pinentry
+:PROPERTIES:
+:header-args: :tangle modules/init-gpg.el :mkdirp t
+:END:
+
+#+begin_src emacs-lisp
+  ;;; init-gpg.el -- GPG Configuration -*- lexical-binding t; -*-
+
+  (when (init-package-installed-p 'pinentry)
+    (setq epa-pinentry-mode 'loopback)
+    (add-hook 'after-init-hook #'pinentry-start))
+
+  (provide 'init-gpg)
+  ;;;init-gpg.el ends here
+#+end_src
+
 ** Projects and Version Control
    :PROPERTIES:
    :header-args: :tangle modules/init-project.el
