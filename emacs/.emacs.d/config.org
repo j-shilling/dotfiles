@@ -570,6 +570,7 @@ I need a function to initialize straight when I need it:
 #+end_src
 
 *** Window Splitting
+
 #+begin_src emacs-lisp
   (setq window-divider-default-places t
 	window-divider-default-bottom-width 1
@@ -597,6 +598,32 @@ I need a function to initialize straight when I need it:
 
      (setq window-resize-pixelwise nil)
      (setq resize-mini-windows 'grow-only)
+#+end_src
+
+*** Theme
+
+#+begin_src emacs-lisp
+  (setq modus-themes-bold-constructs t
+	modus-themes-italic-constructs t
+	modus-themes-syntax '(yellow-comments)
+	modus-themes-mixed-fonts t
+	modus-themes-prompts '(intense bold)
+	modus-themes-completions '((matches . (intense))
+				   (selection . (intense accented text-also italic)))
+	modus-themes-lang-checkers '(intense straight-underline)
+	modus-themes-subtle-line-numbers nil
+	modus-themes-paren-match '(bold intense)
+	modus-themes-region '(accented bg-only)
+	modus-themes-variable-pitch-ui t)
+
+  (setq modus-themes-markup nil
+	modus-themes-org-blocks 'gray-background
+	modus-themes-org-agenda nil
+	modus-themes-headings nil)
+
+  (add-hook 'init-first-buffer-hook
+	    (lambda ()
+	      (load-theme 'modus-vivendi t)))
 #+end_src
 
 *** Footer
