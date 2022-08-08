@@ -2,7 +2,6 @@
 
 export XDG_STATE_HOME="${HOME}/.local/var/lib"
 export PASSWORD_STORE_DIR="${XDG_STATE_HOME}/password-store"
-export GUIX_PROFILE="${HOME}/.guix-profile"
 export EDITOR="emacsclient -a '' -c"
 export BROWSER="nyxt"
 
@@ -15,10 +14,18 @@ if [ -d "${HOME}/.local/share/flatpak/exports/share" ] ; then
 fi
 
 # Maybe init GUIX
+export GUIX_PROFILE="${HOME}/.guix-profile"
+if [ -d $GUIX_PROFILE ] ; then
+    source "$GUIX_PROFILE/etc/profile"
+fi
+
+export GUIX_PROFILE="${HOME}/.config/guix/current"
 if [ -d $GUIX_PROFILE ] ; then
     source "$GUIX_PROFILE/etc/profile"
     export GUILE_LOAD_PATH="$HOME/.config/guix:$GUILE_LOAD_PATH"
 fi
+
+export GUILE_LOAD_PATH="$HOME/.config/guix:$GUILE_LOAD_PATH"
 
 # Check for WSL
 if type uname &> /dev/null && [[ "$(uname -r)" == *microsoft* ]] ; then
