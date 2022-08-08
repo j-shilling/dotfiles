@@ -791,6 +791,18 @@ I need a function to initialize straight when I need it:
                     (add-hook 'completion-at-point-functions
                               #'cape-tex nil t))))))
 
+  (when (init-package-installed-p 'yasnippet)
+    (add-hook 'init-first-input-hook #'yas-global-mode)
+    (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
+
+    (add-hook 'yas-after-exit-snippet-hook
+              (lambda ()
+                (when (eq major-mode 'clojure-mode)
+                  (when (and (eq ?\( (char-before yas-snippet-beg))
+                             (eq ?\) (char-after yas-snippet-end)))
+                    (save-excursion
+                      (goto-char yas-snippet-beg)
+                      (paredit-raise-sexp)))))))
 
   (provide 'init-completion)
   ;;; init-completion.el ends here
