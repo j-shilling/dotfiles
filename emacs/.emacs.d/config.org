@@ -731,12 +731,53 @@ I need a function to initialize straight when I need it:
   ;;; init-completion.el -- completion -*- lexical-binding t; -*-
 
   (add-hook 'init-first-input-hook #'fido-mode)
-  (with-eval-after-load 'icomplete
+  (after! 'icomplete
     (when (fboundp 'fido-vertical-mode)
       (add-hook 'fido-mode-hook #'fido-vertical-mode))
     (customize-set-value 'read-file-name-completion-ignore-case t)
     (customize-set-value 'read-buffer-completion-ignore-case t)
     (customize-set-value 'completion-ignore-case t))
+
+  (when (init-package-installed-p 'corfu)
+    (add-hook 'init-first-buffer-hook #'global-corfu-mode)
+    (customize-set-value corfu-cycle t)
+    (customize-set-value corfu-auto t)
+    (customize-set-value corfu-separator ?\s)
+    (customize-set-value corfu-quit-at-boundary t)
+    (customize-set-value corfu-quit-no-match t)
+    (customize-set-value corfu-preview-current t)
+    (customize-set-value corfu-preselect-first nil)
+    (customize-set-value corfu-on-exact-match 'insert)
+    (customize-set-value corfu-echo-documentation t)
+    (customize-set-value corfu-scroll-margin 5)
+
+    (setq completion-cycle-threshold 3
+          tab-always-indent 'complete)
+
+    (when (init-package-installed-p 'cape)
+      (after! corfu
+        (setq completion-at-point-functions
+              (list #'cape-dabbrev
+                    #'cape-abbrev
+                    #'cape-ispell))
+        (add-hook 'prog-mode-hook
+                  (lambda ()
+                    (interactive)
+                    (add-hook 'completion-at-point-functions
+                              #'cape-keyword nil t)))
+
+        (add-hook 'emacs-lisp-mode
+                  (lambda ()
+                    (interactive)
+                    (add-hook 'completion-at-point-functions
+                              #'cape-symbol nil t)))
+
+        (add-hook 'latex-mode-hook
+                  (lambda ()
+                    (interactive)
+                    (add-hook 'completion-at-point-functions
+                              #'cape-tex nil t)))))))
+
 
   (provide 'init-completion)
   ;;; init-completion.el ends here

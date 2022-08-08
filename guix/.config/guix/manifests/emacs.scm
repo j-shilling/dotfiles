@@ -20,7 +20,9 @@
    emacs-paredit
    emacs-guix
    emacs-geiser
-   emacs-pinentry))
+   emacs-pinentry
+   emacs-corfu
+   emacs-cape))
 
 (define manifest
   (packages->manifest packages))
