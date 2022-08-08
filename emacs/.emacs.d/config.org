@@ -728,7 +728,11 @@ I need a function to initialize straight when I need it:
   ;;; init-gpg.el -- GPG Configuration -*- lexical-binding t; -*-
 
   (when (init-package-installed-p 'pinentry)
-    (setq epa-pinentry-mode 'loopback)
+    (setq epa-pinentry-mode 'loopback
+          epa-file-select-keys nil
+          epa-file-encrypt-to "0FCC8E6A96FF109F"
+          epa-file-cache-passphrase-for-symmetric-encryption t
+          epa-file-inhibit-auto-save t)
     (add-hook 'after-init-hook #'pinentry-start))
 
   (provide 'init-gpg)
@@ -744,6 +748,8 @@ I need a function to initialize straight when I need it:
      ;;; init-project.el -- General Configuration -*- lexical-binding t; -*-
      (when (init-package-installed-p 'magit)
        (global-set-key (kbd "C-x g") #'magit-status))
+
+     (setq project-list-file (init-state-path "projects"))
 
      (provide 'init-project)
      ;;; init-project.el ends here
