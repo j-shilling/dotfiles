@@ -13,8 +13,8 @@
 
   (setq gc-cons-threshold most-positive-fixnum)
   (add-hook 'after-init-hook
-	    (lambda ()
-	      (setq gc-cons-threshold (* 1025 10))))
+            (lambda ()
+              (setq gc-cons-threshold (* 1025 10))))
 
   (setq package-enable-at-startup nil)
 
@@ -28,7 +28,7 @@
 
   (when (featurep 'native-compile)
     (setq native-comp-async-report-warnings-errors nil
-	  native-comp-deferred-compilation t))
+          native-comp-deferred-compilation t))
 
   ;;; early-init.el ends here
 #+end_src
@@ -47,9 +47,9 @@
 
 #+begin_src emacs-lisp
   (add-hook 'emacs-startup-hook
-	    (lambda ()
-	      (message "Emacs loaded in %s."
-		       (emacs-init-time))))
+            (lambda ()
+              (message "Emacs loaded in %s."
+                       (emacs-init-time))))
 #+end_src
 
 ** System Information
@@ -69,9 +69,9 @@ Copied from crafted emacs
   (defun init-using-guix-emacs-p ()
     (unless IS-WINDOWS
       (string-prefix-p "/gnu/store"
-		       (file-truename (or (executable-find
-					   (car command-line-args))
-					  (car command-line-args))))))
+                       (file-truename (or (executable-find
+                                           (car command-line-args))
+                                          (car command-line-args))))))
   (defconst IS-GUIX (init-using-guix-emacs-p))
 #+end_src
 
@@ -93,23 +93,23 @@ Copied from crafted emacs
   This is taken from Doom Emacs."
     (declare (indent 1))
     (let ((append (if (eq (car forms) :after) (pop forms)))
-	  (fn (intern (format "init--transient-%d-h"
-			      (put 'add-transient-hook! 'counter
-				   (1+ (or (get 'add-transient-hook! 'counter)
-					   0)))))))
+          (fn (intern (format "init--transient-%d-h"
+                              (put 'add-transient-hook! 'counter
+                                   (1+ (or (get 'add-transient-hook! 'counter)
+                                           0)))))))
       `(let ((sym ,hook-or-function))
-	 (defun ,fn (&rest _)
-	   ,(format "Transient hook for %S" (init-unquote hook-or-function))
-	   ,@forms
-	   (let ((sym ,hook-or-function))
-	     (cond ((functionp sym) (advice-remove sym #',fn))
-		   ((symbolp sym)   (remove-hook sym #',fn))))
-	   (unintern ',fn nil))
-	 (cond ((functionp sym)
-		(advice-add ,hook-or-function ,(if append :after :before) #',fn))
-	       ((symbolp sym)
-		(put ',fn 'permanent-local-hook t)
-		(add-hook sym #',fn ,append))))))
+         (defun ,fn (&rest _)
+           ,(format "Transient hook for %S" (init-unquote hook-or-function))
+           ,@forms
+           (let ((sym ,hook-or-function))
+             (cond ((functionp sym) (advice-remove sym #',fn))
+                   ((symbolp sym)   (remove-hook sym #',fn))))
+           (unintern ',fn nil))
+         (cond ((functionp sym)
+                (advice-add ,hook-or-function ,(if append :after :before) #',fn))
+               ((symbolp sym)
+                (put ',fn 'permanent-local-hook t)
+                (add-hook sym #',fn ,append))))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -124,20 +124,20 @@ Copied from crafted emacs
   TRIGGER-HOOKS is a list of quoted hooks."
     (dolist (hook trigger-hooks)
       (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
-	(fset
-	 fn (lambda (&rest _)
-	      (when (and after-init-time
-			 (or (daemonp)
-			     (and (boundp hook)
-				  (symbol-value hook))))
-		(run-hooks hook-var)
-		(set hook-var nil))))
-	(cond ((daemonp)
-	       (add-hook 'after-init-hook fn 'append))
-	      ((eq hook 'find-file-hook)
-	       (advice-add 'after-find-file :before fn '((depth . -101))))
-	      ((add-hook hook fn -101)))
-	fn)))
+        (fset
+         fn (lambda (&rest _)
+              (when (and after-init-time
+                         (or (daemonp)
+                             (and (boundp hook)
+                                  (symbol-value hook))))
+                (run-hooks hook-var)
+                (set hook-var nil))))
+        (cond ((daemonp)
+               (add-hook 'after-init-hook fn 'append))
+              ((eq hook 'find-file-hook)
+               (advice-add 'after-find-file :before fn '((depth . -101))))
+              ((add-hook hook fn -101)))
+        fn)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -173,20 +173,20 @@ Finally, we can schedule each of these to go off at the proper time.
   wrapper around `eval-after-load'."
     (declare (indent defun) (debug t))
     (if (symbolp package)
-	(list (if (or (not (bound-and-true-p byte-compile-current-file))
-		      (require package nil 'noerror))
-		  #'progn
-		#'with-no-warnings)
-	      `(eval-after-load ',package ',(macroexp-progn body)))
+        (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                      (require package nil 'noerror))
+                  #'progn
+                #'with-no-warnings)
+              `(eval-after-load ',package ',(macroexp-progn body)))
       (let ((p (car package)))
-	(cond ((memq p '(:or :any))
-	       (macroexp-progn
-		(cl-loop for next in (cdr package)
-			 collect `(after! ,next ,@body))))
-	      ((memq p '(:and :all))
-	       (dolist (next (reverse (cdr package)) (car body))
-		 (setq body `((after! ,next ,@body)))))
-	      (`(after! (:and ,@package) ,@body))))))
+        (cond ((memq p '(:or :any))
+               (macroexp-progn
+                (cl-loop for next in (cdr package)
+                         collect `(after! ,next ,@body))))
+              ((memq p '(:and :all))
+               (dolist (next (reverse (cdr package)) (car body))
+                 (setq body `((after! ,next ,@body)))))
+              (`(after! (:and ,@package) ,@body))))))
 #+end_src
 ** XDG Directories
 
@@ -261,23 +261,23 @@ I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
   (defun init-bootstrap-straight ()
     (setq straight-base-dir (init-state-path "./")
-	  straight-use-package-by-default t)
+          straight-use-package-by-default t)
     (let ((bootstrap-file
-	   (init-state-path "straight" "repos" "straight.el" "bootstrap.el")))
+           (init-state-path "straight" "repos" "straight.el" "bootstrap.el")))
       (unless (file-exists-p bootstrap-file)
-	(with-current-buffer
-	    (url-retrieve-synchronously
-	     "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-	     'silent 'inhibit-cookies)
-	  (goto-char (point-max))
-	  (eval-print-last-sexp)))
+        (with-current-buffer
+            (url-retrieve-synchronously
+             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+             'silent 'inhibit-cookies)
+          (goto-char (point-max))
+          (eval-print-last-sexp)))
       (load bootstrap-file nil 'nomessage))
 
     ;; install use-package
     (straight-use-package 'use-package)
 
     (setq use-package-always-ensure nil
-	  use-package-always-defer t)
+          use-package-always-defer t)
 
     (provide 'init-straight))
 #+end_src
@@ -285,25 +285,25 @@ I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
   (defun init-package-installed-p (package)
     (if IS-GUIX
-	(progn
-	  (let ((autoload-name (format "%s-autoloads" package)))
-	    (featurep (intern autoload-name))))
+        (progn
+          (let ((autoload-name (format "%s-autoloads" package)))
+            (featurep (intern autoload-name))))
       (progn
-	(unless (featurep 'init-straight)
-	  (error "Not implemented")))))
+        (unless (featurep 'init-straight)
+          (error "Not implemented")))))
 
   (unless (featurep 'testing)
     (dolist (hook '(init-first-file-hook
-		    init-first-buffer-hook
-		    init-first-input-hook
-		    after-init-hook
-		    emacs-startup-hook
-		    window-setup-hook))
+                    init-first-buffer-hook
+                    init-first-input-hook
+                    after-init-hook
+                    emacs-startup-hook
+                    window-setup-hook))
       (add-hook hook
-		(lambda ()
-		  (init-log "%s: (init-package-installed-p 'paredit) %s"
-			    hook
-			    (init-package-installed-p 'paredit)))))
+                (lambda ()
+                  (init-log "%s: (init-package-installed-p 'paredit) %s"
+                            hook
+                            (init-package-installed-p 'paredit)))))
     (provide 'testing))
 #+end_src
 
@@ -311,7 +311,7 @@ I need a function to initialize straight when I need it:
   (defun init-ensure-package (package)
     (unless IS-GUIX
       (unless (featurep 'init-straight)
-	(init-bootstrap-straight))
+        (init-bootstrap-straight))
       (straight-use-package package)))
 #+end_src
  
@@ -322,7 +322,7 @@ I need a function to initialize straight when I need it:
 
   (when NATIVECOMP
     (setq native-comp-deferred-compilation nil
-	  native-comp-eln-load-path `(,(init-cache-path "eln/"))))
+          native-comp-eln-load-path `(,(init-cache-path "eln/"))))
 #+end_src
 
 ** Logging
@@ -331,17 +331,17 @@ I need a function to initialize straight when I need it:
      (defmacro init-log (output &rest args)
        "Copy of `doom-log'."
        `(when (or init-file-debug noninteractive)
-	  (let ((inhibit-message t))
-	    (message
-	     (format
-	      "* [%s] %s"
-	      ,(let ((time `(format "%.06f" (float-time (time-subtract (current-time) before-init-time)))))
-		 (cond (noninteractive time)
-		       ((bound-and-true-p init--current-module)
-			init--current-module)
-		       (time)))
-	      ,output)
-	     ,@args))))
+          (let ((inhibit-message t))
+            (message
+             (format
+              "* [%s] %s"
+              ,(let ((time `(format "%.06f" (float-time (time-subtract (current-time) before-init-time)))))
+                 (cond (noninteractive time)
+                       ((bound-and-true-p init--current-module)
+                        init--current-module)
+                       (time)))
+              ,output)
+             ,@args))))
 
    #+end_src
 
@@ -356,8 +356,8 @@ I need a function to initialize straight when I need it:
   (when (file-directory-p MODULES-DIR)
     (let ((modules (directory-files MODULES-DIR t ".el$")))
       (dolist (module modules)
-	(let ((init--current-module module))
-	  (load-file module)))))
+        (let ((init--current-module module))
+          (load-file module)))))
 #+end_src
 
 ** Finalize
@@ -374,7 +374,7 @@ I need a function to initialize straight when I need it:
    :END:
 *** Header
 #+begin_src emacs-lisp
-     ;;; init-defaults.el -- General Configuration -*- lexical-binding t; -*-
+     ;;; init-defaults.el -- General Configuration -*- lexical-binding: t; -*-
 #+end_src
 *** Encoding
 #+begin_src emacs-lisp
@@ -390,6 +390,18 @@ I need a function to initialize straight when I need it:
                            'utf-8-dos
                          'utf-8-unix))))
      (set-language-environment "English")
+#+end_src
+*** Tabs
+#+begin_src emacs-lisp
+  (setq-default indent-tabs-mode nil)
+  (setq-default tab-width 4)
+#+end_src
+*** Editing
+#+begin_src emacs-lisp
+  (add-hook 'init-first-input-hook #'delete-selection-mode)
+  (add-hook 'init-first-file-hook #'global-auto-revert-mode)
+  (after! whitespace
+    (customize-set-value 'whitespace-action '(cleanup auto-cleanup)))
 #+end_src
 *** File recovery
 #+begin_src emacs-lisp
@@ -500,23 +512,23 @@ I need a function to initialize straight when I need it:
 
 *** Header
 #+begin_src emacs-lisp
-;;; init-ui.el -- General Configuration -*- lexical-binding t; -*-
+;;; init-ui.el -- General Configuration -*- lexical-binding: t; -*-
 #+end_src
 
 *** Frame defaults
 #+begin_src emacs-lisp
      ;; frame defaults
      (setq default-frame-alist
-	   '((min-heigt . 1)
-	     (height . 45)
-	     (min-width . 1)
-	     (width . 81)
-	     (vertical-scroll-bars . nil)
-	     (internal-border-width . 14)
-	     (left-fringe . 1)
-	     (right-fringe . 1)
-	     (tool-bar-lines . 0)
-	     (menu-bar-lines . 0)))
+           '((min-heigt . 1)
+             (height . 45)
+             (min-width . 1)
+             (width . 81)
+             (vertical-scroll-bars . nil)
+             (internal-border-width . 14)
+             (left-fringe . 1)
+             (right-fringe . 1)
+             (tool-bar-lines . 0)
+             (menu-bar-lines . 0)))
 #+end_src
 
 *** Cleanup UI
@@ -524,12 +536,12 @@ I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
   ;; Turn of decorations
   (setq inhibit-startup-screen t
-	inhibit-startup-message t
-	inhibit-startup-echo-area-message t
-	initial-scratch-message nil)
+        inhibit-startup-message t
+        inhibit-startup-echo-area-message t
+        initial-scratch-message nil)
 
   (setq indicate-buffer-boundaries nil
-	indicate-empty-lines nil)
+        indicate-empty-lines nil)
 
   ;; Avoid inconsistent GUIs
   (setq use-dialog-box nil)
@@ -548,18 +560,18 @@ I need a function to initialize straight when I need it:
 
   (defun init-find-font ()
     (cond ((init-font-exists-p "Fira Code")
-	   (font-spec :family "Fira Code" :size 18))
-	  (t nil)))
+           (font-spec :family "Fira Code" :size 18))
+          (t nil)))
 
   (defun init-variable-pitch-font ()
     (cond ((init-font-exists-p "Fira Sans")
-	   (font-spec :family "Fira Sans" :size 18))
-	  (t nil)))
+           (font-spec :family "Fira Sans" :size 18))
+          (t nil)))
 
   (defvar init-font (init-find-font)
     "The default font to use.
 
-	 Inspired by the way Doom Emacs handles `doom-font'.")
+         Inspired by the way Doom Emacs handles `doom-font'.")
 
   (defvar init-variable-pitch-font (init-variable-pitch-font))
   (defvar init-serif-font nil)
@@ -567,43 +579,43 @@ I need a function to initialize straight when I need it:
   (defun init-load-fonts ()
     "Loads `init-font'."
     (dolist (pair `((default . ,init-font)
-		    (fixed-pitch . ,init-font)
-		    (fixed-pitch-serif . ,init-serif-font)
-		    (variable-pitch . ,init-variable-pitch-font)))
+                    (fixed-pitch . ,init-font)
+                    (fixed-pitch-serif . ,init-serif-font)
+                    (variable-pitch . ,init-variable-pitch-font)))
       (when-let ((face (car pair))
-		 (font (cdr pair)))
-	(set-face-attribute face nil
-			    :width 'normal :weight 'normal
-			    :slant 'normal :font font))))
+                 (font (cdr pair)))
+        (set-face-attribute face nil
+                            :width 'normal :weight 'normal
+                            :slant 'normal :font font))))
 
   (add-hook 'init-first-buffer-hook
-	    #'init-load-fonts)
+            #'init-load-fonts)
 #+end_src
 
 *** Scrolling
 #+begin_src emacs-lisp
   (setq hscroll-margin 2
-	hscroll-step 1
-	scroll-conservatively 101
-	scroll-margin 0
-	scroll-preserve-screen-position t
-	auto-window-vscroll nil
-	mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
-	mouse-wheel-scroll-amount-horizontal 2)
+        hscroll-step 1
+        scroll-conservatively 101
+        scroll-margin 0
+        scroll-preserve-screen-position t
+        auto-window-vscroll nil
+        mouse-wheel-scroll-amount '(2 ((shift) . hscroll))
+        mouse-wheel-scroll-amount-horizontal 2)
 #+end_src
 
 *** Window Splitting
 
 #+begin_src emacs-lisp
   (setq window-divider-default-places t
-	window-divider-default-bottom-width 1
-	window-divider-default-right-width 1)
+        window-divider-default-bottom-width 1
+        window-divider-default-right-width 1)
 
   (setq split-width-threshold 160
-	split-height-threshold nil)
+        split-height-threshold nil)
 
   (add-hook 'init-first-buffer-hook
-	    #'window-divider-mode)
+            #'window-divider-mode)
 #+end_src
 
 *** Cursor
@@ -612,7 +624,7 @@ I need a function to initialize straight when I need it:
 
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   (add-hook 'init-first-buffer-hook (lambda ()
-				      (blink-cursor-mode -1)))
+                                      (blink-cursor-mode -1)))
 #+end_src
 
 *** Resizing
@@ -628,11 +640,11 @@ I need a function to initialize straight when I need it:
      (push '(vertical-scroll-bars) default-frame-alist)
      t
      (setq window-divider-default-places t
-	   window-divider-default-bottom-width 1
-	   window-divider-default-right-width 1)
+           window-divider-default-bottom-width 1
+           window-divider-default-right-width 1)
 
      (add-hook 'init-first-buffer-hook
-	       #'window-divider-mode)
+               #'window-divider-mode)
 
      ;; Avoid inconsistent GUIs
      (setq use-dialog-box nil)
@@ -642,7 +654,7 @@ I need a function to initialize straight when I need it:
        (setq x-gtk-use-system-tooltips nil))
 
      (setq split-width-threshold 160
-	   split-height-threshold nil)
+           split-height-threshold nil)
 
      (setq enable-recursive-minibuffers t)
      (setq echo-keystrokes 0.02)
@@ -653,26 +665,26 @@ I need a function to initialize straight when I need it:
 
 #+begin_src emacs-lisp
   (setq modus-themes-bold-constructs t
-	modus-themes-italic-constructs t
-	modus-themes-syntax '(yellow-comments)
-	modus-themes-mixed-fonts t
-	modus-themes-prompts '(intense bold)
-	modus-themes-completions '((matches . (intense))
-				   (selection . (intense accented text-also italic)))
-	modus-themes-lang-checkers '(intense straight-underline)
-	modus-themes-subtle-line-numbers nil
-	modus-themes-paren-match '(bold intense)
-	modus-themes-region '(accented bg-only)
-	modus-themes-variable-pitch-ui t)
+        modus-themes-italic-constructs t
+        modus-themes-syntax '(yellow-comments)
+        modus-themes-mixed-fonts t
+        modus-themes-prompts '(intense bold)
+        modus-themes-completions '((matches . (intense))
+                                   (selection . (intense accented text-also italic)))
+        modus-themes-lang-checkers '(intense straight-underline)
+        modus-themes-subtle-line-numbers nil
+        modus-themes-paren-match '(bold intense)
+        modus-themes-region '(accented bg-only)
+        modus-themes-variable-pitch-ui t)
 
   (setq modus-themes-markup nil
-	modus-themes-org-blocks 'gray-background
-	modus-themes-org-agenda nil
-	modus-themes-headings nil)
+        modus-themes-org-blocks 'gray-background
+        modus-themes-org-agenda nil
+        modus-themes-headings nil)
 
   (add-hook 'init-first-buffer-hook
-	    (lambda ()
-	      (load-theme 'modus-vivendi t)))
+            (lambda ()
+              (load-theme 'modus-vivendi t)))
 #+end_src
 
 *** Footer
@@ -687,36 +699,36 @@ I need a function to initialize straight when I need it:
    :END:
 
    #+begin_src emacs-lisp
-     ;;; init-org.el -- General Configuration -*- lexical-binding t; -*-
+     ;;; init-org.el -- General Configuration -*- lexical-binding: t; -*-
 
      (setq org-special-ctrl-a/e t
-	   org-special-ctrl-k t
-	   org-startup-indented t
-	   org-log-done t
-	   org-src-fontify-natively t
-	   org-src-tab-acts-natively t
-	   org-confirm-babel-evaluate nil
-	   org-hide-emphasis-markers t
-	   org-pretty-entities t
-	   org-log-into-drawer t
-	   org-clock-report-include-clocking-task t
-	   org-clock-out-when-done t
-	   org-clock-out-remove-zero-time-clocks t
-	   org-clock-persist t
-	   org-clock-in-resume t
-	   org-clock-persist-query-resume nil
-	   org-modules '(org-habit))
+           org-special-ctrl-k t
+           org-startup-indented t
+           org-log-done t
+           org-src-fontify-natively t
+           org-src-tab-acts-natively t
+           org-confirm-babel-evaluate nil
+           org-hide-emphasis-markers t
+           org-pretty-entities t
+           org-log-into-drawer t
+           org-clock-report-include-clocking-task t
+           org-clock-out-when-done t
+           org-clock-out-remove-zero-time-clocks t
+           org-clock-persist t
+           org-clock-in-resume t
+           org-clock-persist-query-resume nil
+           org-modules '(org-habit))
 
      (setq org-ellipsis " ↓ "
-	   org-pretty-entities t
-	   org-fontify-whole-heading-line t
-	   org-fontify-done-headline t
-	   org-fontify-quote-and-verse-blocks t
-	   org-hide-emphasis-markers t)
+           org-pretty-entities t
+           org-fontify-whole-heading-line t
+           org-fontify-done-headline t
+           org-fontify-quote-and-verse-blocks t
+           org-hide-emphasis-markers t)
 
      (when (init-package-installed-p 'org-appear)
        (after! org
-	 (add-hook 'org-mode #'org-appear-mode)))
+         (add-hook 'org-mode #'org-appear-mode)))
 
      (provide 'init-org)
      ;;; init-org.el ends here
@@ -728,7 +740,7 @@ I need a function to initialize straight when I need it:
 :END:
 
 #+begin_src emacs-lisp
-  ;;; init-completion.el -- completion -*- lexical-binding t; -*-
+  ;;; init-completion.el -- completion -*- lexical-binding: t; -*-
 
   (add-hook 'init-first-input-hook #'fido-mode)
   (after! 'icomplete
@@ -740,16 +752,17 @@ I need a function to initialize straight when I need it:
 
   (when (init-package-installed-p 'corfu)
     (add-hook 'init-first-buffer-hook #'global-corfu-mode)
-    (customize-set-value corfu-cycle t)
-    (customize-set-value corfu-auto t)
-    (customize-set-value corfu-separator ?\s)
-    (customize-set-value corfu-quit-at-boundary t)
-    (customize-set-value corfu-quit-no-match t)
-    (customize-set-value corfu-preview-current t)
-    (customize-set-value corfu-preselect-first nil)
-    (customize-set-value corfu-on-exact-match 'insert)
-    (customize-set-value corfu-echo-documentation t)
-    (customize-set-value corfu-scroll-margin 5)
+    (after! corfu
+      (customize-set-value 'corfu-cycle t)
+      (customize-set-value 'corfu-auto t)
+      (customize-set-value 'corfu-separator ?\s)
+      (customize-set-value 'corfu-quit-at-boundary t)
+      (customize-set-value 'corfu-quit-no-match t)
+      (customize-set-value 'corfu-preview-current t)
+      (customize-set-value 'corfu-preselect-first nil)
+      (customize-set-value 'corfu-on-exact-match 'insert)
+      (customize-set-value 'corfu-echo-documentation t)
+      (customize-set-value 'corfu-scroll-margin 5))
 
     (setq completion-cycle-threshold 3
           tab-always-indent 'complete)
@@ -776,7 +789,7 @@ I need a function to initialize straight when I need it:
                   (lambda ()
                     (interactive)
                     (add-hook 'completion-at-point-functions
-                              #'cape-tex nil t)))))))
+                              #'cape-tex nil t))))))
 
 
   (provide 'init-completion)
@@ -789,7 +802,7 @@ I need a function to initialize straight when I need it:
 :END:
 
 #+begin_src emacs-lisp
-  ;;; init-gpg.el -- GPG Configuration -*- lexical-binding t; -*-
+  ;;; init-gpg.el -- GPG Configuration -*- lexical-binding: t; -*-
 
   (when (init-package-installed-p 'pinentry)
     (setq epa-pinentry-mode 'loopback
@@ -809,7 +822,7 @@ I need a function to initialize straight when I need it:
    :END:
 
    #+begin_src emacs-lisp
-     ;;; init-project.el -- General Configuration -*- lexical-binding t; -*-
+     ;;; init-project.el -- General Configuration -*- lexical-binding: t; -*-
      (when (init-package-installed-p 'magit)
        (global-set-key (kbd "C-x g") #'magit-status))
 
@@ -825,7 +838,7 @@ I need a function to initialize straight when I need it:
    :END:
 
    #+begin_src emacs-lisp
-     ;;; init-prog.el -- General Programming Configuration -*- lexical-binding t; -*-
+     ;;; init-prog.el -- General Programming Configuration -*- lexical-binding: t; -*-
 
      (add-hook 'prog-mode-hook #'flymake-mode-on)
 
@@ -844,28 +857,32 @@ I need a function to initialize straight when I need it:
 :END:
 
    #+begin_src emacs-lisp
-     ;;; init-lisp.el -- General Configuration -*- lexical-binding t; -*-
+     ;;; init-lisp.el -- General Configuration -*- lexical-binding: t; -*-
 
      (defvar init-lisp-hooks
        `(emacs-lisp-mode-hook
-	 eval-expression-minibuffer-setup-hook
-	 ielm-mode-hook
-	 lisp-mode-hook
-	 scheme-mode-hook
-	 ,@(when (init-package-installed-p 'clojure-mode)
-	     '(clojure-mode-hook
-	       clojurec-mode-hook
-	       clojurescrope-mode-hook))))
+         eval-expression-minibuffer-setup-hook
+         ielm-mode-hook
+         lisp-mode-hook
+         scheme-mode-hook
+         ,@(when (init-package-installed-p 'geiser)
+             '(geiser-repl-mode-hook))
+         ,@(when (init-package-installed-p 'clojure-mode)
+             '(clojure-mode-hook
+               clojurec-mode-hook
+               clojurescrope-mode-hook))
+         ,@(when (init-package-installed-p 'cider)
+             '(cider-repl-mode-hook))))
 
      (dolist (hook init-lisp-hooks)
        (when (init-package-installed-p 'paredit)
-	 (add-hook hook #'enable-paredit-mode))
+         (add-hook hook #'enable-paredit-mode))
        (add-hook hook #'show-paren-mode))
 
      (after! geiser-guile
-       (setq geiser-guile-load-path	
-	     (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
-	       (split-string guile-load-path ":"))))
+       (setq geiser-guile-load-path
+             (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+               (split-string guile-load-path ":"))))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
