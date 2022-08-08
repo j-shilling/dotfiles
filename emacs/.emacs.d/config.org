@@ -372,103 +372,126 @@ I need a function to initialize straight when I need it:
    :PROPERTIES:
    :header-args: :tangle modules/init-defaults.el :mkdirp t
    :END:
-
-   #+begin_src emacs-lisp
+*** Header
+#+begin_src emacs-lisp
      ;;; init-defaults.el -- General Configuration -*- lexical-binding t; -*-
-
+#+end_src
+*** Encoding
+#+begin_src emacs-lisp
      ;; Encoding
      (require 'seq)
      (seq-doseq (fn '(set-default-coding-systems
-		      prefer-coding-system
-		      set-terminal-coding-system
-		      set-keyboard-coding-system
-		      set-buffer-file-coding-system
-		      set-selection-coding-system))
+                      prefer-coding-system
+                      set-terminal-coding-system
+                      set-keyboard-coding-system
+                      set-buffer-file-coding-system
+                      set-selection-coding-system))
        (apply fn (list (if IS-WINDOWS
-			   'utf-8-dos
-			 'utf-8-unix))))
+                           'utf-8-dos
+                         'utf-8-unix))))
      (set-language-environment "English")
+#+end_src
+*** File recovery
+#+begin_src emacs-lisp
+  ;; Recovery
+  (setq auto-save-list-file-prefix
+        (file-name-as-directory
+         (init-cache-path "autosave")))
 
-     ;; Recovery
-     (setq auto-save-list-file-prefix
-	   (file-name-as-directory
-	    (init-cache-path "autosave")))
+  (setq auto-save-default t
+        auto-save-timeout 20
+        auto-save-interval 200)
+  ;; backups
+  (setq backup-directory-alist
+        `(("." . ,(init-cache-path "backups"))))
 
-     (setq auto-save-default t
-	   auto-save-timeout 20
-	   auto-save-interval 200)
+  (setq make-backup-files t
+        vc-make-backup-files nil
+        backup-by-copying t
+        version-control t
+        kept-old-versions 6
+        kept-new-versions 9
+        delete-by-moving-to-trash t)
 
-     ;; backups
-     (setq backup-directory-alist
-	   `(("." . ,(init-cache-path "backups"))))
-
-     (setq make-backup-files t
-	   vc-make-backup-files nil
-	   backup-by-copying t
-	   version-control t
-	   kept-old-versions 6
-	   kept-new-versions 9
-	   delete-by-moving-to-trash t)
-
+#+end_src
+*** Bookmarks + Recent Files
+#+begin_src emacs-lisp
      ;; Bookmarks
      ;; TODO: Bookmark keybindings w/ autoloads
      (after! bookmark
        (setq bookmark-default-file
-	     (init-cache-path "bookmark")))
+             (init-cache-path "bookmark")))
 
      ;; Recentf
        (setq recentf-max-menu-items 50
-	     recentf-save-file (init-cache-path "recentf"))
+             recentf-save-file (init-cache-path "recentf"))
      (add-hook 'init-first-file-hook #'recentf-mode)
+#+end_src
+*** History
+#+begin_src emacs-lisp
+  ;; Save History
+  ;; https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
+  (defun unpropertize-kill-ring ()
+    "Remove properties from `kill-ring'."
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+  (add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
 
-     ;; Save History
-       ;; https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
-       (defun unpropertize-kill-ring ()
-	 "Remove properties from `kill-ring'."
-	 (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
-       (add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
+  (setq kill-ring-max 50
+        history-length 50
+        savehist-file (init-cache-path "history"))
+  (setq savehist-additional-variables
+        '(kill-ring
+          command-history
+          set-variable-value-history
+          query-replace-history
+          read-expression-history
+          minibuffer-history
+          read-char-history
+          face-name-history
+          bookmark-history
+          file-name-history))
+  (put 'minibuffer-history 'history-length 50)
+  (put 'file-name-history 'history-length 50)
+  (put 'set-variable-value-history 'history-length 25)
+  (put 'query-replace-history 'history-length 25)
+  (put 'read-expression-history 'history-length 25)
+  (put 'read-char-history 'history-length 25)
+  (put 'face-name-history 'history-length 25)
+  (put 'bookmark-history 'history-length 25)
+  (setq history-delete-duplicates t)
 
-       (setq kill-ring-max 50
-	     history-length 50
-	     savehist-file (init-cache-path "history"))
-       (setq savehist-additional-variables
-	     '(kill-ring
-	       command-history
-	       set-variable-value-history
-	       query-replace-history
-	       read-expression-history
-	       minibuffer-history
-	       read-char-history
-	       face-name-history
-	       bookmark-history
-	       file-name-history))
-       (put 'minibuffer-history 'history-length 50)
-       (put 'file-name-history 'history-length 50)
-       (put 'set-variable-value-history 'history-length 25)
-       (put 'query-replace-history 'history-length 25)
-       (put 'read-expression-history 'history-length 25)
-       (put 'read-char-history 'history-length 25)
-       (put 'face-name-history 'history-length 25)
-       (put 'bookmark-history 'history-length 25)
-       (setq history-delete-duplicates t)
+  (add-hook 'init-first-input-hook #'savehist-mode)
 
-     (add-hook 'init-first-input-hook #'savehist-mode)
+  ;; Save Place
+  (setq save-place-file (init-cache-path "places")
+        save-place-forget-unreadable-files t)
+  (add-hook 'init-first-input-hook #'save-place-mode)
 
-     ;; Save Place
-       (setq save-place-file (init-cache-path "places")
-	     save-place-forget-unreadable-files t)
-       (add-hook 'init-first-input-hook #'save-place-mode)
+  ;; kill ring
+  (setq kill-do-not-save-duplicates t)
+#+end_src
+*** Prompts
+#+begin_src emacs-lisp
+  (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
 
+  (if (boundp 'use-short-answers)
+      (setq use-short-answers t)
+    (advice-add 'yes-or-no-p :override #'y-or-n-p))
+#+end_src
+*** Files With Long Lines
+#+begin_src emacs-lisp
+  (setq bidi-paragraph-direction 'left-to-right
+        bidi-inhibit-bpa t)
 
-     (setq minibuffer-prompt-properties '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
-
-     (setq display-line-numbers-type 'relative)
-     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-
-     (provide 'init-defaults)
-     ;;; init-defaults.el ends here
-   #+end_src
+  (add-hook 'init-first-buffer-hook
+            (lambda ()
+              (global-so-long-mode 1)))
+#+end_src
+*** Footer
+#+begin_src emacs-lisp
+  (provide 'init-defaults)
+  ;;; init-defaults.el ends here
+#+end_src
    
 ** UI
    :PROPERTIES:
@@ -755,15 +778,22 @@ I need a function to initialize straight when I need it:
      ;;; init-project.el ends here
    #+end_src
 
-** LSP
+** Programming
    :PROPERTIES:
    :header-args: :tangle modules/init-lsp.el :mkdirp yes
    :END:
 
    #+begin_src emacs-lisp
-     ;;; init-lsp.el -- General Configuration -*- lexical-binding t; -*-
+     ;;; init-prog.el -- General Programming Configuration -*- lexical-binding t; -*-
 
-     (provide 'init-lsp)
+     (add-hook 'prog-mode-hook #'flymake-mode-on)
+
+     (setq display-line-numbers-type 'relative)
+     (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
+     (add-hook 'prog-mode-hook #'whitespace-mode)
+
+     (provide 'init-prog)
      ;;; init-lsp.el ends here
    #+end_src
 
