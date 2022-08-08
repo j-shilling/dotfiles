@@ -1,28 +1,24 @@
 (define-module (manifests emacs)
-  #:use-module (gnu packages base)
-  #:use-module (gnu packages bash)
-  #:use-module (gnu packages compression)
-  #:use-module (gnu packages emacs)
-  #:use-module (gnu packages emacs-xyz)
-  #:use-module (gnu packages guile)
+  #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
             manifest))
 
 (define packages
-  (list
-   coreutils
-   bash
-   gzip
-   guile-3.0-latest
-   glibc-locales
-   emacs-next-pgtk
-   emacs-paredit
-   emacs-guix
-   emacs-geiser
-   emacs-pinentry
-   emacs-corfu
-   emacs-cape))
+  (map (compose list specification->package+output)
+       '("coreutils"
+         "bash"
+         "gzip"
+         "guile"
+         "glibc-locales"
+         "guix"
+         "emacs-next-pgtk"
+         "emacs-paredit"
+         "emacs-guix"
+         "emacs-geiser"
+         "emacs-pinentry"
+         "emacs-corfu"
+         "emacs-cape")))
 
 (define manifest
   (packages->manifest packages))
