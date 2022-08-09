@@ -18,7 +18,9 @@
          "emacs-geiser"
          "emacs-pinentry"
          "emacs-corfu"
-         "emacs-cape")))
+         "emacs-cape"
+         "emacs-yasnippet"
+         "emacs-yasnippet-snippets")))
 
 (define manifest
   (packages->manifest packages))

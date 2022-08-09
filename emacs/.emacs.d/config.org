@@ -765,44 +765,45 @@ I need a function to initialize straight when I need it:
       (customize-set-value 'corfu-scroll-margin 5))
 
     (setq completion-cycle-threshold 3
-          tab-always-indent 'complete)
+	  tab-always-indent 'complete)
 
     (when (init-package-installed-p 'cape)
       (after! corfu
-        (setq completion-at-point-functions
-              (list #'cape-dabbrev
-                    #'cape-abbrev
-                    #'cape-ispell))
-        (add-hook 'prog-mode-hook
-                  (lambda ()
-                    (interactive)
-                    (add-hook 'completion-at-point-functions
-                              #'cape-keyword nil t)))
+	(setq completion-at-point-functions
+	      (list #'cape-dabbrev
+		    #'cape-abbrev
+		    #'cape-ispell))
+	(add-hook 'prog-mode-hook
+		  (lambda ()
+		    (interactive)
+		    (add-hook 'completion-at-point-functions
+			      #'cape-keyword nil t)))
 
-        (add-hook 'emacs-lisp-mode
-                  (lambda ()
-                    (interactive)
-                    (add-hook 'completion-at-point-functions
-                              #'cape-symbol nil t)))
+	(add-hook 'emacs-lisp-mode
+		  (lambda ()
+		    (interactive)
+		    (add-hook 'completion-at-point-functions
+			      #'cape-symbol nil t)))
 
-        (add-hook 'latex-mode-hook
-                  (lambda ()
-                    (interactive)
-                    (add-hook 'completion-at-point-functions
-                              #'cape-tex nil t))))))
+	(add-hook 'latex-mode-hook
+		  (lambda ()
+		    (interactive)
+		    (add-hook 'completion-at-point-functions
+			      #'cape-tex nil t))))))
 
   (when (init-package-installed-p 'yasnippet)
     (add-hook 'init-first-input-hook #'yas-global-mode)
-    (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
+    (after! yasnippet
+      (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
 
-    (add-hook 'yas-after-exit-snippet-hook
-              (lambda ()
-                (when (eq major-mode 'clojure-mode)
-                  (when (and (eq ?\( (char-before yas-snippet-beg))
-                             (eq ?\) (char-after yas-snippet-end)))
-                    (save-excursion
-                      (goto-char yas-snippet-beg)
-                      (paredit-raise-sexp)))))))
+      (add-hook 'yas-after-exit-snippet-hook
+		(lambda ()
+		  (when (eq major-mode 'clojure-mode)
+		    (when (and (eq ?\( (char-before yas-snippet-beg))
+			       (eq ?\) (char-after yas-snippet-end)))
+		      (save-excursion
+			(goto-char yas-snippet-beg)
+			(paredit-raise-sexp))))))))
 
   (provide 'init-completion)
   ;;; init-completion.el ends here
@@ -876,30 +877,97 @@ I need a function to initialize straight when I need it:
    #+begin_src emacs-lisp
      ;;; init-lisp.el -- General Configuration -*- lexical-binding: t; -*-
 
-     (defvar init-lisp-hooks
-       `(emacs-lisp-mode-hook
-         eval-expression-minibuffer-setup-hook
-         ielm-mode-hook
-         lisp-mode-hook
-         scheme-mode-hook
-         ,@(when (init-package-installed-p 'geiser)
-             '(geiser-repl-mode-hook))
-         ,@(when (init-package-installed-p 'clojure-mode)
-             '(clojure-mode-hook
-               clojurec-mode-hook
-               clojurescrope-mode-hook))
-         ,@(when (init-package-installed-p 'cider)
-             '(cider-repl-mode-hook))))
+     (declare-function after! "init.el" (package &rest body))
+     (declare-function init-package-installed-p "init.el" (package))
 
-     (dolist (hook init-lisp-hooks)
+     (defconst init-lisp-modes
+       `(emacs-lisp-mode
+         eval-expression-minibuffer-setup
+         ielm-mode
+         lisp-mode
+         scheme-mode
+         ,@(when (init-package-installed-p 'geiser)
+             '(geiser-repl-mode))
+         ,@(when (init-package-installed-p 'clojure-mode)
+             '(clojure-mode
+               clojurec-mode
+               clojurescrope-mode))
+         ,@(when (init-package-installed-p 'cider)
+             '(cider-repl-mode)))
+       "Installed modes which correspond to lisp-like languages.")
+
+     (defun init-list-mode->hook (mode)
+       "Derrive a hook variable name from `MODE'."
+       (declare (pure t) (side-effect-free t))
+       (let ((mode-name (cond
+                         ((symbolp mode) (symbol-name mode))
+                         ((stringp mode) mode)
+                         (t (signal 'wrong-type-argument '(stringp mode))))))
+         (intern (format "%s-hook" mode-name))))
+
+     (defun init-lisp-hooks (&optional lisp-modes)
+       "Return symbols refering to hook vars derrived from mode names.
+
+     If `LISP-MODES' is given, this list will be converted.  Otherwise,
+     `init-lisp-modes' will be used."
+       (declare (pure t) (side-effect-free t))
+       (mapcar #'init-list-mode->hook
+               (or lisp-modes
+                   init-lisp-modes)))
+
+     (require 'seq)
+     (defun init-lisp-guile-load-path ()
+       "Derive list of guile load path directories from GUILE_LOAD_PATH."
+       (declare (side-effect-free t))
+       (let ((guile-dirs (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+                           (split-string guile-load-path ":")))
+             (guix-dir (file-truename "~/.config/guix")))
+         (if (and (file-exists-p guix-dir)
+                  (not (seq-find (lambda (dir)
+                                   (string= guix-dir (file-truename dir)))
+                                 guile-dirs)))
+             (cons guix-dir guile-dirs)
+           guile-dirs)))
+
+     (defun init-lisp-mode-p (&optional mode)
+       "Return non-nil when `MODE' is in `init-lisp-modes'.
+
+     If `MODE' is not specified, the current `major-mode' is checked
+     instead."
+       (declare (pure t) (side-effect-free t))
+       (let ((mode-sym (cond
+                        ((not mode) major-mode)
+                        ((stringp mode) (intern mode))
+                        ((symbolp mode) mode)
+                        (t (signal 'wrong-type-argument '(symbolp mode))))))
+         (memq mode-sym init-lisp-modes)))
+
+     (defun init-lisp-string-or-comment-p (&optional pos)
+       "Return non-nil when `POS' is in a string or comment.
+
+     `POS' defaults to `(point)'."
+       (declare (side-effect-free t))
+       (let ((val (syntax-ppss (or pos (point)))))
+         (or (nth 3 val)
+             (nth 4 val))))
+
+     (dolist (hook (init-lisp-hooks))
        (when (init-package-installed-p 'paredit)
+         (declare-function enable-paredit-mode "paredit" ())
          (add-hook hook #'enable-paredit-mode))
+       (when (init-package-installed-p 'yasnippet)
+         ;; Don't expand snippets inside of a string or a comment
+         (defvar yas-buffer-local-condition)
+         (add-hook hook
+                   (lambda ()
+                     (setq yas-buffer-local-condition
+                           '(not (init-lisp-string-or-comment-p))))))
        (add-hook hook #'show-paren-mode))
 
-     (after! geiser-guile
-       (setq geiser-guile-load-path
-             (when-let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
-               (split-string guile-load-path ":"))))
+     (defvar geiser-guile-load-path)
+
+     (after! 'geiser-guile
+       (setq geiser-guile-load-path (init-lisp-guile-load-path)))
 
      (provide 'init-lisp)
      ;;; init-lisp.el ends here
