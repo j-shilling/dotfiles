@@ -1,15 +1,15 @@
 (define-module (manifests browsers)
-  #:use-module (gnu packages web-browsers)
-  #:use-module (nongnu packages mozilla)
+  #:use-module (gnu packages)
   #:use-module (guix profiles)
-  #:export (browsers-packages
-            browsers-manifest))
+  #:export (packages
+            manifest))
 
-(define browsers-packages
-  (list nyxt
-        firefox))
+(define packages
+  (map (compose list specification->package+output)
+       '("nyxt"
+         "firefox")))
 
-(define browsers-manifest
-  (packages->manifest browsers-packages))
+(define manifest
+  (packages->manifest packages))
 
-browsers-manifest
+manifest

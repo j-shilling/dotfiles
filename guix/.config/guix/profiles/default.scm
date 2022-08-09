@@ -2,7 +2,7 @@
   #:use-module (guix profiles)
   #:use-module ((manifests core) :prefix core:)
   #:use-module (manifests media)
-  #:use-module (manifests browsers)
+  #:use-module ((manifests browsers) :prefix browsers:)
   #:use-module (manifests shell)
   #:use-module (manifests build-tools)
   #:use-module ((manifests emacs) :prefix emacs:)
@@ -18,7 +18,7 @@
           (append core:packages
                   shell-packages
                   media-packages
-                  browsers-packages
+                  browsers:packages
 		  programming:packages
                   sway:packages
                   games:packages)))
