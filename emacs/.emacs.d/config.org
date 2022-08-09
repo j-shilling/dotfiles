@@ -822,7 +822,12 @@ I need a function to initialize straight when I need it:
           epa-file-encrypt-to "0FCC8E6A96FF109F"
           epa-file-cache-passphrase-for-symmetric-encryption t
           epa-file-inhibit-auto-save t)
-    (add-hook 'after-init-hook #'pinentry-start))
+    (add-hook 'after-init-hook #'pinentry-start)
+
+    (setenv "SSH_AUTH_SOCK"
+            (string-trim
+             (shell-command-to-string
+              "gpgconf --list-dirs agent-ssh-socket"))))
 
   (provide 'init-gpg)
   ;;;init-gpg.el ends here
