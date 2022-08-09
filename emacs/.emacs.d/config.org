@@ -765,31 +765,31 @@ I need a function to initialize straight when I need it:
       (customize-set-value 'corfu-scroll-margin 5))
 
     (setq completion-cycle-threshold 3
-	  tab-always-indent 'complete)
+      tab-always-indent 'complete)
 
     (when (init-package-installed-p 'cape)
       (after! corfu
-	(setq completion-at-point-functions
-	      (list #'cape-dabbrev
-		    #'cape-abbrev
-		    #'cape-ispell))
-	(add-hook 'prog-mode-hook
-		  (lambda ()
-		    (interactive)
-		    (add-hook 'completion-at-point-functions
-			      #'cape-keyword nil t)))
+    (setq completion-at-point-functions
+          (list #'cape-dabbrev
+            #'cape-abbrev
+            #'cape-ispell))
+    (add-hook 'prog-mode-hook
+          (lambda ()
+            (interactive)
+            (add-hook 'completion-at-point-functions
+                  #'cape-keyword nil t)))
 
-	(add-hook 'emacs-lisp-mode
-		  (lambda ()
-		    (interactive)
-		    (add-hook 'completion-at-point-functions
-			      #'cape-symbol nil t)))
+    (add-hook 'emacs-lisp-mode
+          (lambda ()
+            (interactive)
+            (add-hook 'completion-at-point-functions
+                  #'cape-symbol nil t)))
 
-	(add-hook 'latex-mode-hook
-		  (lambda ()
-		    (interactive)
-		    (add-hook 'completion-at-point-functions
-			      #'cape-tex nil t))))))
+    (add-hook 'latex-mode-hook
+          (lambda ()
+            (interactive)
+            (add-hook 'completion-at-point-functions
+                  #'cape-tex nil t))))))
 
   (when (init-package-installed-p 'yasnippet)
     (add-hook 'init-first-input-hook #'yas-global-mode)
@@ -797,13 +797,13 @@ I need a function to initialize straight when I need it:
       (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
 
       (add-hook 'yas-after-exit-snippet-hook
-		(lambda ()
-		  (when (eq major-mode 'clojure-mode)
-		    (when (and (eq ?\( (char-before yas-snippet-beg))
-			       (eq ?\) (char-after yas-snippet-end)))
-		      (save-excursion
-			(goto-char yas-snippet-beg)
-			(paredit-raise-sexp))))))))
+        (lambda ()
+          (when (eq major-mode 'clojure-mode)
+            (when (and (eq ?\( (char-before yas-snippet-beg))
+                   (eq ?\) (char-after yas-snippet-end)))
+              (save-excursion
+            (goto-char yas-snippet-beg)
+            (paredit-raise-sexp))))))))
 
   (provide 'init-completion)
   ;;; init-completion.el ends here
@@ -879,6 +879,7 @@ I need a function to initialize straight when I need it:
 
      (declare-function after! "init.el" (package &rest body))
      (declare-function init-package-installed-p "init.el" (package))
+     (declare-function init-cache-path "init.el" (&rest parts))
 
      (defconst init-lisp-modes
        `(emacs-lisp-mode
@@ -908,8 +909,8 @@ I need a function to initialize straight when I need it:
      (defun init-lisp-hooks (&optional lisp-modes)
        "Return symbols refering to hook vars derrived from mode names.
 
-     If `LISP-MODES' is given, this list will be converted.  Otherwise,
-     `init-lisp-modes' will be used."
+          If `LISP-MODES' is given, this list will be converted.  Otherwise,
+          `init-lisp-modes' will be used."
        (declare (pure t) (side-effect-free t))
        (mapcar #'init-list-mode->hook
                (or lisp-modes
@@ -932,8 +933,8 @@ I need a function to initialize straight when I need it:
      (defun init-lisp-mode-p (&optional mode)
        "Return non-nil when `MODE' is in `init-lisp-modes'.
 
-     If `MODE' is not specified, the current `major-mode' is checked
-     instead."
+          If `MODE' is not specified, the current `major-mode' is checked
+          instead."
        (declare (pure t) (side-effect-free t))
        (let ((mode-sym (cond
                         ((not mode) major-mode)
@@ -945,11 +946,17 @@ I need a function to initialize straight when I need it:
      (defun init-lisp-string-or-comment-p (&optional pos)
        "Return non-nil when `POS' is in a string or comment.
 
-     `POS' defaults to `(point)'."
+          `POS' defaults to `(point)'."
        (declare (side-effect-free t))
        (let ((val (syntax-ppss (or pos (point)))))
          (or (nth 3 val)
              (nth 4 val))))
+
+     (defun init-lisp-char-at (&optional pos)
+       "Return the character at `POS'."
+       (let ((real-pos (or pos (point))))
+         (string-to-char
+          (buffer-substring-no-properties real-pos (+ 1 real-pos)))))
 
      (dolist (hook (init-lisp-hooks))
        (when (init-package-installed-p 'paredit)
@@ -961,16 +968,79 @@ I need a function to initialize straight when I need it:
          (add-hook hook
                    (lambda ()
                      (setq yas-buffer-local-condition
-                           '(not (init-lisp-string-or-comment-p))))))
+                           '(and (not (init-lisp-string-or-comment-p))
+                                 (not (eq ?- (char-before (- (point) 1)))))))))
        (add-hook hook #'show-paren-mode))
 
      (defvar geiser-guile-load-path)
-
-     (after! 'geiser-guile
+     (defvar geiser-guile)
+     (after! geiser-guile
        (setq geiser-guile-load-path (init-lisp-guile-load-path)))
 
+     (defvar cider)
+     (defvar nrepl-hide-special-buffers)
+     (defvar nrepl-log-messages)
+     (defvar cider-font-lock-dynamically)
+     (defvar cider-overlays-use-font-lock)
+     (defvar cider-repl-history-display-duplicates)
+     (defvar cider-repl-history-display-style)
+     (defvar cider-repl-history-file)
+     (defvar cider-repl-history-highlight-current-entry)
+     (defvar cider-repl-history-quit-action)
+     (defvar cider-repl-history-highlight-inserted-item)
+     (defvar cider-repl-history-size)
+     (defvar cider-repl-result-prefix)
+     (defvar cider-repl-use-clojure-font-lock)
+     (defvar cider-repl-use-pretty-printing)
+     (defvar cider-repl-wrap-history)
+     (defvar cider-stacktrace-default-filters)
+     (defvar cider-repl-pop-to-buffer-on-connect)
+     (defvar cider-repl-display-help-banner)
+     (after! cider
+       (add-hook 'cider-mode-hook #'eldoc-mode)
+       (setq nrepl-hide-special-buffers t
+             nrepl-log-messages nil
+             cider-font-lock-dynamically t
+             cider-overlays-use-font-lock t
+             cider-repl-history-display-duplicates nil
+             cider-repl-history-display-style 'one-line
+             cider-repl-history-file (init-cache-path "cider-repl-history-file")
+             cider-repl-history-highlight-current-entry t
+             cider-repl-history-quit-action 'delete-and-destroy
+             cider-repl-history-highlight-inserted-item t
+             cider-repl-history-size 1000
+             cider-repl-result-prefix ";; => "
+             cider-repl-use-clojure-font-lock t
+             cider-repl-use-pretty-printing t
+             cider-repl-wrap-history nil
+             cider-stacktrace-default-filters '(tooling dup)
+             cider-repl-pop-to-buffer-on-connect 'display-only
+             cider-repl-display-help-banner nil))
+
+     (defvar org-babel-clojure-backend)
+     (when (init-package-installed-p 'cider)
+       (after! 'ob-clojure
+         (setq org-babel-clojure-backend 'cider)))
+
+     (when (init-package-installed-p 'yasnippet)
+       (defun init-lisp-ensure-paren-balanced ()
+         "Ensure yas snippet expansion doesn't insert extra parens."
+         (when (and (init-lisp-mode-p)
+                    (eq ?\( (char-before yas-snippet-beg))
+                    (eq ?\( (init-lisp-char-at yas-snippet-beg)))
+           (save-excursion
+             (when (and (eq ?\) (char-after yas-snippet-end))
+                        (eq ?\) (init-lisp-char-at yas-snippet-end)))
+               (goto-char yas-snippet-end)
+               (delete-char 1))
+             (goto-char yas-snippet-beg)
+             (delete-char 1))))
+
+       (after! yasnippet
+         (add-hook 'yas-after-exit-snippet-hook #'init-lisp-ensure-paren-balanced)))
+
      (provide 'init-lisp)
-     ;;; init-lisp.el ends here
+     ;; init-lisp.el ends here
    #+end_src
    
    
