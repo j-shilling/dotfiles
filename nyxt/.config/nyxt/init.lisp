@@ -7,10 +7,6 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-(dolist (file (list (nyxt-init-file "statusline.lisp")
-                    (nyxt-init-file "stylesheet.lisp")))
-  (load file))
-
 (ql:quickload :slynk)
 (load-after-system :slynk (nyxt-init-file "slynk.lisp"))
 
@@ -19,35 +15,26 @@
      (external-editor-program
       (list "emacsclient" "-cn" "-a" ""))))
 
-(define-configuration (buffer internal-buffer editor-buffer)
-  ((default-modes `(vi-normal-mode ,@%slot-default%))
+(define-configuration (buffer prompt-buffer)
+  ((default-modes `(nyxt/emacs-mode:emacs-mode ,@%slot-default%))
    (download-engine :renderer)
-   (current-zoom-ratio 1.25)))
+   (current-zoom-ratio 1)))
 
 (define-configuration prompt-buffer
-  ((default-modes `(vi-insert-mode ,@%slot-default%))
-   (override-map (let ((map (make-keymap "override-map")))
+  ((override-map (let ((map (make-keymap "override-map")))
                    (define-key map
                      "escape" 'nyxt/prompt-buffer-mode:cancel-input
                      "C-g" 'nyxt/prompt-buffer-mode:cancel-input)
                    map))))
 
 (define-configuration web-buffer
-  ((default-modes `(vi-normal-mode
+  ((default-modes `(nyxt/emacs-mode:emacs-mode
                     auto-mode
                     blocker-mode
                     force-https-mode
                     reduce-tracking-mode
                     firefox-mimick-mode
                     ,@%slot-default%))))
-
-(define-configuration nyxt/web-mode:web-mode
-  ((nyxt/web-mode::keymap-scheme
-    (nyxt::define-scheme (:name-prefix "web" :import %slot-default%)
-      scheme:vi-normal
-      (list
-       "v" 'nyxt/visual-mode:visual-mode
-       "d" 'nyxt/web-mode:scroll-page-down)))))
 
 ;;; reduce-tracking-mode has a preferred-user-agent slot that it uses
 ;;; as the User Agent to set when enabled. What I want here is to have
