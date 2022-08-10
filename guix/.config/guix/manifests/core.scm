@@ -16,7 +16,7 @@
   #:use-module (gnu packages wget)
   #:use-module (guix profiles)
   #:export (packages
-	    manifest))
+        manifest))
 
 (define packages
   (list bash
@@ -26,7 +26,7 @@
         git
         glibc-locales
         gnupg
-	guile-3.0-latest
+    guile-3.0-latest
         nss-certs
         openssh
         password-store

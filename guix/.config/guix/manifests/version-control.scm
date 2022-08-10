@@ -1,13 +1,14 @@
 (define-module (manifests version-control)
-  #:use-module (gnu packages version-control)
-  #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
-	    manifest))
+            manifest))
 
 (define packages
-  (list git
-	emacs-magit))
+  (map (compose list specification->package+output)
+       '("git"
+         "nss-certs"
+         "emacs-magit")))
 
 (define manifest
   (packages->manifest packages))
