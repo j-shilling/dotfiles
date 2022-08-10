@@ -2,21 +2,26 @@ font pango:Fira Sans 18
 
 set $mod Mod4
 
-bar {
-        status_command i3status
-}
-
 set $left h
 set $down j
 set $up k
 set $right l
 
+bar {
+    status_command i3status
+
+    mode dock
+    position top
+    binding_mode_indicator yes
+}
+
 exec_always --no-startup-id dunst
 exec_always --no-startup-id picom
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh --hack
 exec gpgconf --launch gpg-agent
 exec emacs --bg-daemon
 
-set $term alacritty
+set $term emacsclient -a '' -c -e "(eshell t)"
 set $menu rofi -show run
 
 exec_always --no-startup-id feh --bg-scale $HOME/dotfiles/wallpapers/GNUEmacsDesktopWallpaper.png
