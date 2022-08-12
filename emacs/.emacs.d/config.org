@@ -821,6 +821,81 @@ I need a function to initialize straight when I need it:
   ;;;init-gpg.el ends here
 #+end_src
 
+** EShell
+   :PROPERTIES:
+   :header-args: :tangle modules/init-eshell.el
+   :END:
+
+   #+begin_src emacs-lisp
+     ;;; init-eshell.el -- Eshell configuration -*- lexical-binding: t; -*-
+
+     (after! eshell
+       (require 'em-alias)
+       (require 'esh-mode)
+       (require 'esh-module)
+       (require 'em-hist)
+       (require 'esh-cmd)
+
+       (setq eshell-directory-name (init-state-path "eshell")
+             eshell-aliases-file (init-state-path "eshell" "alias")
+             eshell-history-size 10000
+             eshell-buffer-maximum-lines 1000
+             eshell-hist-ignoredups t
+             eshell-scroll-to-bottom-on-input t
+             eshell-prefer-lisp-functions nil)
+
+       (add-to-list 'eshell-modules-list 'eshell-tramp)
+       (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+       (setenv "PAGER" "cat")
+
+       (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
+
+       (eshell-hist-initialize))
+
+     (when (init-package-installed-p 'esh-autosuggest)
+       (autoload 'esh-autosuggest-mode "esh-autosuggest"
+         "Enable fish-like-autosuggestions in eshell"t)
+       (add-hook 'eshell-mode-hook #'esh-autosuggest-mode))
+
+     (when (init-package-installed-p 'eshell-syntax-highlighting)
+       (after! eshell
+         (eshell-syntax-highlighting-global-mode +1)))
+
+     (when (init-package-installed-p 'xterm-color)
+       (after! eshell
+         (require 'esh-mode)
+         (require 'xterm-color)
+
+         (add-hook 'eshell-before-prompt-hook
+                   (lambda ()
+                     (setq xterm-color-preserve-properties t)))
+
+         (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+
+         (setq eshell-output-filter-functions
+               (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
+
+         (setenv "TERM" "xterm-256color")))
+
+     (provide 'init-eshell)
+     ;;; init-eshell.el ends here
+   #+end_src
+
+** Spelling
+:PROPERTIES:
+:header-args: :tangle modules/init-spelling.el
+:END:
+
+#+begin_src emacs-lisp
+  ;;; init-spelling.el -- Configure Flyspell -*- lexcial-binding: t -*-
+
+  (add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode)
+
+  (provide 'init-spelling)
+  ;;; init-spelling.el ends here
+#+end_src
 ** Projects and Version Control
    :PROPERTIES:
    :header-args: :tangle modules/init-project.el
