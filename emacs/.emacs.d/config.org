@@ -285,26 +285,12 @@ I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
   (defun init-package-installed-p (package)
     (if IS-GUIX
-        (progn
-          (let ((autoload-name (format "%s-autoloads" package)))
-            (featurep (intern autoload-name))))
+	(progn
+	  (let ((autoload-name (format "%s-autoloads" package)))
+	    (featurep (intern autoload-name))))
       (progn
-        (unless (featurep 'init-straight)
-          (error "Not implemented")))))
-
-  (unless (featurep 'testing)
-    (dolist (hook '(init-first-file-hook
-                    init-first-buffer-hook
-                    init-first-input-hook
-                    after-init-hook
-                    emacs-startup-hook
-                    window-setup-hook))
-      (add-hook hook
-                (lambda ()
-                  (init-log "%s: (init-package-installed-p 'paredit) %s"
-                            hook
-                            (init-package-installed-p 'paredit)))))
-    (provide 'testing))
+	(unless (featurep 'init-straight)
+	  (error "Not implemented")))))
 #+end_src
 
 #+begin_src emacs-lisp
