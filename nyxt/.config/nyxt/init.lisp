@@ -7,8 +7,25 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
+;;; Loading extensions and third-party-dependent configs. See the
+;;; matching files for where to find those extensions.
+;;;
+;;; Usually, though, it boils down to cloning a git repository into
+;;; your `*extensions-path*' (usually ~/.local/share/nyxt/extensions)
+;;; and adding a `load-after-system' (Nyxt 2) /
+;;; `define-nyxt-user-system-and-load' (Nyxt 3) line mentioning a
+;;; config file for this extension.
+(defmacro load-after-system* (system file)
+  #+nyxt-2
+  `(load-after-system ,system (nyxt-init-file ,(if (str:ends-with-p ".lisp" file)
+                                                   file
+                                                   (str:concat file ".lisp"))))
+  #+nyxt-3
+  `(define-nyxt-user-system-and-load ,(gensym "NYXT-USER/")
+     :depends-on (,system) :components (,file)))
+
 (ql:quickload :slynk)
-(load-after-system :slynk (nyxt-init-file "slynk.lisp"))
+(load-after-system* :slynk "slynk")
 
 (define-configuration browser
     ((session-restore-prompt :never-restore)
