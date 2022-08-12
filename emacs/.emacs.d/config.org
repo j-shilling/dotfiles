@@ -727,10 +727,12 @@ I need a function to initialize straight when I need it:
 #+begin_src emacs-lisp
   ;;; init-completion.el -- completion -*- lexical-binding: t; -*-
 
-  (add-hook 'init-first-input-hook #'fido-mode)
+  (add-hook 'init-first-input-hook
+            (if (fboundp 'fido-vertical-mode)
+                #'fido-vertical-mode
+              #'fido-mode))
+
   (after! 'icomplete
-    (when (fboundp 'fido-vertical-mode)
-      (add-hook 'fido-mode-hook #'fido-vertical-mode))
     (customize-set-value 'read-file-name-completion-ignore-case t)
     (customize-set-value 'read-buffer-completion-ignore-case t)
     (customize-set-value 'completion-ignore-case t))
