@@ -17,9 +17,9 @@ bar {
 
 exec_always --no-startup-id dunst
 exec_always --no-startup-id picom
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh --hack
+exec_always --no-startup-id signal-desktop --start-in-tray
 exec gpgconf --launch gpg-agent
-exec emacs --bg-daemon
+
 
 set $term emacsclient -a '' -c -e "(eshell t)"
 set $menu rofi -show run
