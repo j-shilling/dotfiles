@@ -409,8 +409,7 @@ I need a function to initialize straight when I need it:
         version-control t
         kept-old-versions 6
         kept-new-versions 9
-        delete-by-moving-to-trash t)
-
+        delete-by-moving-to-trash nil)
 #+end_src
 *** Bookmarks + Recent Files
 #+begin_src emacs-lisp
