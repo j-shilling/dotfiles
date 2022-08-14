@@ -781,16 +781,7 @@ I need a function to initialize straight when I need it:
   (when (init-package-installed-p 'yasnippet)
     (add-hook 'init-first-input-hook #'yas-global-mode)
     (after! yasnippet
-      (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
-
-      (add-hook 'yas-after-exit-snippet-hook
-        (lambda ()
-          (when (eq major-mode 'clojure-mode)
-            (when (and (eq ?\( (char-before yas-snippet-beg))
-                   (eq ?\) (char-after yas-snippet-end)))
-              (save-excursion
-            (goto-char yas-snippet-beg)
-            (paredit-raise-sexp))))))))
+      (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)))
 
   (provide 'init-completion)
   ;;; init-completion.el ends here
@@ -931,7 +922,7 @@ I need a function to initialize straight when I need it:
      ;;; init-lsp.el ends here
    #+end_src
 
-** Lisp
+** Lisp 
 :PROPERTIES:
 :header-args: :tangle modules/init-lisp.el :mkdirp yes
 :END:
