@@ -30,7 +30,7 @@
 (define-configuration browser
     ((session-restore-prompt :never-restore)
      (external-editor-program
-      (list "emacsclient" "-cn" "-a" ""))))
+      "emacsclient")))
 
 (define-configuration (buffer prompt-buffer)
   ((default-modes `(nyxt/emacs-mode:emacs-mode ,@%slot-default%))

@@ -781,6 +781,8 @@ I need a function to initialize straight when I need it:
   (when (init-package-installed-p 'yasnippet)
     (add-hook 'init-first-input-hook #'yas-global-mode)
     (after! yasnippet
+      (setq yas-key-syntaxes (list #'yas-try-key-from-whitespace
+                                   "w_.()" "w_." "w_"))
       (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)))
 
   (provide 'init-completion)
@@ -823,30 +825,70 @@ I need a function to initialize straight when I need it:
      (after! eshell
        (require 'em-alias)
        (require 'esh-mode)
-       (require 'esh-module)
-       (require 'em-hist)
        (require 'esh-cmd)
 
+       ;; cache / state files
+
+       (declare-function init-state-path (& parts))
+
+       (defvar eshell-directory-name)
+  
        (setq eshell-directory-name (init-state-path "eshell")
-             eshell-aliases-file (init-state-path "eshell" "alias")
-             eshell-history-size 10000
-             eshell-buffer-maximum-lines 1000
-             eshell-hist-ignoredups t
              eshell-scroll-to-bottom-on-input t
              eshell-prefer-lisp-functions nil)
 
+       ;; Use tramp for things like `su' or `sudo'
+       (require 'esh-module)
+       (defvar eshell-modules-list)
        (add-to-list 'eshell-modules-list 'eshell-tramp)
+
+       (declare-function init-eshell-require-tramp ())
+       (defun init-eshell-require-tramp ()
+         (require 'tramp)
+         (remove-hook 'eshell-mode-hook #'init-eshell-require-tramp))
+       (add-hook 'eshell-mode-hook #'init-eshell-require-tramp)
+
+       ;; History Management
+       (defvar eshell-history-size)
+       (defvar eshell-hist-ignoredups)
+
+       (setq eshell-history-size 10000
+             eshell-hist-ignoredups t)
+
+       (add-to-list 'eshell-modules-list 'eshell-hist)
+
+       ;; Aliases
+       (defvar eshell-aliases-file)
+       (setq eshell-aliases-file (init-state-path "eshell" "alias"))
+
+       ;; Buffer Management
+       (defvar eshell-output-filter-functions)
+       (defvar eshell-buffer-maximum-lines)
+       (setq eshell-buffer-maximum-lines 1024)
        (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+       ;; Smart Shell
+       (require 'em-smart)
+
+       (defvar eshell-where-to-jump)
+       (defvar eshell-review-quick-commands)
+       (defvar eshell-smart-space-goes-to-end)
+  
+       (add-to-list 'eshell-modules-list 'eshell-smart)
+
+       (setq eshell-where-to-jump 'begin
+             eshell-review-quick-commands nil
+             eshell-smart-space-goes-to-end t)
 
        (setenv "PAGER" "cat")
 
-       (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
-
-       (eshell-hist-initialize))
+       (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point))
 
      (when (init-package-installed-p 'esh-autosuggest)
+       (declare-function esh-autosuggest-mode ())
        (autoload 'esh-autosuggest-mode "esh-autosuggest"
          "Enable fish-like-autosuggestions in eshell"t)
+  
        (add-hook 'eshell-mode-hook #'esh-autosuggest-mode))
 
      (when (init-package-installed-p 'eshell-syntax-highlighting)
@@ -1089,8 +1131,45 @@ I need a function to initialize straight when I need it:
              (goto-char yas-snippet-beg)
              (delete-char 1))))
 
+       (defun init-lisp-non-whitespace-char-before (&optional pos)
+         "Return the char before POS, ignoring whitespace.
+
+     If POS is nil, then uses `point'."
+         (save-excursion
+           (when pos
+             (goto-char pos))
+           (skip-chars-backward "[^[:space:]\n]")
+           (char-before)))
+
+       (defun init-lisp-non-whitespace-char-after (&optional pos)
+         "Return the char after POS, ignoring whitespace.
+
+     If POS is nil, then uses `point'."
+         (save-excursion
+           (when pos
+             (goto-char pos))
+           (skip-chars-forward "[^[:space:]\n]")
+           (char-after)))
+
+       (defun init-lisp-sexp-p (&optional start end)
+         "Return non-nil when parens are around START and END."
+         (and (eq ?\( (init-lisp-non-whitespace-char-before start))
+              (eq ?\) (init-lisp-non-whitespace-char-after end))))
+
+       (defun init-lisp-check-parens ()
+         (save-excursion
+           (when (init-lisp-sexp-p (if (boundp 'start)
+                                       start
+                                     (error "'start is not bound"))
+                                   (if (boundp 'end)
+                                       end
+                                     (error "'end is not bound")))
+             (message "%s" (yas--template-content snippet)))))
+
        (after! yasnippet
-         (add-hook 'yas-after-exit-snippet-hook #'init-lisp-ensure-paren-balanced)))
+         ;(add-hook 'yas-before-expand-snippet-hook #'init-lisp-check-parens)
+         ;(add-hook 'yas-after-exit-snippet-hook #'init-lisp-ensure-paren-balanced)
+         ))
 
      (provide 'init-lisp)
      ;; init-lisp.el ends here

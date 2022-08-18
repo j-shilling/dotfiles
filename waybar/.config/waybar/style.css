@@ -1,8 +1,8 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: Hack;
-    font-size: 13px;
+    font-family: Fira Sans;
+    font-size: 18px;
     min-height: 0;
 }
 
@@ -13,13 +13,7 @@ window#waybar {
 
 #window {
     font-weight: bold;
-    font-family: "Hack";
 }
-/*
-#workspaces {
-    padding: 0 5px;
-}
-*/
 
 #workspaces button {
     padding: 0 5px;
