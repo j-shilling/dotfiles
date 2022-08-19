@@ -9,12 +9,13 @@
        '("coreutils"
          "bash"
          "gzip"
+         "unzip"
          "guile"
          "glibc-locales"
          "guix"
          "aspell"
          "aspell-dict-en"
-         
+
          "emacs-next-pgtk"
          "emacs-paredit"
          "emacs-guix"
