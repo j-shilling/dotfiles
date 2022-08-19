@@ -1,12 +1,5 @@
 (in-package #:nyxt-user)
 
-;;; Load quicklisp. Not sure it works.
-#-quicklisp
-(let ((quicklisp-init
-        (merge-pathnames "quicklisp/setup.lisp" (user-homedir-pathname))))
-  (when (probe-file quicklisp-init)
-    (load quicklisp-init)))
-
 ;;; Loading extensions and third-party-dependent configs. See the
 ;;; matching files for where to find those extensions.
 ;;;
@@ -24,13 +17,10 @@
   `(define-nyxt-user-system-and-load ,(gensym "NYXT-USER/")
      :depends-on (,system) :components (,file)))
 
-(ql:quickload :slynk)
-(load-after-system* :slynk "slynk")
-
 (define-configuration browser
     ((session-restore-prompt :never-restore)
      (external-editor-program
-      "emacsclient")))
+      '("emacsclient" "-cn" "-a" ""))))
 
 (define-configuration (buffer prompt-buffer)
   ((default-modes `(nyxt/emacs-mode:emacs-mode ,@%slot-default%))
