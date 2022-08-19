@@ -832,7 +832,7 @@ I need a function to initialize straight when I need it:
        (declare-function init-state-path (& parts))
 
        (defvar eshell-directory-name)
-  
+
        (setq eshell-directory-name (init-state-path "eshell")
              eshell-scroll-to-bottom-on-input t
              eshell-prefer-lisp-functions nil)
@@ -873,7 +873,7 @@ I need a function to initialize straight when I need it:
        (defvar eshell-where-to-jump)
        (defvar eshell-review-quick-commands)
        (defvar eshell-smart-space-goes-to-end)
-  
+
        (add-to-list 'eshell-modules-list 'eshell-smart)
 
        (setq eshell-where-to-jump 'begin
@@ -881,6 +881,11 @@ I need a function to initialize straight when I need it:
              eshell-smart-space-goes-to-end t)
 
        (setenv "PAGER" "cat")
+       (setenv "EDITOR" "emacsclient -c -a ''")
+       (when (file-exists-p "~/.config/guix")
+         (let ((guile-load-path (getenv "GUILE_LOAD_PATH")))
+           (setenv "GUILE_LOAD_PATH"
+                   (concat "~/.config/guix:" guile-load-path))))
 
        (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point))
 
@@ -888,7 +893,7 @@ I need a function to initialize straight when I need it:
        (declare-function esh-autosuggest-mode ())
        (autoload 'esh-autosuggest-mode "esh-autosuggest"
          "Enable fish-like-autosuggestions in eshell"t)
-  
+
        (add-hook 'eshell-mode-hook #'esh-autosuggest-mode))
 
      (when (init-package-installed-p 'eshell-syntax-highlighting)
