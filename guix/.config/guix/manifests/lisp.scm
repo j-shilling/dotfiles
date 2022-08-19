@@ -6,11 +6,7 @@
 
 (define packages
   (map (compose list specification->package+output)
-       '("emacs-sly"
-         "emacs-sly-stepper"
-         "emacs-sly-quicklisp"
-         "emacs-sly-macrostep"
-         "emacs-sly-asdf"
+       '("emacs-slime"
          "sbcl")))
 
 (define manifest

@@ -1,6 +1,6 @@
 (define-module (profiles default)
   #:use-module (guix profiles)
-  #:use-module ((manifests core) :prefix core:)
+  #:use-module (gnu packages)
   #:use-module (manifests media)
   #:use-module ((manifests browsers) :prefix browsers:)
   #:use-module (manifests shell)
@@ -15,13 +15,13 @@
 
 (define packages
   (filter (negate unspecified?)
-          (append core:packages
-                  shell-packages
+          (append shell-packages
                   media-packages
                   browsers:packages
-		  programming:packages
+                  programming:packages
                   sway:packages
-                  games:packages)))
+                  games:packages
+                  (list (specification->package+output "flatpak")))))
 
 (define manifest
   (packages->manifest packages))

@@ -31,8 +31,8 @@ exec "sh -c 'sleep 5;exec /usr/libexec/xdg-desktop-portal -r'"
 # on the original workspace that the command was run on.
 # set $menu bemenu-run --fn $uifont -b -p "▶" --tf "$prompt" --hf "$highlight" --sf "$highlight" --scf "$highlight" | xargs swaymsg exec
 
-set $menu bemenu-run -l 10 --fn 'Fira Sans 18' -p run
-# set $menu fuzzel
+# set $menu bemenu-run -l 10 --fn 'Fira Sans 18' -p run
+set $menu fuzzel
 
 ### Output configuration
 #
