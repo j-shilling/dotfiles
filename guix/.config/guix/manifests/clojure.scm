@@ -9,6 +9,7 @@
        '("clojure"
          "clojure-tools"
          "openjdk:jdk"
+         "maven"
          "emacs-cider"
          "emacs-clojure-mode"
          "emacs-clojure-snippets"

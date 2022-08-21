@@ -75,7 +75,9 @@
                       `(("jake" ,(local-file "../keys/jake.pub"))))))
            (service guix-publish-service-type
                     (guix-publish-configuration
-                     (advertise? #t))))
+                     (advertise? #t)))
+           (service bluetooth-service-type
+                    (bluetooth-configuration)))
      %modified-desktop-services))
 
    (bootloader

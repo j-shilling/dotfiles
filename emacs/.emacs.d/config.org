@@ -916,6 +916,9 @@ I need a function to initialize straight when I need it:
 
          (setenv "TERM" "xterm-256color")))
 
+     (when (init-package-installed-p 'envrc)
+       (add-hook 'after-init-hook #'envrc-global-mode))
+
      (provide 'init-eshell)
      ;;; init-eshell.el ends here
    #+end_src

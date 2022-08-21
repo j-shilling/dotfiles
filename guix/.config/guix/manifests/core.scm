@@ -26,7 +26,7 @@
         git
         glibc-locales
         gnupg
-    guile-3.0-latest
+        guile-3.0-latest
         nss-certs
         openssh
         password-store

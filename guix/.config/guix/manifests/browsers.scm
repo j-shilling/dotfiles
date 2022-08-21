@@ -7,7 +7,8 @@
 (define packages
   (map (compose list specification->package+output)
        '("nyxt"
-         "firefox")))
+         "firefox"
+         "ungoogled-chromium")))
 
 (define manifest
   (packages->manifest packages))

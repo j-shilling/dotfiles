@@ -3,11 +3,9 @@
   #:use-module (gnu packages)
   #:use-module (manifests media)
   #:use-module ((manifests browsers) :prefix browsers:)
-  #:use-module (manifests shell)
-  #:use-module (manifests build-tools)
+  #:use-module ((manifests shell) :prefix shell:)
   #:use-module ((manifests emacs) :prefix emacs:)
   #:use-module ((manifests sway) :prefix sway:)
-  #:use-module ((manifests devel-tools) :prefix devel:)
   #:use-module ((manifests games) :prefix games:)
   #:use-module ((profiles programming) :prefix programming:)
   #:export (manifest
@@ -15,7 +13,7 @@
 
 (define packages
   (filter (negate unspecified?)
-          (append shell-packages
+          (append shell:packages
                   media-packages
                   browsers:packages
                   programming:packages
