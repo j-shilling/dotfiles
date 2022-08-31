@@ -1,3 +1,7 @@
+(define-module (channels)
+  #:use-module (guix ci)
+  #:use-module (guix channels))
+
 (cons*
  ;; Proprietary Software
  (channel
@@ -30,12 +34,15 @@
     (openpgp-fingerprint
      "50F3 3E2E 5B0C 3D90 0424  ABE8 9BDC F497 A4BB CC7F"))))
  ;; Guix Home Etc.
- ;; (channel
- ;;  (name 'rde)
- ;;  (url "https://git.sr.ht/~abcdw/rde")
- ;;  (introduction
- ;;   (make-channel-introduction
- ;;    "257cebd587b66e4d865b3537a9a88cccd7107c95"
- ;;    (openpgp-fingerprint
- ;;     "2841 9AC6 5038 7440 C7E9  2FFA 2208 D209 58C1 DEB0"))))
+ (channel
+  (name 'rde)
+  (url "https://git.sr.ht/~abcdw/rde")
+  (introduction
+   (make-channel-introduction
+    "257cebd587b66e4d865b3537a9a88cccd7107c95"
+    (openpgp-fingerprint
+     "2841 9AC6 5038 7440 C7E9  2FFA 2208 D209 58C1 DEB0"))))
+ (channel
+  (name 'dotfiles)
+  (url "file:///home/jake/dotfiles"))
  %default-channels)

@@ -1,4 +1,4 @@
-(define-module (manifests browsers)
+(define-module (jrs manifests lisp)
   #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
@@ -6,9 +6,8 @@
 
 (define packages
   (map (compose list specification->package+output)
-       '("nyxt"
-         "firefox"
-         "ungoogled-chromium")))
+       '("emacs-slime"
+         "sbcl")))
 
 (define manifest
   (packages->manifest packages))

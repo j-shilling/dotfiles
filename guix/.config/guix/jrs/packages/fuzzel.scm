@@ -1,4 +1,4 @@
-(define-module (manifests sway)
+(define-module (jrs packages fuzzel)
   #:use-module (guix profiles)
   #:use-module (guix packages)
   #:use-module (guix build-system meson)
@@ -18,9 +18,7 @@
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages image)
   #:use-module (gnu packages fontutils)
-  #:use-module (gnu packages pkg-config)
-  #:export (manifest
-            packages))
+  #:use-module (gnu packages pkg-config))
 
 (define-public fuzzel
   (package
@@ -56,21 +54,3 @@
 drun mode.")
    (license (list license:expat
                   license:zlib))))
-
-(define packages
-  (list alacritty
-        bemenu
-        brightnessctl
-        font-fira-code
-        font-fira-mono
-        font-fira-sans
-        mako
-        pavucontrol
-        sway
-        waybar
-        fuzzel))
-
-(define manifest
-  (packages->manifest packages))
-
-manifest

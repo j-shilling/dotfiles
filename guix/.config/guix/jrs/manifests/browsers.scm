@@ -1,4 +1,4 @@
-(define-module (manifests version-control)
+(define-module (jrs manifests browsers)
   #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
@@ -6,9 +6,9 @@
 
 (define packages
   (map (compose list specification->package+output)
-       '("git"
-         "nss-certs"
-         "emacs-magit")))
+       '("nyxt"
+         ;"firefox"
+         "ungoogled-chromium")))
 
 (define manifest
   (packages->manifest packages))

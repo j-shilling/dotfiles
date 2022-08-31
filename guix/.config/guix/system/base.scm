@@ -1,6 +1,5 @@
 (define-module (system base)
   #:use-module (gnu)
-  #:use-module ((manifests core) :prefix core:)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu services docker)
@@ -50,12 +49,12 @@
                   (group "users")
                   (home-directory "/home/jake")
                   (supplementary-groups
-                   '("wheel" "netdev" "audio" "video" "docker")))
+                   '("wheel" "netdev" "audio" "lp" "video" "docker")))
                  %base-user-accounts))
 
    (packages
     (append
-     core:packages
+     ;core:packages
      (list sway
            i3-gaps)
      %base-packages))

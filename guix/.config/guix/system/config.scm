@@ -1,13 +1,12 @@
 (define-module (system config)
+  #:use-module (system base)
   #:use-module (gnu)
-  #:use-module ((manifests core) :prefix core:)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu services docker)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
-  #:use-module ((keys nonguix) :prefix key:)
-  #:export (base-config))
+  #:use-module ((keys nonguix) :prefix key:))
 
 (define mercurius-config
   (operating-system

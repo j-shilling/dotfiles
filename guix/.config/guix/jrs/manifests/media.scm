@@ -1,4 +1,4 @@
-(define-module (manifests shell)
+(define-module (jrs manifests media)
   #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
@@ -6,12 +6,9 @@
 
 (define packages
   (map (compose list specification->package+output)
-       '("bash"
-         "bash-completion"
-         "tmux"
-         "fzf"
-         "direnv"
-         "emacs-envrc")))
+       '("gst-plugins-good"
+         "gst-plugins-bad"
+         "gst-plugins-ugly")))
 
 (define manifest
   (packages->manifest packages))

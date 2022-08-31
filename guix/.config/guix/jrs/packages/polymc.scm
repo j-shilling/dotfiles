@@ -1,4 +1,4 @@
-(define-module (manifests games)
+(define-module (jrs packages polymc)
   #:use-module (guix profiles)
   #:use-module (guix build-system cmake)
   #:use-module (gnu packages compression)
@@ -11,10 +11,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) :prefix license:)
-  #:use-module ((nonguix licenses) :prefix non-license:)
-  #:use-module (packages polymc)
-  #:export (packages
-            manifest))
+  #:use-module ((nonguix licenses) :prefix non-license:))
 
 (define-public polymc
   (package
@@ -85,11 +82,3 @@ their associated options with a simple interface.")
                   license:asl2.0        ; classparser, systeminfo
                   ;; Batch icon set:
                   (non-license:nonfree "file://COPYING.md")))))
-
-(define packages
-  (list polymc))
-
-(define manifest
-  (packages->manifest packages))
-
-manifest

@@ -1,4 +1,4 @@
-(define-module (manifests emacs)
+(define-module (jrs manifests emacs)
   #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
@@ -33,7 +33,6 @@
 
          ;; Dired
          "emacs-all-the-icons-dired"
-         "emacs-dired-hacks"
 
          ;; Eshell
          "emacs-esh-autosuggest"

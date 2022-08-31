@@ -1,13 +1,12 @@
-(define-module (manifests lisp)
+(define-module (jrs manifests games)
   #:use-module (gnu packages)
   #:use-module (guix profiles)
+  #:use-module (jrs packages polymc)
   #:export (packages
             manifest))
 
 (define packages
-  (map (compose list specification->package+output)
-       '("emacs-slime"
-         "sbcl")))
+  (list polymc))
 
 (define manifest
   (packages->manifest packages))

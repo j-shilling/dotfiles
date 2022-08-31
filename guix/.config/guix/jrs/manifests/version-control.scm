@@ -1,4 +1,4 @@
-(define-module (manifests clojure)
+(define-module (jrs manifests version-control)
   #:use-module (gnu packages)
   #:use-module (guix profiles)
   #:export (packages
@@ -6,14 +6,9 @@
 
 (define packages
   (map (compose list specification->package+output)
-       '("clojure"
-         "clojure-tools"
-         "openjdk:jdk"
-         "maven"
-         "emacs-cider"
-         "emacs-clojure-mode"
-         "emacs-clojure-snippets"
-         "emacs-eglot")))
+       '("git"
+         "nss-certs"
+         "emacs-magit")))
 
 (define manifest
   (packages->manifest packages))
