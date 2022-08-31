@@ -484,6 +484,13 @@ I need a function to initialize straight when I need it:
             (lambda ()
               (global-so-long-mode 1)))
 #+end_src
+*** Helpful
+#+begin_src emacs-lisp
+  (when (init-package-installed-p 'helpful)
+    (global-set-key (kbd "C-h f") #'helpful-callable)
+    (global-set-key (kbd "C-h v") #'helpful-variable)
+    (global-set-key (kbd "C-h k") #'helpful-key))
+#+end_src
 *** Footer
 #+begin_src emacs-lisp
   (provide 'init-defaults)
@@ -923,6 +930,38 @@ I need a function to initialize straight when I need it:
      ;;; init-eshell.el ends here
    #+end_src
 
+** Dired and Proced
+#+begin_src emacs-lisp
+  ;;; init-dired.el -- Configure Dired -*- lexical-bidning: t -*-
+
+  (setq dired-dwim-target t
+        dired-hide-details-hide-symlink-targets nil
+        dired-auto-revert-buffer #'dired-buffer-stale-p
+        dired-recursive-copies 'always
+        dired-recursive-deletes 'top
+        dired-create-destination-dirs 'ask
+        dired-listing-switches "-lah -v --group-directories-first")
+
+  ;; dired-x
+  (autoload 'dired-omit-mode "dired-x")
+  (setq dired-omit-verbose nil
+        dired-clean-confirm-killing-deleted-buffers nil)
+
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
+  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+
+  (when (init-package-installed-p 'all-the-icons-dired)
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+  (setq proced-auto-update-interval 1)
+  (add-hook 'proced-mode-hook
+            (lambda ()
+              (proced-toggle-auto-update 1)))
+
+  (provide 'init-dired)
+  ;;; init-dired.el ends here
+#+end_src
+
 ** Spelling
 :PROPERTIES:
 :header-args: :tangle modules/init-spelling.el
@@ -1159,25 +1198,29 @@ I need a function to initialize straight when I need it:
            (skip-chars-forward "[^[:space:]\n]")
            (char-after)))
 
-       (defun init-lisp-sexp-p (&optional start end)
+       (defun init-lisp-point-in-sexp-p (&optional start end)
          "Return non-nil when parens are around START and END."
          (and (eq ?\( (init-lisp-non-whitespace-char-before start))
               (eq ?\) (init-lisp-non-whitespace-char-after end))))
 
+       (defun init-lisp-string-is-sexp-p (s)
+         (string-match "\s*(.*)\s*" s nil t))
+
        (defun init-lisp-check-parens ()
          (save-excursion
-           (when (init-lisp-sexp-p (if (boundp 'start)
-                                       start
-                                     (error "'start is not bound"))
-                                   (if (boundp 'end)
-                                       end
-                                     (error "'end is not bound")))
-             (message "%s" (yas--template-content snippet)))))
+           (when (and (init-lisp-point-in-sexp-p (if (boundp 'start)
+                                                     start
+                                                   (error "'start is not bound"))
+                                                 (if (boundp 'end)
+                                                     end
+                                                   (error "'end is not bound")))
+                      (init-lisp-string-is-sexp-p
+                       (yas--template-content snippet)))
+             (setf start (scan-lists (point) -1 +1)
+                   end (scan-lists (point) +1 +1)))))
 
        (after! yasnippet
-         ;(add-hook 'yas-before-expand-snippet-hook #'init-lisp-check-parens)
-         ;(add-hook 'yas-after-exit-snippet-hook #'init-lisp-ensure-paren-balanced)
-         ))
+         (add-hook 'yas-before-expand-snippet-hook #'init-lisp-check-parens)))
 
      (provide 'init-lisp)
      ;; init-lisp.el ends here
