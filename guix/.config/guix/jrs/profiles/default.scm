@@ -23,7 +23,9 @@
                   media:packages
                   shell:packages
                   sway:packages
-                  version-control:packages)))
+                  version-control:packages
+                  (map (compose list specification->package+output)
+                       '("flatpak")))))
 
 (define manifest
   (packages->manifest packages))

@@ -16,8 +16,7 @@
          "pavucontrol"
          "sway"
          "waybar"
-         ;"fuzzel"
-         )))
+         "fuzzel")))
 
 (define manifest
   (packages->manifest packages))
