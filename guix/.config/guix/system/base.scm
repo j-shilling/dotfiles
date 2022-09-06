@@ -2,12 +2,14 @@
   #:use-module (gnu)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages certs)
   #:use-module (gnu services docker)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
   #:use-module (gnu services ssh)
   #:use-module (gnu services syncthing)
   #:use-module ((keys nonguix) :prefix key:)
+  #:use-module ((jrs manifests core) :prefix core:)
   #:export (base-config))
 
 (use-service-modules desktop networking ssh xorg)
@@ -54,7 +56,7 @@
 
    (packages
     (append
-     ;core:packages
+     core:packages
      (list sway
            i3-gaps)
      %base-packages))
