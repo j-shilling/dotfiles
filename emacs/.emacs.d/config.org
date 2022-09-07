@@ -735,9 +735,14 @@ I need a function to initialize straight when I need it:
   ;;; init-completion.el -- completion -*- lexical-binding: t; -*-
 
   (add-hook 'init-first-input-hook
-            (if (fboundp 'fido-vertical-mode)
-                #'fido-vertical-mode
-              #'fido-mode))
+            (cond
+             ((init-package-installed-p 'vertico) #'vertico-mode)
+             ((fboundp 'fido-vertical-mode) #'fido-vertical-mode)
+             ((fboundp 'fido-mode) #'fido-mode)))
+
+  (when (init-package-installed-p 'marginalia)
+    (add-hook 'init-first-input-hook
+              #'marginalia-mode))
 
   (after! 'icomplete
     (customize-set-value 'read-file-name-completion-ignore-case t)

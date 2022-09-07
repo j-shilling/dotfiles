@@ -15,6 +15,7 @@
          "guix"
          "aspell"
          "aspell-dict-en"
+         "emacs-flyspell-correct"
 
          "emacs-next-pgtk"
          "emacs-paredit"
@@ -26,6 +27,11 @@
          ;; Completion
          "emacs-corfu"
          "emacs-cape"
+         "emacs-vertico"
+         "emacs-consult"
+         "emacs-consult-yasnippet"
+         "emacs-marginalia"
+         "emacs-embark"
 
          ;; Snippets
          "emacs-yasnippet"

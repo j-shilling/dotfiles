@@ -14,7 +14,8 @@
          "emacs"
          "vim"
          "coreutils"
-         "file")))
+         "file"
+         "make")))
 
 (define manifest
   (packages->manifest packages))
