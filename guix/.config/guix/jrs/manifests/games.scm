@@ -6,7 +6,7 @@
             manifest))
 
 (define packages
-  (list polymc))
+  (list `(,polymc "out")))
 
 (define manifest
   (packages->manifest packages))

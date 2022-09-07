@@ -31,6 +31,10 @@
          "emacs-yasnippet"
          "emacs-yasnippet-snippets"
 
+         ;; Syntax Highlighting
+         "tree-sitter"
+         ;; TODO: Figure out emacs-tree-sitter
+
          ;; Dired
          "emacs-all-the-icons-dired"
 

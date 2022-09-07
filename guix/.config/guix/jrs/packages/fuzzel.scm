@@ -54,3 +54,5 @@
 drun mode.")
    (license (list license:expat
                   license:zlib))))
+
+fuzzel

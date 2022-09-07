@@ -13,7 +13,8 @@
          "bash-completion"
          "emacs"
          "vim"
-         "coreutils")))
+         "coreutils"
+         "file")))
 
 (define manifest
   (packages->manifest packages))
