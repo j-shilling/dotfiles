@@ -9,7 +9,7 @@
   (append
    (map (compose list specification->package+output)
         '("nyxt"))
-   `((,firefox "out"))))
+   `((,firefox/wayland "out"))))
 
 (define manifest
   (packages->manifest packages))
