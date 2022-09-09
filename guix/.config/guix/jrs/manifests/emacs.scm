@@ -23,15 +23,21 @@
          "emacs-geiser"
          "emacs-pinentry"
          "emacs-helpful"
+         "emacs-wgrep"
+
+         "emacs-pinentry"
+         "pinentry-emacs"
 
          ;; Completion
          "emacs-corfu"
          "emacs-cape"
          "emacs-vertico"
          "emacs-consult"
+         "emacs-consult-dir"
          "emacs-consult-yasnippet"
          "emacs-marginalia"
          "emacs-embark"
+         "emacs-orderless"
 
          ;; Snippets
          "emacs-yasnippet"
