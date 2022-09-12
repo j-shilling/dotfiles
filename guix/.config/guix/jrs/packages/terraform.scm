@@ -1,4 +1,5 @@
 (define-module (jrs packages terraform)
+  #:use-module (srfi srfi-28)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system copy)
@@ -8,19 +9,22 @@
 (define-public terraform
   (package
    (name "terraform")
-   (version "1.2.8")
+   (version "1.2.9")
    (source (origin (method url-fetch)
-                   (uri "https://releases.hashicorp.com/terraform/1.2.8/terraform_1.2.8_linux_amd64.zip")
+                   (uri
+                    (format
+                     "https://releases.hashicorp.com/terraform/~a/terraform_~a_linux_amd64.zip"
+                     version version))
                    (sha256
                     (base32
-                     "18p2mgwrkzrsb5wrc92myfqgzc31k7c5dh8qa06yjf3kygb4d71y"))))
+                     "1yzjcbis9syfz17sykg7j157dbdgm59ijbhj0dqw3nmd863c63qf"))))
    (home-page "https://www.terraform.io")
    (synopsis "Terraform")
    (description "")
    (build-system copy-build-system)
    (arguments
-     '(#:install-plan
-       '(("./terraform" "bin/"))))
+    '(#:install-plan
+      '(("./terraform" "bin/"))))
    (inputs (list unzip))
    (license license:expat)))
 
