@@ -740,6 +740,25 @@ I need a function to initialize straight when I need it:
              ((fboundp 'fido-vertical-mode) #'fido-vertical-mode)
              ((fboundp 'fido-mode) #'fido-mode)))
 
+  (after! vertico
+    (setq vertico-resize nil
+          vertico-count 17
+          vertico-cycle t))
+
+  (when (init-package-installed-p 'consult)
+    (global-set-key [remap apropos] #'consult-apropos)
+    (global-set-key [remap bookmark-jump] #'consult-bookmark)
+    (global-set-key [remap goto-line] #'consult-goto-line)
+    (global-set-key [remap imenu] #'consult-imenu)
+    (global-set-key [remap locate] #'consult-locate)
+    (global-set-key [remap load-theme] #'consult-load-theme)
+    (global-set-key [remap man] #'consult-man)
+    (global-set-key [remap recentf-open-files] #'consult-recent-file)
+    (global-set-key [remap switch-to-buffer] #'consult-buffer)
+    (global-set-key [remap switch-to-buffer-other-window] #'consult-buffer-other-window)
+    (global-set-key [remap switch-to-buffer-other-frame] #'consult-buffer-other-frame)
+    (global-set-key [remap yank-pop] #'consult-yank-pop))
+
   (when (init-package-installed-p 'marginalia)
     (add-hook 'init-first-input-hook
               #'marginalia-mode))
