@@ -16,7 +16,7 @@
 (define-public polymc
   (package
    (name "polymc")
-   (version "1.4.1")
+   (version "1.4.2")
    (source (origin
             (method git-fetch)
             (uri (git-reference
@@ -26,7 +26,7 @@
             (file-name (git-file-name name version))
             (sha256
              (base32
-              "1rhkmp4rqg3srla09ffxq829xk9ppyj3fx4kijch10rsg1pq9v9y"))))
+              "0y6nazjxg6yxp2ifpbn1ank51g0zcwmm139qagjxpbhjjzny98ls"))))
    (build-system cmake-build-system)
    (supported-systems '("i686-linux" "x86_64-linux"))
    (arguments
@@ -61,7 +61,7 @@
                  libxxf86vm
                  pulseaudio
                  mesa))
-   (propagated-inputs (list `(,openjdk17 "jdk")))
+   (propagated-inputs (list `(,openjdk18 "jdk")))
    (home-page "https://polymc.org/")
    (synopsis "A free, open source launcher for Minecraft")
    (description
@@ -82,3 +82,5 @@ their associated options with a simple interface.")
                   license:asl2.0        ; classparser, systeminfo
                   ;; Batch icon set:
                   (non-license:nonfree "file://COPYING.md")))))
+
+polymc
