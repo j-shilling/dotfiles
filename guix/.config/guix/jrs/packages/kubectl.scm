@@ -29,6 +29,6 @@
                      (add-before 'install 'set-permissions
                                  (lambda* (#:key outputs #:allow-other-keys)
                                    (chmod "./kubectl" #o755))))))
-   (license #:f)))
+   (license #f)))
 
 kubectl
