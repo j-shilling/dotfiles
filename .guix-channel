@@ -2,7 +2,7 @@
 
 (channel
  (version 0)
- (directory "guix/.config/guix")
+ (directory ".")
  (dependencies
   (channel
    (name rde)
