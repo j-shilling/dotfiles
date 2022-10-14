@@ -4,18 +4,22 @@
   #:export (packages
             manifest))
 
+(define specifications
+  '("nss-certs"
+    "curl"
+    "git"
+    "bash"
+    "bash-completion"
+    "emacs"
+    "vim"
+    "coreutils"
+    "file"
+    "make"
+    "stow"))
+
 (define packages
-  (map (compose list specification->package+output)
-       '("nss-certs"
-         "curl"
-         "git"
-         "bash"
-         "bash-completion"
-         "emacs"
-         "vim"
-         "coreutils"
-         "file"
-         "make")))
+  (map (compose list specification->package)
+       specifications))
 
 (define manifest
   (packages->manifest packages))

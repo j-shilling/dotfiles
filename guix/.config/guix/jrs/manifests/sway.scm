@@ -8,7 +8,7 @@
 (define packages
   (append
    (map (compose list specification->package+output)
-        '(;"alacritty"
+        '("alacritty"
           "bemenu"
           "brightnessctl"
           "font-fira-code"
@@ -17,7 +17,14 @@
           "mako"
           "pavucontrol"
           "sway"
-          "waybar"))
+          "waybar"
+          "pipewire"
+          "wireplumber"
+          "xdg-desktop-portal"
+          "xdg-desktop-portal-wlr"
+          "slurp"
+          "grim"
+          "grimshot"))
    (list `(,fuzzel "out"))))
 
 (define manifest

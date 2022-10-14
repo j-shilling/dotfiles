@@ -745,6 +745,9 @@ I need a function to initialize straight when I need it:
           vertico-count 17
           vertico-cycle t))
 
+  (when (init-package-installed-p 'orderless)
+    (setq completion-styles '(orderless basic)))
+
   (when (init-package-installed-p 'consult)
     (global-set-key [remap apropos] #'consult-apropos)
     (global-set-key [remap bookmark-jump] #'consult-bookmark)
@@ -895,7 +898,7 @@ I need a function to initialize straight when I need it:
        ;; Buffer Management
        (defvar eshell-output-filter-functions)
        (defvar eshell-buffer-maximum-lines)
-       (setq eshell-buffer-maximum-lines 1024)
+       (setq eshell-buffer-maximum-lines 10240)
        (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
        ;; Smart Shell

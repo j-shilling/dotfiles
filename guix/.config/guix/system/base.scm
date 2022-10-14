@@ -3,6 +3,7 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages certs)
+  #:use-module (gnu packages linux)
   #:use-module (gnu services docker)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
@@ -58,6 +59,9 @@
     (append
      core:packages
      (list sway
+           pipewire-0.3
+           xdg-desktop-portal
+           xdg-desktop-portal-wlr
            i3-gaps)
      %base-packages))
 

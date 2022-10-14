@@ -4,10 +4,13 @@
   #:export (packages
             manifest))
 
+(define specifications
+  '("emacs-slime"
+    "sbcl"))
+
 (define packages
   (map (compose list specification->package+output)
-       '("emacs-slime"
-         "sbcl")))
+       specifications))
 
 (define manifest
   (packages->manifest packages))

@@ -3,6 +3,7 @@
   #:use-module (rde features base)
   #:use-module (rde features emacs)
   #:use-module (rde features emacs-xyz)
+  #:use-module (rde features version-control)
   #:use-module (rde features wm)
   #:use-module (rde features gnupg)
   #:use-module (rde features password-utils)
@@ -22,15 +23,24 @@
 
   #:use-module (gnu packages)
   #:use-module (gnu packages fonts)
+  #:use-module (gnu home services)
   #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (gnu services desktop)
+  #:use-module (gnu services xorg)
   #:use-module (gnu system file-systems)
   #:use-module (gnu home-services-utils)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
 
   #:use-module (jrs packages clojure-lsp)
+  #:use-module (jrs packages mozilla)
+  #:use-module (jrs packages linux)
+  #:use-module (jrs packages freedesktop)
+  #:use-module (jrs packages node)
+
+  #:use-module (jrs rde features javascript)
+
   #:use-module ((jrs profiles default) :prefix default:)
   #:use-module ((jrs manifests core) :prefix core:)
   #:use-module (guix gexp)
@@ -55,13 +65,19 @@
     #:user-name "jake"
     #:full-name "Jake Shilling"
     #:email "shilling.jake@gmail.com"
+    #:user-groups '("wheel" "netdev" "audio" "lp" "video" "tty")
     #:user-initial-password-hash #f
     #:emacs-advanced-user? #t
     #:rde-advanced-user? #f)
 
    (feature-gnupg
     #:gpg-primary-key "0FCC8E6A96FF109F"
-    #:gpg-smart-card? #f)
+    #:gpg-smart-card? #f
+    #:pinentry-flavor 'emacs
+    #:ssh-keys
+    '(("57CCEEB098F2AA6791BA6D8F4CEF32B3F147C678")
+      ("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")
+      ("57407F876080A07BE7455903C9F52FB2922C8C49")))
 
    (feature-password-store
     #:remote-password-store-url "git@gitlab.com:shilling.jake/password-store.git")))
@@ -79,6 +95,18 @@
     #:file-systems os-file-systems)
 
    (feature-custom-services
+    #:home-services
+    (list
+     (simple-service
+      'extend-environment-variables
+      home-environment-variables-service-type
+      `(("GUILE_LOAD_PATH" . (string-append
+                              "${GUILE_LOAD_PATH}:"
+                              "${HOME}/.config/guix/current/share/guile/site/3.0"))
+        ("XDG_DATA_DIRS" . (string-append
+                            "${XDG_DATA_DIRS}:"
+                            "/var/lib/flatpak/exports/share:"
+                            "${HOME}/.local/share/flatpak/exports/share")))))
     #:system-services
     (list
      (service guix-publish-service-type
@@ -99,16 +127,19 @@
    (feature-ssh)
    (feature-zsh
     #:enable-zsh-autosuggestions? #t)
+   (feature-git)
 
    (feature-xdg)
 
    (feature-emacs
     #:additional-elisp-packages
     (map specification->package+output
-         '("emacs-paredit"))
+         '("emacs-paredit"
+           "emacs-typescript-mode"))
     #:extra-init-el
-    `(,(slurp-file-like (local-file "./elisp/configure-lisp.el"))))
-
+    `(,(slurp-file-like (local-file "./elisp/configure-defaults.el"))
+      ,(slurp-file-like (local-file "./elisp/configure-lisp.el"))
+      ,(slurp-file-like (local-file "./elisp/configure-javascript.el"))))
 
    (feature-emacs-appearance
     #:dark? #t)
@@ -135,15 +166,28 @@
    (feature-clojure
     #:clojure-lsp
     clojure-lsp)
+   (feature-javascript
+    #:node-pkg node)
    (feature-markdown)
 
    (feature-base-services)
    (feature-desktop-services)
-                                        ;   (feature-docker)
+   (feature-docker)
 
-   (feature-pipewire)
+   (feature-pipewire
+    ;; #:pipewire pipewire
+    ;; #:wireplumber wireplumber
+    )
    (feature-sway
-    #:xwayland? #t)
+    ;; #:xdg-desktop-portal xdg-desktop-portal
+    ;; #:xdg-desktop-portal-wlr xdg-desktop-portal-wlr
+    #:xwayland? #t
+    #:extra-config
+    '((bindsym
+       $mod+Shift+e exec
+       swaynag -t
+       warning -m "You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session."
+       -B "Yes, exit sway" "swaymsg exit")))
    (feature-sway-run-on-tty
     #:sway-tty-number 2)
    (feature-sway-screenshot)
@@ -164,20 +208,18 @@
       #:show-percentage? #t)))
 
    (feature-base-packages
-    ;; #:home-packages
-    ;; (map car default:packages)
-    ;; (map specification->package+output
-    ;;      '("bluez"))
+    #:home-packages
+    (append `(,firefox)
+            (map specification->package+output
+                 '("bluez"
+                   "flatpak"
+                   "make"
+                   "nyxt"
+                   "ungoogled-chromium")))
     #:system-packages
-    (map car core:packages)
-    ;; (map specification->package+output
-    ;;      '("nss-certs"
-    ;;        "vim"
-    ;;        "coreutils"
-    ;;        "file"
-    ;;        "make"
-    ;;        "stow"))))
-    )))
+    ;; (map car core:packages)
+    (map specification->package+output
+         '("nss-certs")))))
 
 (define-public config
   (rde-config
