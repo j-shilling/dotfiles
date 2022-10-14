@@ -1,50 +1,54 @@
-(define-module (jrs rde configs)
-  #:use-module (rde features)
-  #:use-module (rde features base)
-  #:use-module (rde features emacs)
-  #:use-module (rde features emacs-xyz)
-  #:use-module (rde features version-control)
-  #:use-module (rde features wm)
-  #:use-module (rde features gnupg)
-  #:use-module (rde features password-utils)
-  #:use-module (rde features docker)
-  #:use-module (rde features linux)
-  #:use-module (rde features fontutils)
-  #:use-module (rde features terminals)
-  #:use-module (rde features tmux)
-  #:use-module (rde features shells)
-  #:use-module (rde features shellutils)
-  #:use-module (rde features ssh)
-  #:use-module (rde features system)
-  #:use-module (rde features xdg)
-  #:use-module (rde features clojure)
-  #:use-module (rde features markup)
-  #:use-module (rde gexp)
+;;
+;; Special Thanks to https://github.com/nicolas-graves/dotfiles
+;;
 
-  #:use-module (gnu packages)
-  #:use-module (gnu packages fonts)
-  #:use-module (gnu home services)
-  #:use-module (gnu services)
-  #:use-module (gnu services base)
-  #:use-module (gnu services desktop)
-  #:use-module (gnu services xorg)
-  #:use-module (gnu system file-systems)
-  #:use-module (gnu home-services-utils)
-  #:use-module (nongnu packages linux)
-  #:use-module (nongnu system linux-initrd)
+(when (current-filename)
+  (add-to-load-path
+   (dirname (current-filename))))
 
-  #:use-module (jrs packages clojure-lsp)
-  #:use-module (jrs packages mozilla)
-  #:use-module (jrs packages linux)
-  #:use-module (jrs packages freedesktop)
-  #:use-module (jrs packages node)
+(use-modules
+ (guix gexp)
+ (ice-9 match)
+ (ice-9 pretty-print))
 
-  #:use-module (jrs rde features javascript)
+(define (channel-content)
+  "Generate the content of the `channels.scm' file."
+  `(list
+    (channel
+     (name 'nonguix)
+     (url
+      "https://gitlab.com/nonguix/nonguix")
+     (introduction
+      (make-channel-introduction
+       "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
+       (openpgp-fingerprint
+        "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5"))))
+    (channel
+     (name 'rde)
+     (url "https://git.sr.ht/~abcdw/rde")
+     (introduction
+      (make-channel-introduction
+       "257cebd587b66e4d865b3537a9a88cccd7107c95"
+       (openpgp-fingerprint
+        "2841 9AC6 5038 7440 C7E9  2FFA 2208 D209 58C1 DEB0"))))
+    (channel
+     (name 'guix)
+     (url "https://git.savannah.gnu.org/git/guix.git")
+     (introduction
+      (make-channel-introduction
+       "9edb3f66fd807b096b48283debdcddccfea34bad"
+       (openpgp-fingerprint
+        "BBB0 2DDF 2CEA F6A8 0D1D  E643 A2A0 6DF2 A33A 54FA"))))))
 
-  #:use-module ((jrs profiles default) :prefix default:)
-  #:use-module ((jrs manifests core) :prefix core:)
-  #:use-module (guix gexp)
-  #:use-module (ice-9 match))
+(define channels-file
+  (plain-file
+   "channels"
+   (with-output-to-string
+     (lambda ()
+       (pretty-print (channel-content))))))
+
+(use-modules
+ (gnu system file-systems))
 
 (define os-file-systems
   (list (file-system
@@ -57,6 +61,11 @@
           (uuid "5b3dce06-4eb1-47a3-9b33-f7aa7a2ed83c"
                 'ext4))
          (type "ext4"))))
+
+(use-modules
+ (rde features base)
+ (rde features gnupg)
+ (rde features password-utils))
 
 (define %user-features
   (list
@@ -81,6 +90,43 @@
 
    (feature-password-store
     #:remote-password-store-url "git@gitlab.com:shilling.jake/password-store.git")))
+
+(use-modules
+ (rde features)
+ (rde features system)
+ (rde features fontutils)
+ (rde features tmux)
+ (rde features shells)
+ (rde features shellutils)
+ (rde features ssh)
+ (rde features version-control)
+ (rde features xdg)
+ (rde features emacs)
+ (rde features emacs-xyz)
+ (rde features clojure)
+ (rde features markup)
+ (rde features docker)
+ (rde features linux)
+ (rde features wm)
+
+ (rde gexp)
+
+ (gnu services)
+ (gnu services base)
+ (gnu services desktop)
+
+ (gnu packages)
+ (gnu packages fonts)
+
+ (gnu home services)
+
+ (nongnu packages linux)
+ (nongnu system linux-initrd)
+
+ (jrs packages clojure-lsp)
+ (jrs packages node)
+ (jrs packages mozilla)
+ (jrs features javascript))
 
 (define %main-features
   (list
@@ -170,7 +216,21 @@
     #:node-pkg node)
    (feature-markdown)
 
-   (feature-base-services)
+   (feature-base-services
+    #:guix-substitute-urls
+    (append (list "https://substitutes.nonguix.org")
+            (@ (guix store) %default-substitute-urls))
+    #:guix-authorized-keys
+    (append (list (local-file "./public-keys/nonguix.pub"))
+            (@ (gnu services base) %default-authorized-guix-keys))
+    #:base-services
+    (append
+     (list
+      (simple-service
+       'channels-and-sources
+       etc-service-type
+       `(("channels.scm" ,channels-file))))))
+
    (feature-desktop-services)
    (feature-docker)
 

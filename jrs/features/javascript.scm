@@ -1,4 +1,4 @@
-(define-module (jrs rde features javascript)
+(define-module (jrs features javascript)
   #:use-module (rde features)
   #:use-module (rde features predicates)
   #:use-module (rde features emacs)
