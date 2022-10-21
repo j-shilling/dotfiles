@@ -51,6 +51,7 @@
  (gnu services)
  (gnu services base)
  (gnu services desktop)
+ (gnu services ssh)
 
  (gnu home services)
 
@@ -84,6 +85,7 @@
                              "${XDG_DATA_DIRS}:"
                              "/var/lib/flatpak/exports/share:"
                              "${HOME}/.local/share/flatpak/exports/share")))))
+
      #:system-services
      (list
       (simple-service
@@ -94,7 +96,13 @@
                (guix-publish-configuration
                 (advertise? #t)))
       (service bluetooth-service-type
-               (bluetooth-configuration))))
+               (bluetooth-configuration))
+      (service openssh-service-type
+               (openssh-configuration
+                (x11-forwarding? #t)
+                (password-authentication? #f)
+                (authorized-keys
+                 `(("jake" ,(local-file "./public-keys/jake.pub"))))))))
 
     (feature-base-services
      #:guix-substitute-urls
@@ -122,17 +130,29 @@
      %host-features
      %main-features))))
 
+(define-public live-config
+  (rde-config
+   (features
+    (append
+     %user-features
+     %live-host-features
+     %main-features))))
+
 (define-public os
   (rde-config-operating-system config))
 
 (define-public home
   (rde-config-home-environment config))
 
+(define-public live-os
+  (rde-config-operating-system live-config))
+
 (define (dispatcher)
   (let ((rde-target (getenv "RDE_TARGET")))
     (match rde-target
       ("home" home)
       ("system" os)
+      ("live-system" live-os)
       (_ home))))
 
 (dispatcher)
