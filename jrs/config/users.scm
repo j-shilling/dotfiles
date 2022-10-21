@@ -10,8 +10,9 @@
     #:user-name "jake"
     #:full-name "Jake Shilling"
     #:email "shilling.jake@gmail.com"
-    #:user-groups '("wheel" "netdev" "audio" "lp" "video" "tty")
-    #:user-initial-password-hash #f
+    #:user-groups '("wheel" "netdev" "audio" "lp" "video" "tty" "kvm")
+    #:user-initial-password-hash
+    "$6$wBQv6IQzjX$fKWemlD4YAIEcK4IgHzn68VNXyTNSL/MCVeiRH05cPHDyQLSse.k57ZPndZk83ddtnYBglH7GAH4E65nnk4y4/"
     #:emacs-advanced-user? #t
     #:rde-advanced-user? #f)
 
@@ -24,11 +25,10 @@
 
    (feature-gnupg
     #:gpg-primary-key "0FCC8E6A96FF109F"
-    #:pinentry-flavor 'emacs
+    ;; #:pinentry-flavor 'emacs
     #:ssh-keys
-    '(("57CCEEB098F2AA6791BA6D8F4CEF32B3F147C678")
-      ("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")
-      ("57407F876080A07BE7455903C9F52FB2922C8C49")))
+    '(("6B626401361800A59771759B5FBF44151969E206")
+      ("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")))
 
    (feature-password-store
     #:remote-password-store-url "git@gitlab.com:shilling.jake/password-store.git")))
