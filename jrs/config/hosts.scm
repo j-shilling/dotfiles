@@ -48,3 +48,24 @@
     #:file-systems file-systems
     #:swap-devices (list (swap-space (target (lookup 'swap)))))
    (feature-bootloader)))
+
+(define-public %live-host-features
+  (list
+   (feature-host-info
+    #:host-name "GuixLive"
+    #:timezone "America/New_York")
+   (feature-kernel
+    #:kernel   (lookup 'kernel)
+    #:initrd   (lookup 'initrd)
+    #:firmware (lookup 'firmware))
+   (feature-file-systems
+    #:file-systems (list (file-system
+                           (mount-point "/")
+                           (device (file-system-label "Guix_image"))
+                           (type "ext4"))
+                         (file-system
+                           (mount-point "/tmp")
+                           (device "none")
+                           (type "tmpfs")
+                           (check? #f))))
+   (feature-bootloader)))

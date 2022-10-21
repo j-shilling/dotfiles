@@ -14,7 +14,8 @@
     #:additional-elisp-packages
     (map specification->package+output
          '("emacs-paredit"
-           "emacs-typescript-mode"))
+           "emacs-typescript-mode"
+           "emacs-pinentry"))
     #:extra-init-el
     `(,(slurp-file-like (local-file "../../elisp/configure-defaults.el"))
       ,(slurp-file-like (local-file "../../elisp/configure-lisp.el"))

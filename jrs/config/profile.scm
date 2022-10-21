@@ -4,13 +4,13 @@
 (define-public %home-packages
   (map specification->package+output
           '("bluez"
-            "zoom"
             "flatpak"
             "make"
             "nyxt"
             "ungoogled-chromium"
             "zathura"
-            "zathura-pdf-poppler")))
+            "zathura-pdf-poppler"
+            "qemu")))
 
 (define-public %system-packages
   (map specification->package+output
