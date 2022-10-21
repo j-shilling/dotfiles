@@ -26,10 +26,18 @@ guix/system/build:
 	RDE_TARGET=system sudo -E guix system --fallback build --no-grafts --allow-downgrades \
 	${HOME_CONFIG}
 
-# guix/profile:
-# 	guix package -m ./guix/.config/guix/jrs/profiles/default.scm
+guix/image:
+	RDE_TARGET=live-system guix system vm -t qcow2 --volatile \
+	${HOME_CONFIG}
 
-# guix/profile/build:
-# 	guix build -m ./guix/.config/guix/jrs/profiles/default.scm
+guix-image.qcow2: config.scm
+	./make-image.sh
+
+ovmf_x64.bin:
+	./make-firmware.sh
+
+.PHONY: guix/run
+guix/run: guix-image.qcow2 ovmf_x64.bin
+	qemu-system-x86_64 -hda guix-image.qcow2 -bios ovmf_x64.bin -m 1000
 
 # end
