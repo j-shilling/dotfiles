@@ -6,11 +6,14 @@
 
   #:use-module (gnu packages fonts)
 
+  #:use-module (jrs features xorg)
+
   #:use-module (jrs packages linux)
   #:use-module (jrs packages freedesktop))
 
 (define-public %desktop-features
   (list
+   (feature-i3)
    (feature-desktop-services)
    (feature-fonts
      #:font-monospace (font "Fira Mono" #:size 14 #:weight 'regular)
