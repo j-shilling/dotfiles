@@ -14,6 +14,7 @@
 (define-public %desktop-features
   (list
    (feature-i3)
+   (feature-polybar)
    (feature-desktop-services)
    (feature-fonts
      #:font-monospace (font "Fira Mono" #:size 14 #:weight 'regular)
@@ -28,11 +29,7 @@
      #:xdg-desktop-portal-wlr xdg-desktop-portal-wlr
      #:xwayland? #t
      #:extra-config
-     '((bindsym
-        $mod+Shift+e exec
-        swaynag -t
-        warning -m "You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session."
-        -B "Yes, exit sway" "swaymsg exit")))
+     '((bindsym $mod+Shift+e exec swaymsg exit)))
     (feature-sway-run-on-tty
      #:sway-tty-number 2)
     (feature-sway-screenshot)
