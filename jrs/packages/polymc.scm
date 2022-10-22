@@ -61,7 +61,7 @@
                  libxxf86vm
                  pulseaudio
                  mesa))
-   (propagated-inputs (list `(,openjdk18 "jdk")))
+   (propagated-inputs (list `(,openjdk17 "jdk")))
    (home-page "https://polymc.org/")
    (synopsis "A free, open source launcher for Minecraft")
    (description
