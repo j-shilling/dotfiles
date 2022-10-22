@@ -19,7 +19,8 @@
 
   #:use-module (srfi srfi-1)
 
-  #:export (feature-i3))
+  #:export (feature-i3
+            feature-polybar))
 
 (define* (feature-i3
           #:key
@@ -54,8 +55,6 @@
                  (config
                   `((,#~"\n\n# General settings:")
                     (set $mod ,i3-mod)
-
-                    ;; (floating_modifier $mod normal)
 
                     (bindsym $mod+Shift+r reload)
                     (bindsym $mod+Shift+e exec i3-msg exit)
@@ -128,7 +127,8 @@
                   (get-value 'backup-terminal config))
              '() (list alacritty))
          (if (get-value 'default-application-launcher config)
-             '() (list dmenu)))))))
+             '() (list dmenu))
+         (list xinit))))))
 
   (define (system-xorg-services _)
     (list
@@ -142,3 +142,46 @@
              (xorg-configuration . ,xorg-configuration)))
    (home-services-getter home-xorg-services)
    (system-services-getter system-xorg-services)))
+
+(define* (polybar-module
+          name
+          #:optional
+          (config '())
+          #:key
+          (placement 'modules-right)
+          (bar-id 'main))
+  (simple-service
+   (symbol-append 'polybar-module name)
+   home-polybar-service-type
+   (home-polybar-extension
+    (config
+     `((,(symbol-append 'bar/ bar-id) ((,placement . ,name)))
+       (,(symbol-append 'module/ name) ,config))))))
+
+(define* (feature-polybar
+          #:key
+          (polybar polybar))
+
+  (define (home-polybar-services _)
+    (list
+     (service
+      home-polybar-service-type
+      (home-polybar-configuration
+       (polybar polybar)
+       (config
+        `((colors ((base01 . ,(string->symbol "#282828"))
+                   (base02 . ,(string->symbol "#383838"))
+                   (base03 . ,(string->symbol "#585858"))
+                   (base04 . ,(string->symbol "#b8b8b8"))
+                   (base05 . ,(string->symbol "#d8d8d8"))
+                   (base07 . ,(string->symbol "#f8f8f8"))
+                   (base08 . ,(string->symbol "#ab4642"))))
+
+          (bar/main ((background . ,(string->symbol "${colors.base01}"))
+                     (foreground . ,(string->symbol "${colors.base04}"))))))))))
+
+  (feature
+   (name 'polybar)
+   (values `((polybar . ,polybar)
+             (i3-statusbar . #t)))
+   (home-services-getter home-polybar-services)))

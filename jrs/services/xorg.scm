@@ -5,11 +5,17 @@
   #:use-module (guix packages)
   #:use-module (guix gexp)
   #:use-module (rde home services wm)
+  #:use-module (rde serializers ini)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-43)
   #:use-module (ice-9 match)
 
   #:export (home-i3-configuration
-            home-i3-service-type))
+            home-i3-service-type
+
+            home-polybar-configuration
+            home-polybar-service-type
+            home-polybar-extension))
 
 ;;;
 ;;; i3.
@@ -127,3 +133,54 @@ where each expression is also a list, but provided value is:\n ~a") e))) ))
                 (extend home-i3-extensions)
                 (default-value (home-i3-configuration))
                 (description "Install and configure i3")))
+
+;;;
+;;; polybar
+;;;
+
+(define-configuration home-polybar-configuration
+  (polybar
+   (file-like polybar)
+   "polybar package to use.")
+  (config
+   (ini-config '())
+   "A vector of alists representing a polybar config."))
+
+(define-configuration home-polybar-extension
+  (config
+   (ini-config '())
+   "A vector representing additional configuration."))
+
+(define (add-polybar-packages config)
+  (list (home-polybar-configuration-polybar config)))
+
+(define (home-polybar-extensions cfg extensions)
+  (let ((extensions (reverse extensions)))
+    (home-polybar-configuration
+     (inherit cfg)
+     (config
+      (append
+       (home-polybar-configuration-config cfg)
+       (concatenate
+        (map home-polybar-extension-config extensions)))))))
+
+(define (add-polybar-configuration config)
+  `(("polybar/config.ini"
+     ,(apply
+       mixed-text-file
+       "polybar-config"
+       (serialize-ini-config (home-polybar-configuration-config config))))))
+
+(define home-polybar-service-type
+  (service-type (name 'home-polybar)
+                (extensions
+                 (list (service-extension
+                        home-profile-service-type
+                        add-polybar-packages)
+                       (service-extension
+                        home-xdg-configuration-files-service-type
+                        add-polybar-configuration)))
+                (compose identity)
+                (extend home-polybar-extensions)
+                (default-value (home-polybar-configuration))
+                (description "polybar")))
