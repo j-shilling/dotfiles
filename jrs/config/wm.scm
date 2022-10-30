@@ -7,6 +7,7 @@
   #:use-module (gnu packages fonts)
 
   #:use-module (jrs features xorg)
+  #:use-module (jrs features greetd)
 
   #:use-module (jrs packages linux)
   #:use-module (jrs packages freedesktop))
@@ -15,36 +16,37 @@
   (list
    (feature-i3)
    (feature-polybar)
+
    (feature-desktop-services)
    (feature-fonts
-     #:font-monospace (font "Fira Mono" #:size 14 #:weight 'regular)
-     #:font-sans (font "Fira Sans" #:size 14 #:weight 'regular)
-     #:font-packages (list font-fira-mono font-fira-sans)
-     #:default-font-size 14)
+    #:font-monospace (font "Fira Mono" #:size 14 #:weight 'regular)
+    #:font-sans (font "Fira Sans" #:size 14 #:weight 'regular)
+    #:font-packages (list font-fira-mono font-fira-sans)
+    #:default-font-size 14)
    (feature-pipewire
-     #:pipewire pipewire
-     #:wireplumber wireplumber)
-    (feature-sway
-     #:xdg-desktop-portal xdg-desktop-portal
-     #:xdg-desktop-portal-wlr xdg-desktop-portal-wlr
-     #:xwayland? #t
-     #:extra-config
-     '((bindsym $mod+Shift+e exec swaymsg exit)))
-    (feature-sway-run-on-tty
-     #:sway-tty-number 2)
-    (feature-sway-screenshot)
-    (feature-swaylock)
-    (feature-waybar
-     #:transitions? #t
-     #:waybar-modules
-     (list
-      (waybar-sway-window)
-      (waybar-sway-workspaces
-       #:format-icons '())
-      (waybar-tray)
-      (waybar-idle-inhibitor)
-      (waybar-clock
-       #:format "{:%I:%M %p}")
-      (waybar-microphone)
-      (waybar-volume
-       #:show-percentage? #t)))))
+    #:pipewire pipewire
+    #:wireplumber wireplumber)
+   (feature-sway
+    #:xdg-desktop-portal xdg-desktop-portal
+    #:xdg-desktop-portal-wlr xdg-desktop-portal-wlr
+    #:xwayland? #t
+    #:extra-config
+    '((bindsym $mod+Shift+e exec swaymsg exit)))
+   (feature-sway-run-on-tty
+    #:sway-tty-number 2)
+   (feature-sway-screenshot)
+   (feature-swaylock)
+   (feature-waybar
+    #:transitions? #t
+    #:waybar-modules
+    (list
+     (waybar-sway-window)
+     (waybar-sway-workspaces
+      #:format-icons '())
+     (waybar-tray)
+     (waybar-idle-inhibitor)
+     (waybar-clock
+      #:format "{:%I:%M %p}")
+     (waybar-microphone)
+     (waybar-volume
+      #:show-percentage? #t)))))
