@@ -3,6 +3,9 @@
 
 (define-public %mail-features
   (list
-   (feature-isync)
+   (feature-emacs-message)
+   (feature-isync
+    #:isync-verbose #t)
+   ;; (feature-l2md)
    (feature-notmuch)
    (feature-msmtp)))
