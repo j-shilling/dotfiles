@@ -18,8 +18,7 @@
            "emacs-pinentry"))
     #:extra-init-el
     `(,(slurp-file-like (local-file "../../elisp/configure-defaults.el"))
-      ,(slurp-file-like (local-file "../../elisp/configure-lisp.el"))
-      ,(slurp-file-like (local-file "../../elisp/configure-javascript.el"))))
+      ,(slurp-file-like (local-file "../../elisp/configure-lisp.el"))))
 
    (feature-emacs-appearance
     #:dark? #t)
