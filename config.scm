@@ -54,6 +54,7 @@
  (gnu services ssh)
 
  (gnu home services)
+ (gnu home services mcron)
 
  (rde features base)
 
@@ -62,7 +63,8 @@
  (jrs config wm)
  (jrs config development)
  (jrs config shell)
- (jrs config profile))
+ (jrs config profile)
+ (jrs config mcron))
 
 (define %main-features
   (append
@@ -75,6 +77,9 @@
     (feature-custom-services
      #:home-services
      (list
+      (service home-mcron-service-type
+               (home-mcron-configuration
+                (jobs %mcron-jobs)))
       (simple-service
        'extend-environment-variables
        home-environment-variables-service-type
