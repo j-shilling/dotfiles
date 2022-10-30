@@ -4,6 +4,8 @@
   #:use-module (gnu packages wm)
   #:use-module (guix packages)
   #:use-module (guix gexp)
+  #:use-module (guix diagnostics)
+  #:use-module (guix ui)
   #:use-module (rde home services wm)
   #:use-module (rde serializers ini)
   #:use-module (srfi srfi-1)

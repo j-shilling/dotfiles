@@ -5,13 +5,17 @@
   #:use-module (gnu home services)
 
   #:use-module (gnu packages xorg)
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages suckless)
   #:use-module (gnu packages terminals)
+  #:use-module (gnu packages fonts)
+  #:use-module (gnu packages pulseaudio)
 
   #:use-module (guix gexp)
 
   #:use-module (rde features)
+  #:use-module (rde features fontutils)
   #:use-module (rde features predicates)
   #:use-module (rde serializers elisp)
 
@@ -36,7 +40,11 @@
   (ensure-pred any-package? dmenu)
 
   (define (home-xorg-services config)
-    (let* ((lock-cmd
+    (let* ((font-sans (get-value 'font-sans config))
+           (font (format #f "pango:~a ~a"
+                         (font-name font-sans)
+                         (font-size font-sans)))
+           (lock-cmd
             (get-value 'default-screen-locker config "loginctl lock-session"))
 
            (default-terminal
@@ -49,11 +57,35 @@
              (get-value 'default-application-launcher config
                         (file-append dmenu "/bin/dmenu_run -l 20 -p run:"))))
       (list
+       (simple-service
+        'i3-launch-shepherd
+        home-i3-service-type
+        `((,#~"\n\n# Launch shepherd:")
+          (exec ,(program-file
+                  "launch-shepherd"
+                  #~(let ((log-dir (or (getenv "XDG_LOG_HOME")
+                                       (format #f "~a/.local/var/log"
+                                               (getenv "HOME")))))
+                      (system*
+                       #$(file-append shepherd "/bin/shepherd")
+                       "--logfile"
+                       (string-append log-dir "/shepherd.log")))))))
+
+       (simple-service
+        'i3-dbus-update-activation-environment
+        home-i3-service-type
+        `(,@(if (get-value 'dbus config)
+                `((,#~"\n\n# Update dbus environment variables:")
+                  (exec ,(file-append
+                          (get-value 'dbus config)
+                          "/bin/dbus-update-activation-environment") --all))
+                '())))
        (service home-i3-service-type
                 (home-i3-configuration
                  (package i3)
                  (config
                   `((,#~"\n\n# General settings:")
+                    (font ,font)
                     (set $mod ,i3-mod)
 
                     (bindsym $mod+Shift+r reload)
@@ -93,7 +125,7 @@
                     (bindsym $mod+Shift+Right move right)
 
                     (,#~"\n\n# Moving around workspaces:")
-                    (bindsym $mod+tab workspace back_and_forth)
+                    (bindsym $mod+Tab workspace back_and_forth)
                     ,@(append-map
                        (lambda (x)
                          `((bindsym ,(format #f "$mod+~a" (modulo x 10))
@@ -117,6 +149,19 @@
         `((".xinitrc"
            ,(mixed-text-file
              "xinitrc"
+
+             ;; Unset all the stuff set by feature-sway
+             "unset XDG_CURRENT_DESKTOP\n"
+             "unset XDG_SESSION_TYPE\n"
+             "unset RTC_USE_PIPEWIRE\n"
+             "unset SDL_VIDEODRIVER\n"
+             "unset MOZ_ENABLE_WAYLAND\n"
+             "unset CLUTTER_BACKEND\n"
+             "unset ELM_ENGINE\n"
+             "unset ECORE_EVAS_ENGINE\n"
+             "unset QT_QPA_PLATFORM\n"
+
+             "xsetroot -solid dimgray\n"
              "exec " i3 "/bin/i3"))))
 
        (simple-service
@@ -128,7 +173,7 @@
              '() (list alacritty))
          (if (get-value 'default-application-launcher config)
              '() (list dmenu))
-         (list xinit))))))
+         (list xinit xsetroot))))))
 
   (define (system-xorg-services _)
     (list
@@ -139,7 +184,8 @@
    (name 'i3)
    (values `((i3 . ,i3)
              (xorg . #t)
-             (xorg-configuration . ,xorg-configuration)))
+             (xorg-configuration . ,xorg-configuration)
+             (xinit . ,xinit)))
    (home-services-getter home-xorg-services)
    (system-services-getter system-xorg-services)))
 
@@ -162,23 +208,135 @@
           #:key
           (polybar polybar))
 
-  (define (home-polybar-services _)
+  (define (home-polybar-services config)
+
+    (define font-mono
+      (and=> (get-value 'font-monospace config)
+             font-name))
+
     (list
      (service
       home-polybar-service-type
       (home-polybar-configuration
        (polybar polybar)
        (config
-        `((colors ((base01 . ,(string->symbol "#282828"))
-                   (base02 . ,(string->symbol "#383838"))
-                   (base03 . ,(string->symbol "#585858"))
-                   (base04 . ,(string->symbol "#b8b8b8"))
-                   (base05 . ,(string->symbol "#d8d8d8"))
-                   (base07 . ,(string->symbol "#f8f8f8"))
-                   (base08 . ,(string->symbol "#ab4642"))))
+        (let* ((i3-label-padding 1)
+               (font-size 14)
+               (font-offset 5)
+               (height (string->symbol
+                        (format #f "~Apt"
+                                (+ font-size (* font-offset 2)))))
+               (font-0 (string->symbol
+                        (format #f "~A:style=Regular:size=~A;~A"
+                                font-mono font-size font-offset))))
+          `((colors ((base01 . ,(string->symbol "#282828"))
+                     (base02 . ,(string->symbol "#383838"))
+                     (base03 . ,(string->symbol "#585858"))
+                     (base04 . ,(string->symbol "#b8b8b8"))
+                     (base05 . ,(string->symbol "#d8d8d8"))
+                     (base07 . ,(string->symbol "#f8f8f8"))
+                     (base08 . ,(string->symbol "#ab4642"))))
 
-          (bar/main ((background . ,(string->symbol "${colors.base01}"))
-                     (foreground . ,(string->symbol "${colors.base04}"))))))))))
+            (bar/main ((background . ,(string->symbol "${colors.base01}"))
+                       (foreground . ,(string->symbol "${colors.base04}"))
+
+                       (font-0 . ,font-0)
+                       (font-1 . FontAwesome)
+
+                       (enable-ipc . true)
+                       (height . ,height)
+
+                       (monitor . ,(string->symbol "${env:MONITOR:}"))
+
+                       (modules-left . i3)
+                       (modules-center . xwindow)
+                       (modules-right . ,(string->symbol "pulseaudio date"))))
+
+            (module/i3 ((type . internal/i3)
+                        (pin-workspaces . true)
+                        (enable-client . true)
+
+                        (label-visible . %index%)
+                        (label-visible-padding . ,i3-label-padding)
+
+                        (label-focused . %index%)
+                        (label-focused-foreground . ,(string->symbol "${colors.base07}"))
+                        (label-focused-background . ,(string->symbol "${colors.base02}"))
+                        (label-focused-padding . ,i3-label-padding)
+
+                        (label-unfocused . %index%)
+                        (label-unfocused-padding . ,i3-label-padding)
+
+                        (label-urgent . %index%)
+                        (label-urgent-foreground . ,(string->symbol "${colors.base08}"))))
+
+            (module/xwindow ((type . internal/xwindow)))
+
+            (module/date ((type . internal/date)
+                          (date . "")
+                          (time . ,(string->symbol "%l:%M %p"))
+                          (date-alt . ,(string->symbol "%b %d, %Y"))
+                          (time-alt . "")
+                          (label . ,(string->symbol "%date%%time%"))
+                          (label-padding . ,i3-label-padding)))
+
+            (module/pulseaudio ((type . internal/pulseaudio)
+                                (format-volume . ,(string->symbol "<ramp-volume> <label-volume>"))
+                                (label-volume . %percentage%%)
+                                ;; (label-muted . ,(string->symbol "%{T1}🔇%{T-}"))
+                                (ramp-volume-0 . ,(string->symbol "%{T1}🔈%{T-}"))
+                                (ramp-volume-1 . ,(string->symbol "%{T1}🔊%{T-}"))
+                                (ramp-volume-2 . ,(string->symbol "%{T1}📢%{T-}"))
+                                (on-click . ,#~(format #f "~s"
+                                                       #$(file-append
+                                                          (get-value 'pavucontrol config pavucontrol)
+                                                          "/bin/pavucontrol"))))))))))
+     (simple-service
+      'i3-waybar
+      home-i3-service-type
+      `((exec_always --no-startup-id
+                     ,(program-file
+                       "launch-polybar"
+                       #~(begin
+                           (use-modules (guix build utils)
+                                        (ice-9 popen)
+                                        (ice-9 rdelim))
+
+                           (system* "killall" "polybar")
+
+                           (let ((polybar-bin (string-append #$polybar "/bin/polybar")))
+
+                             (define (list-monitors)
+                               (define lines '())
+                               (let ((pipe (open-input-pipe (string-append polybar-bin " -m"))))
+                                 (do ((line (read-line pipe)
+                                            (read-line pipe)))
+                                     ((eof-object? line))
+                                   (set! lines (cons line lines)))
+                                 (close-pipe pipe))
+
+                               (map (lambda (str)
+                                      (car (string-split str #\:)))
+                                    lines))
+
+                             (define (start-polybar-on-each-monitor monitors)
+                               (map (lambda (monitor)
+                                      (setenv "MONITOR" monitor)
+                                      (let ((pid (primitive-fork)))
+                                        (if (zero? pid)
+                                            (execlp polybar-bin)
+                                            (begin
+                                              (unsetenv "MONITOR")
+                                              pid))))
+                                    monitors))
+
+                             (for-each waitpid
+                                       (start-polybar-on-each-monitor
+                                        (list-monitors)))))))))
+     (simple-service
+      'polybar-add-font-package
+      home-profile-service-type
+      (list font-awesome))))
 
   (feature
    (name 'polybar)
