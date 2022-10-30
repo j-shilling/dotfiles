@@ -17,7 +17,7 @@
   (package
    (inherit gnu:xdg-desktop-portal)
    (name "xdg-desktop-portal")
-   (version "1.14.16")
+   (version "1.14.6")
    (source (origin
             (method url-fetch)
             (uri (string-append
@@ -25,7 +25,7 @@
                   version "/xdg-desktop-portal-" version ".tar.xz"))
             (sha256
              (base32
-              "0wqc9x3k7lf3mig53i4rjazi0xi8bcykwaaw7r7prvnscnd1k405"))))
+              "1q0djpnwlrqm0h0alyh1r6dlkqdrr7mj5hiam4mqzxqa5jbqkrgj"))))
    (inputs
     (modify-inputs (package-inputs gnu:xdg-desktop-portal)
                    (replace "pipewire" jrs:pipewire)))))
