@@ -33,3 +33,7 @@
 (dolist (hook (init-lisp-hooks))
   (declare-function enable-paredit-mode "paredit" ())
   (add-hook hook #'enable-paredit-mode))
+
+;; GUIX STUFF
+
+(add-hook 'scheme-mode-hook 'guix-devel-mode)
