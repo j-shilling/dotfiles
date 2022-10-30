@@ -4,6 +4,15 @@
   #:use-module (rde features mail)
   #:use-module (rde features password-utils))
 
+(define* (mail-lst id fqda urls)
+  "Make a simple mailing-list."
+  (mailing-list
+   (id   id)
+   (fqda fqda)
+   (config (l2md-repo
+            (name (symbol->string id))
+            (urls urls)))))
+
 (define-public %user-features
   (list
    (feature-user-info
@@ -20,8 +29,17 @@
     #:mail-accounts (list (mail-account
                            (id 'personal)
                            (fqda "shilling.jake@gmail.com")
+                           (type 'gmail))
+                          (mail-account
+                           (id 'work)
+                           (fqda "jshilling@arena.io")
                            (type 'gmail)))
-    #:mailing-lists '())
+    #:mailing-lists (list (mail-lst 'guix-devel "guix-devel@gnu.org"
+                                    '("https://yhetil.org/guix-devel/0"))
+                          (mail-lst 'guix-bugs "guix-bugs@gnu.org"
+                                    '("https://yhetil.org/guix-bugs/0"))
+                          (mail-lst 'guix-patches "guix-patches@gnu.org"
+                                    '("https://yhetil.org/guix-patches/1"))))
 
    (feature-gnupg
     #:gpg-primary-key "0FCC8E6A96FF109F"
