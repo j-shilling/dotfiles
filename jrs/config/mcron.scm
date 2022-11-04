@@ -5,7 +5,10 @@
 (define %mcron-jobs
   (list
    #~(job '(next-minute
-            (range 0 60 10))
+            (range 0 60 5))
           (lambda ()
+            (system* "afew" "-vm")
             (system* "mbsync" "-Va")
-            (system* "notmuch" "new")))))
+            (system* "l2md --verbose")
+            (system* "notmuch" "new")
+            (system* "notifymuch")))))

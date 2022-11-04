@@ -59,7 +59,7 @@
                  typescript-indent-list-items t
                  typescript-ident-switch-clauses 2))
 
-          (add-to-list 'auto-mode-alist '("\\.tsx\\'" . 'typescript-tsx-mode))
+          (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-tsx-mode))
           (autoload 'typescript-tsx-mode "typescript-mode" nil t)
           (define-derived-mode typescript-tsx-mode web-mode "TypeScript-TSX")
 

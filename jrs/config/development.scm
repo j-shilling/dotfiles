@@ -5,6 +5,8 @@
   #:use-module (rde features markup)
 
   #:use-module (jrs features javascript)
+  #:use-module (jrs features python)
+  #:use-module (jrs features ocaml)
 
   #:use-module (jrs packages clojure-lsp)
   #:use-module (jrs packages node))
@@ -18,4 +20,6 @@
     clojure-lsp)
    (feature-javascript
     #:node-pkg node)
+   (feature-ocaml)
+   (feature-python)
    (feature-git)))

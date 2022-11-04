@@ -99,7 +99,8 @@
        `(("channels.scm" ,channels-file)))
       (service guix-publish-service-type
                (guix-publish-configuration
-                (advertise? #t)))
+                (advertise? #t)
+                (host "0.0.0.0")))
       (service bluetooth-service-type
                (bluetooth-configuration))
       (service openssh-service-type

@@ -39,7 +39,13 @@
                           (mail-lst 'guix-bugs "guix-bugs@gnu.org"
                                     '("https://yhetil.org/guix-bugs/0"))
                           (mail-lst 'guix-patches "guix-patches@gnu.org"
-                                    '("https://yhetil.org/guix-patches/1"))))
+                                    '("https://yhetil.org/guix-patches/1"))
+                          (mail-lst 'emacs-devel "emacs-devel@gnu.org"
+                                    '("https://yhetil.org/emacs-devel/"))
+                          (mail-lst 'emacs-bugs "bug-gnu-emacs@gnu.org"
+                                    '("https://yhetil.org/emacs-bugs/"))
+                          (mail-lst 'emacs-user "help-gnu-emacs@gnu.org"
+                                    '("https://yhetil.org/emacs-user/"))))
 
    (feature-gnupg
     #:gpg-primary-key "0FCC8E6A96FF109F"

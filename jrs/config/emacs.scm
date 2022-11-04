@@ -6,7 +6,10 @@
   #:use-module (rde gexp)
 
   #:use-module (rde features emacs)
-  #:use-module (rde features emacs-xyz))
+  #:use-module (rde features emacs-xyz)
+  #:use-module (rde features terminals)
+
+  #:use-module (jrs features emacs-xyz))
 
 (define-public %emacs-features
   (list
@@ -14,7 +17,6 @@
     #:additional-elisp-packages
     (map specification->package+output
          '("emacs-paredit"
-           "emacs-typescript-mode"
            "emacs-pinentry"))
     #:extra-init-el
     `(,(slurp-file-like (local-file "../../elisp/configure-defaults.el"))
@@ -33,7 +35,9 @@
     #:turn-on? #f)
    (feature-emacs-dired)
    (feature-emacs-eshell)
+   (feature-vterm)
    (feature-emacs-git)
+   (feature-emacs-magit-forge)
    (feature-emacs-geiser)
    (feature-emacs-guix)
    (feature-emacs-eglot)

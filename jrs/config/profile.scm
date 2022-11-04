@@ -12,7 +12,10 @@
           "ungoogled-chromium"
           "zathura"
           "zathura-pdf-poppler"
-          "qemu"))
+          "qemu"
+          "notifymuch"
+          "hicolor-icon-theme" ;; Needed for notifymuch
+          ))
    (list
     polymc)))
 
