@@ -5,7 +5,9 @@
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
 
-  #:use-module (rde features system))
+  #:use-module (rde features system)
+
+  #:use-module (jrs utils))
 
 ;;
 ;; Special Thanks to https://github.com/nicolas-graves/dotfiles
@@ -36,18 +38,19 @@
      (device (lookup 'root)))))
 
 (define-public %host-features
-  (list
-   (feature-host-info
-    #:host-name (gethostname)
-    #:timezone "America/New_York")
-   (feature-kernel
-    #:kernel   (lookup 'kernel)
-    #:initrd   (lookup 'initrd)
-    #:firmware (lookup 'firmware))
-   (feature-file-systems
-    #:file-systems file-systems
-    #:swap-devices (list (swap-space (target (lookup 'swap)))))
-   (feature-bootloader)))
+  (when (guix-system?)
+    (list
+     (feature-host-info
+      #:host-name (gethostname)
+      #:timezone "America/New_York")
+     (feature-kernel
+      #:kernel   (lookup 'kernel)
+      #:initrd   (lookup 'initrd)
+      #:firmware (lookup 'firmware))
+     (feature-file-systems
+      #:file-systems file-systems
+      #:swap-devices (list (swap-space (target (lookup 'swap)))))
+     (feature-bootloader))))
 
 (define-public %live-host-features
   (list

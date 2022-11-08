@@ -7,7 +7,7 @@
   #:use-module (gnu packages fonts)
 
   #:use-module (jrs features xorg)
-  #:use-module (jrs features greetd)
+  #:use-module (jrs features mako)
 
   #:use-module (jrs packages linux)
   #:use-module (jrs packages freedesktop))
@@ -16,6 +16,8 @@
   (list
    (feature-i3)
    (feature-polybar)
+
+   (feature-mako)
 
    (feature-desktop-services)
    (feature-fonts

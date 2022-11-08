@@ -37,7 +37,6 @@
    (feature-emacs-eshell)
    (feature-vterm)
    (feature-emacs-git)
-   (feature-emacs-magit-forge)
    (feature-emacs-geiser)
    (feature-emacs-guix)
    (feature-emacs-eglot)

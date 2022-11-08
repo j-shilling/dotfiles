@@ -64,7 +64,9 @@
  (jrs config development)
  (jrs config shell)
  (jrs config profile)
- (jrs config mcron))
+ (jrs config mcron)
+
+ (jrs utils))
 
 (define %main-features
   (append
@@ -92,31 +94,34 @@
                              "${HOME}/.local/share/flatpak/exports/share")))))
 
      #:system-services
-     (list
-      (simple-service
-       'channels-and-sources
-       etc-service-type
-       `(("channels.scm" ,channels-file)))
-      (service guix-publish-service-type
-               (guix-publish-configuration
-                (advertise? #t)
-                (host "0.0.0.0")))
-      (service bluetooth-service-type
-               (bluetooth-configuration))
-      (service openssh-service-type
-               (openssh-configuration
-                (x11-forwarding? #t)
-                (password-authentication? #f)
-                (authorized-keys
-                 `(("jake" ,(local-file "./public-keys/jake.pub"))))))))
+     (if (guix-system?)
+         (list
+          (simple-service
+           'channels-and-sources
+           etc-service-type
+           `(("channels.scm" ,channels-file)))
+          (service guix-publish-service-type
+                   (guix-publish-configuration
+                    (advertise? #t)
+                    (host "0.0.0.0")))
+          (service bluetooth-service-type
+                   (bluetooth-configuration))
+          (service openssh-service-type
+                   (openssh-configuration
+                    (x11-forwarding? #t)
+                    (password-authentication? #f)
+                    (authorized-keys
+                     `(("jake" ,(local-file "./public-keys/jake.pub")))))))
+         (list)))
 
-    (feature-base-services
-     #:guix-substitute-urls
-     (append (list "https://substitutes.nonguix.org")
-             (@ (guix store) %default-substitute-urls))
-     #:guix-authorized-keys
-     (append (list (local-file "./public-keys/nonguix-key.pub"))
-             (@ (gnu services base) %default-authorized-guix-keys)))
+    (when (guix-system?)
+      (feature-base-services
+       #:guix-substitute-urls
+       (append (list "https://substitutes.nonguix.org")
+               (@ (guix store) %default-substitute-urls))
+       #:guix-authorized-keys
+       (append (list (local-file "./public-keys/nonguix-key.pub"))
+               (@ (gnu services base) %default-authorized-guix-keys))))
 
     (feature-base-packages
      #:home-packages %home-packages
@@ -145,7 +150,8 @@
      %main-features))))
 
 (define-public os
-  (rde-config-operating-system config))
+  (when (guix-system?)
+    (rde-config-operating-system config)))
 
 (define-public home
   (rde-config-home-environment config))

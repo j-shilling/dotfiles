@@ -5,6 +5,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu packages ocaml)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (jrs packages ocaml-xyz)
   #:export (feature-ocaml))
 
 (define (feature-ocaml)
@@ -14,7 +15,9 @@
      (rde-elisp-configuration-service
       'ocaml
       config
-      '((with-eval-after-load
+      '((add-to-list 'auto-mode-alist
+                     '("\\.ml\\'" . tuareg-mode))
+        (with-eval-after-load
          'tuareg
          (setq tuareg-prettify-symbols-full t
                tuareg-opam-insinuate t)
@@ -59,7 +62,8 @@
             ocaml-utop
             dune
             opam
-            ocaml-merlin))))
+            ocaml-merlin
+            ocaml-manual))))
 
   (feature
    (name 'ocaml)
