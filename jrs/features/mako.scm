@@ -24,7 +24,7 @@
       (home-mako-configuration
        (package mako)
        (config
-        `((font . ,font-sans)
+        `((font . "Fira Code 18")
           (background-color . "#6f6f6f")
           (text-color . "#FFFFFFFF")
           (width . 300)

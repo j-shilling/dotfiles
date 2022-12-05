@@ -13,7 +13,8 @@
   #:use-module (rde features mail)
   #:use-module (rde serializers ini)
   #:export (feature-l2md-no-mcron
-            feature-afew))
+            feature-afew
+            feature-mcron-mail))
 
 (define* (feature-l2md-no-mcron)
   (let ((rde-feature (feature-l2md)))
@@ -79,4 +80,41 @@
 
   (feature
    (name 'afew)
+   (home-services-getter get-home-services)))
+
+(define (fetch-mail)
+  (system "afew -vm")
+  (system "l2md --verbose")
+  (system "mbsync -Va")
+  (system "notmuch new"))
+
+(define* (feature-mcron-mail
+          #:key
+          (at '(next-minute
+                (range 0 60 5))))
+
+  (define (get-home-services config)
+    (let ((isync-cmd (if (get-value 'isync config)
+                         (get-value 'isync-synchconize-cmd-fn config)
+                         "echo No synchronize command"))
+          (l2md-cmd (if (get-value 'l2md config)
+                        "l2md --verbose"
+                        "echo No l2md command"))
+          (notmuch-cmd (if (get-value 'notmuch config)
+                           "notmuch new"
+                           "echo No notmuch command")))
+        (list
+         (simple-service
+          'fetch-mail-job
+          home-mcron-service-type
+          (list
+           #~(job
+              '#$at
+              (lambda ()
+                (system #$l2md-cmd)
+                (system #$isync-cmd)
+                (system #$notmuch-cmd))))))))
+
+  (feature
+   (name 'mcron-mail)
    (home-services-getter get-home-services)))

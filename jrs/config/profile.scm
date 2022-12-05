@@ -15,6 +15,11 @@
           "qemu"
           "notifymuch"
           "hicolor-icon-theme" ;; Needed for notifymuch
+          "leiningen"
+          "postgresql"
+          "docker-compose"
+          "sshpass"
+          "xdg-desktop-portal-gtk"
           ))
    (list
     polymc)))

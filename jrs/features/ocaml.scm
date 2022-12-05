@@ -3,9 +3,20 @@
   #:use-module (rde features emacs)
   #:use-module (gnu services)
   #:use-module (gnu home services)
+  #:use-module (gnu home-services shells)
   #:use-module (gnu packages ocaml)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages xorg)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages autotools)
+  #:use-module (gnu packages gettext)
+  #:use-module (gnu packages texinfo)
   #:use-module (jrs packages ocaml-xyz)
+  #:use-module (gnu packages gcc)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages commencement)
   #:export (feature-ocaml))
 
 (define (feature-ocaml)
@@ -15,18 +26,29 @@
      (rde-elisp-configuration-service
       'ocaml
       config
-      '((add-to-list 'auto-mode-alist
+      '(;; Tuareg installed through Guix
+        (add-to-list 'auto-mode-alist
                      '("\\.ml\\'" . tuareg-mode))
         (with-eval-after-load
          'tuareg
          (setq tuareg-prettify-symbols-full t
                tuareg-opam-insinuate t)
          (tuareg-opam-update-env (tuareg-opam-current-compiler))
-         (autoload 'merlin-mode "merlin" nil t)
-         (add-hook 'tuareg-mode-hook 'merlin-mode)
-         (autoload 'ocp-setup-indent "ocp-indent" nil t)
          (add-hook 'tuareg-mode-hook 'ocp-setup-indent)
          (add-hook 'tuareg-mode-hook 'utop-minor-mode))
+
+        ;; Other ocaml packages installed through opam. Add the load path
+        (let ((opam-share (ignore-errors (car (process-lines "opam" "var" "share")))))
+          (when (and opam-share (file-directory-p opam-share))
+            ;; Register Merlin
+            (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+            (autoload 'merlin-mode "merlin" nil t nil)
+            ;; Automatically start it in OCaml buffers
+            (add-hook 'tuareg-mode-hook 'merlin-mode t)
+            (add-hook 'caml-mode-hook 'merlin-mode t)
+            ;; Use opam switch to lookup ocamlmerlin binary
+            (setq merlin-command 'opam)
+            (autoload 'ocp-setup-indent "ocp-indent" nil t)))
 
         (with-eval-after-load
          'merlin
@@ -54,16 +76,38 @@
       #:elisp-packages
       (list emacs-tuareg))
 
+     (when (get-value 'zsh config)
+       (simple-service
+        'opam-zsh-init
+        home-zsh-service-type
+        (home-zsh-extension
+         (zshrc
+          (list
+           "test -r ${HOME}/.opam/opam-init/init.sh && . ${HOME}/.opam/opam-init/init.sh")))))
+
+     (when (get-value 'bash config)
+       (simple-service
+        'opam-bash-init
+        home-bash-service-type
+        (home-bash-extension
+         (bashrc
+          (list
+           "test -r ${HOME}/.opam/opam-init/init.sh && . ${HOME}/.opam/opam-init/init.sh")))))
+
      (simple-service
       'ocaml-packages
       home-profile-service-type
-      (list ocaml-ocp-indent
-            ocamlformat
-            ocaml-utop
-            dune
-            opam
-            ocaml-merlin
-            ocaml-manual))))
+      (list opam
+            ocaml-manual
+            ;; Packages need for opam to build ocaml
+            gcc
+            glibc
+            binutils
+            libx11
+            libiberty
+            zlib
+            perl
+            pkg-config))))
 
   (feature
    (name 'ocaml)

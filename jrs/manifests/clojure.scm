@@ -10,6 +10,7 @@
          "clojure-tools"
          "openjdk:jdk"
          "maven"
+         "leiningen"
          "emacs-cider"
          "emacs-clojure-mode"
          "emacs-clojure-snippets"

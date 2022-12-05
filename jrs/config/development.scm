@@ -22,4 +22,6 @@
     #:node-pkg node)
    (feature-ocaml)
    (feature-python)
-   (feature-git)))
+   (feature-git
+    #:sign-commits? #t
+    #:git-send-email? #t)))

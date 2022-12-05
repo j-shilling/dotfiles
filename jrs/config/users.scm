@@ -33,13 +33,7 @@
                           (mail-account
                            (id 'work)
                            (fqda "jshilling@arena.io")
-                           (type 'gmail)))
-    #:mailing-lists (list (mail-lst 'guix-devel "guix-devel@gnu.org"
-                                    '("https://yhetil.org/guix-devel/0"))
-                          (mail-lst 'guix-bugs "guix-bugs@gnu.org"
-                                    '("https://yhetil.org/guix-bugs/0"))
-                          (mail-lst 'guix-patches "guix-patches@gnu.org"
-                                    '("https://yhetil.org/guix-patches/1"))))
+                           (type 'gmail))))
 
    (feature-gnupg
     #:gpg-primary-key "0FCC8E6A96FF109F"
