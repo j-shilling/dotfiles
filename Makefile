@@ -19,7 +19,7 @@ guix/home/build:
 	${HOME_CONFIG}
 
 guix/system:
-	RDE_TARGET=system sudo -E guix system --fallback reconfigure \
+	RDE_TARGET=system sudo -E guix system --fallback reconfigure --allow-downgrades \
 	${HOME_CONFIG}
 
 guix/system/build:
