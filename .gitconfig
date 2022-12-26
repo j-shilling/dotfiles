@@ -1,0 +1,28 @@
+[user]
+	email = shilling.jake@gmail.com
+	name = Jake Shilling
+	signingkey = 47BBC0300141D21B
+[gitlab]
+	user = shilling.jake
+[github]
+	user = j-shilling
+[core]
+	editor = emacsclient -c -a ''
+	autocrlf = input
+	whitespace = -trailing-space,-space-before-tab,-cr-at-eol
+[init]
+	defaultBranch = main
+[merge]
+	ff = false
+	log = true
+	renormalize = true
+[pull]
+	rebase = true
+[fetch]
+	prune = true
+[commit]
+	gpgsign = true
+[pgp]
+	program = gpg
+[gpg]
+	program = gpg
