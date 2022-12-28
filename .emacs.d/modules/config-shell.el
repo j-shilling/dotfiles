@@ -76,7 +76,8 @@
   (([remap term] . vterm)
    ([remap shell] . vterm)
    ([remap project-shell] . project-vterm)
-   ("s-t" . vterm))
+   ("s-t" . vterm)
+   ("C-x p t" . project-vterm))
   :preface
   (defun project-vterm ()
     (interactive)
