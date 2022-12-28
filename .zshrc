@@ -1,6 +1,11 @@
 # -*- mode: sh; -*-
 
 source $HOME/dotfiles/shell/.common_profile
+if [[ "${INSIDE_EMACS}" = 'vterm' ]] ; then
+  if [[ -n "${EMACS_VTERM_PATH}" ]] && [[ -f "${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh" ]] ; then
+    source "${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh"
+  fi
+fi
 
 export ZSH="${HOME}/.oh-my-zsh"
 

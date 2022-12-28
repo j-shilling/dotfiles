@@ -81,15 +81,6 @@ export PYENV_ROOT="${HOME}/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-# Look for emacs-vterm install directory to find files that help with vterm
-# integration in emacs
-
-if [[ "${INSIDE_EMACS}" = 'vterm' ]] ; then
-  if [[ -n "${EMACS_VTERM_PATH}" ]] && [[ -f "${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh" ]] ; then
-    source "${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh"
-  fi
-fi
-
 # This is needed to make this file cooperate with TRAMP
 # mode
 [ $TERM = "dumb" ] && unsetopt zle && PS1='$ '

@@ -5,8 +5,19 @@ if [[ $- != *i* ]] ; then
     return
 fi
 
-source /etc/bash.bashrc
-source $HOME/.common_profile
+if [ -e /etc/bash.bashrc ] ; then
+    source /etc/bash.bashrc
+fi
+
+if [ -e "${HOME}/.common_profile" ] ; then
+    source $HOME/.common_profile
+fi
+
+if [[ "${INSIDE_EMACS}" = 'vterm' ]] ; then
+  if [[ -n "${EMACS_VTERM_PATH}" ]] && [[ -f "${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh" ]] ; then
+    source "${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh"
+  fi
+fi
 
 PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
 
