@@ -27,6 +27,11 @@
         org-fontify-quote-and-verse-blocks t
         org-hide-emphasis-markers t))
 
+(use-package org-modern
+  :hook
+  ((org-mode . org-modern-mode)
+   (org-agenda-finalize . org-modern-agenda)))
+
 (use-package org-appear
   :hook
   (org-mode . org-appear-mode))

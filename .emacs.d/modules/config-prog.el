@@ -18,8 +18,14 @@
   ((magit-pre-refresh . diff-hl-magit-pre-refresh)
    (magit-post-refresh . diff-hl-magit-post-refresh)
    (init-first-file . global-diff-hl-mode)
-   (dired-mode . diff-hl-dired-mode)
-   (diff-hl-mode . diff-hl-margin-mode)))
+   (dired-mode . diff-hl-dired-mode)))
+(use-package consult-git-log-grep
+  :custom
+  (consult-git-log-grep-open-function #'magit-show-commit))
+
+(use-package flymake
+  :custom
+  (flymake-fringe-indicator-position nil))
 
 (use-package project
   :straight nil
@@ -28,10 +34,29 @@
         (init-state-path "projects")
         project-switch-commands
         (assq-delete-all 'project-vc-dir project-switch-commands)))
-(use-package consult-eglot)
-(use-package consult-git-log-grep
+
+;;; Taken from crafted emacs
+(defconst config-prog--eglot-exclude
+  '(clojure-mode
+    lisp-mode
+    scheme-mode
+    tuareg-mode))
+(defun config-prog--add-eglot-hooks (mode-list)
+  (dolist (mode-def mode-list)
+    (let ((mode (if (listp mode-def) (car mode-def) mode-def)))
+      (if (listp mode)
+          (config-prog--add-eglot-hooks mode)
+        (when (and (fboundp mode)
+                   (not (memq mode config-prog--eglot-exclude)))
+          (let ((hook (intern (concat (symbol-name mode) "-hook"))))
+            (init-log "Adding eglot to " (symbol-name hook))
+            (add-hook hook #'eglot-ensure)))))))
+(use-package consult-eglot
+  :init
+  (config-prog--add-eglot-hooks eglot-server-programs)
   :custom
-  (consult-git-log-grep-open-function #'magit-show-commit))
+  (eglot-autoshutdown t))
+
 (use-package consult-project-extra
   :bind
   (("C-c p f" . consult-project-extra-find)
