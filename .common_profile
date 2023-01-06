@@ -101,3 +101,10 @@ test -r /home/jake/.opam/opam-init/init.sh && . /home/jake/.opam/opam-init/init.
 export DOTNET_ROOT="${HOME}/.dotnet"
 export PATH="${PATH}:${DOTNET_ROOT}:${DOTNET_ROOT}/tools"
 export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+export DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0
+
+# needed for godzilla tests
+export DEV_PGHOST=localhost
+export DEV_PGUSER=postgres
+export DEV_PGPORT=5432
+export DEV_PGPASSWORD=postgres
