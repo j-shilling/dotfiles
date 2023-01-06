@@ -2,8 +2,8 @@
 
 export XDG_STATE_HOME="${HOME}/.local/var/lib"
 export PASSWORD_STORE_DIR="${XDG_STATE_HOME}/password-store"
-export EDITOR="emacsclient -a '' -c"
-export BROWSER="nyxt"
+export EDITOR="emacsclient -a '' -t"
+export VISUAL="emacsclient -a '' -c"
 
 if [ -d "/var/lib/flatpak/exports/share" ] ; then
     export XDG_DATA_DIRS="${XDG_DATA_DIRS}:/var/lib/flatpak/exports/share"
