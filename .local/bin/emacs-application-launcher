@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# -*- mode: sh -*-
+
+# Essentially copied from RDE:
+# https://git.sr.ht/~abcdw/rde/tree/master/item/src/rde/features/emacs.scm
+
+function emacs-application-launcher {
+    height="${1:-10}"
+    vertico_count=$((height+1))
+    emacsclient --create-frame \
+                --eval "(progn \
+(set-frame-name \"Application Launcher\")
+(let ((current-frame (selected-frame))
+      (vertico-count ${vertico_count}))
+  (unwind-protect
+      (command-execute 'app-launcher-run-app)
+    (delete-frame current-frame))))" \
+                -F "((minibuffer . only)  (width . 120) (height . ${height}))" \
+                -a ''
+}
+
+emacs-application-launcher

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# -*- mode: sh -*-
+
+if [ $# -gt 0 ]; then
+    dirname=$1
+else
+    dirname=$HOME
+fi
+
+emacsclient -a '' -nc --eval "(dired \"$dirname\")" > /dev/null
