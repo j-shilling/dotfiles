@@ -185,6 +185,44 @@
         aw-ignore-current nil))
 
 ;;;
+;;; IBuffer
+;;;
+
+(use-package ibuffer
+  :bind
+  (("C-x C-b" . ibuffer))
+  :config
+  (setq ibuffer-show-empty-filter-groups nil
+        ibuffer-filter-group-name-face '(:inherit (success bold))
+        ibuffer-formats
+        `((mark modified read-only locked
+                ,(propertize " " 'display `(space :align-to 8))
+                (name 18 18 :left :elide)
+                " " (size 9 -1 :right)
+                " " (mode 16 16 :left :elide)
+                ,@(when (require 'ibuffer-vc nil t)
+                    '(" " (vc-status 12 :left)))
+                " " filename-and-process)
+          (mark " " (name 16 -1) " " filename)))
+
+  (define-ibuffer-column icon (:name "  ")
+    (let ((icon (if (and (buffer-file-name)
+                         (all-the-icons-auto-mode-match?))
+                    (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)) :v-adjust -0.05)
+                  (all-the-icons-icon-for-mode major-mode :v-adjust -0.05))))
+      (if (symbolp icon)
+          (setq icon (all-the-icons-faicon "file-o" :face 'all-the-icons-dsilver :height 0.8 :v-adjust 0.0))
+        icon)))
+
+  (define-ibuffer-column size
+    (:name "Size"
+           :inline t
+           :header-mouse-map ibuffer-size-header-map)
+    (file-size-human-readable (buffer-size))))
+
+(use-package ibuffer-vc)
+
+;;;
 ;;; Misc
 ;;;
 

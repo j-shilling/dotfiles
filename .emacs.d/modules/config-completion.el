@@ -20,8 +20,8 @@
   (completion-styles
    '(orderless basic))
   (completion-category-overrides
-   ((project-file (styles (partial-completion basic orderless)))
-    (file (styles (partial-completion basic orderless))))))
+   '((project-file (styles (partial-completion basic orderless)))
+     (file (styles (partial-completion basic orderless))))))
 
 (use-package vertico
   :straight (:files (:defaults "extensions/*"))
@@ -130,10 +130,12 @@
   :straight (:files (:defaults "extensions/*"))
   :hook
   (after-init . global-corfu-mode)
-  :config
-  (setq corfu-auto t
-        corfu-auto-delay 0
-        corfu-auto-prefix 0))
+  :custom
+  (corfu-auto nil)
+  (corfu-preselect nil)
+  (corfu-quit-no-match t)
+  (corfu-preview-current t)
+  (corfu-quit-at-boundary t))
 
 (use-package corfu-popupinfo
   :straight nil
@@ -144,8 +146,13 @@
   :straight nil
   :hook
   (corfu-mode . corfu-echo-mode)
-  :config
-  (setq corfu-echo-delay 0))
+  :custom
+  (corfu-echo-delay 0))
+
+(use-package corfu-history
+  :straight nil
+  :hook
+  (corfu-mode . corfu-history-mode))
 
 (use-package corfu-terminal
   :hook
@@ -211,10 +218,7 @@
           try-expand-dabbrev-visible
           try-expand-dabbrev-all-buffers)))
 (use-package yasnippet-snippets)
-(use-package auto-yasnippet
-  :bind
-  (("<S-tab>" . aya-create)
-   ("C-<tab>" . aya-expand)))
+(use-package auto-yasnippet)
 (use-package consult-yasnippet
   :bind
   (("C-M-/" . consult-yasnippet)))

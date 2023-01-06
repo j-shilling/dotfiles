@@ -128,7 +128,8 @@ Inspired by the way Doom Emacs handles `doom-font'.")
 
 (use-package modus-themes
   :hook
-  (init-first-buffer . modus-themes-load-vivendi)
+  (init-first-buffer . (lambda ()
+                         (load-theme 'modus-vivendi t)))
   :init
   (setq modus-themes-mode-line '(borderless)
         modus-themes-diffs 'desaturated

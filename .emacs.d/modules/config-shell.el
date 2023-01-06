@@ -1,4 +1,8 @@
 ;;; config-shell.el -- Eshell configuration -*- lexical-binding: t; -*-
+;;
+;;; Commentary:
+;;
+;;; Code:
 
 (use-package tramp
   :straight nil
@@ -56,15 +60,31 @@
 (use-package xterm-color
   :hook
   (eshell-before-prompt . (lambda ()
+                            (require 'xterm-color)
+                            (defvar xterm-color-preserve-properties)
                             (setq xterm-color-preserve-properties t)))
   :commands
   (xterm-color-filter)
   :init
-  (require 'esh-mode)
-  (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+  (with-eval-after-load 'esh-mode
+    (defvar eshell-preoutput-filter-functions)
+    (defvar eshell-output-filter-functions)
+    (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+    (setq eshell-output-filter-functions
+          (remove 'eshell-handle-ansi-color eshell-output-filter-functions)))
+  (with-eval-after-load 'comint
+    (setq comint-output-filter-functions
+          (remove 'ansi-color-process-output
+                  comint-output-filter-functions))
+    (add-hook 'comint-mode-hook
+              ;; Taken from https://github.com/atomontage/xterm-color#comint
+              (lambda ()
+                (font-lock-mode -1)
+                (make-local-variable 'font-lock-function)
+                (setq font-lock-function (lambda (_) nil))
+                (add-hook 'comint-preoutput-filter-functions
+                          'xterm-color-filter nil t))))
   :config
-  (setq eshell-output-filter-functions
-        (remove 'eshell-handle-ansi-color eshell-output-filter-functions))
   (setenv "TERM" "xterm-256color"))
 
 (use-package envrc
@@ -78,22 +98,31 @@
    ([remap project-shell] . project-vterm)
    ("s-t" . vterm)
    ("C-x p t" . project-vterm))
+  :custom
+  (vterm-copy-exclude-prompt t)
+  (vterm-max-scrollback 100000)
   :preface
   (defun project-vterm ()
     (interactive)
     (let ((default-directory (project-root (project-current t)))
           (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
+      (setq-local vterm-buffer-name-string nil)
       (let (vterm-buffer (get-buffer vterm-buffer-name))
         (if (and vterm-buffer (not current-prefix-arg))
             (pop-to-buffer vterm-buffer
                            (bound-and-true-p display-comint-buffer-action))
           (vterm)))))
   :init
-  (add-to-list 'project-switch-commands '(project-vterm "Vterm" "t") t)
-  (add-to-list 'project-kill-buffer-conditions '(major-mode . vterm-mode))
-  :config
-  (setq vterm-copy-exclude-prompt t
-        vterm-max-scrollback 100000))
+  (with-eval-after-load 'project
+    (defvar project-switch-commands)
+    (defvar project-kill-buffer-conditions)
+    (declare-function assq-delete-all (key alist))
+    (customize-set-value
+     'project-switch-commands
+     (cons '(project-vterm "Vterm") project-switch-commands))
+    (customize-set-value
+     'project-kill-buffer-conditions
+     (cons '(major-mode . vterm-mode) project-kill-buffer-conditions))))
 
 (provide 'config-shell)
 ;;; config-shell.el ends here
