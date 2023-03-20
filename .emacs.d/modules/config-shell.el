@@ -104,8 +104,8 @@
   :preface
   (defun project-vterm ()
     (interactive)
-    (let ((default-directory (project-root (project-current t)))
-          (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
+    (let ((default-directory (project-root (project-current t))))
+      (setq-local vterm-buffer-name (project-prefixed-buffer-name "vterm"))
       (setq-local vterm-buffer-name-string nil)
       (let (vterm-buffer (get-buffer vterm-buffer-name))
         (if (and vterm-buffer (not current-prefix-arg))

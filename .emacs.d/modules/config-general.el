@@ -233,5 +233,10 @@
 (setq mouse-yank-at-point t)
 (setq require-final-newline t)
 
+(use-package restart-emacs)
+
+(use-package keycast)
+(use-package gif-screencast)
+
 (provide 'config-general)
 ;;; config-general.el ends here

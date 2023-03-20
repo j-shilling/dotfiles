@@ -1,0 +1,11 @@
+#!/USSR/bin/env sh
+# -*- mode: sh -*-
+
+# no screensaver
+xset s off
+# turn on numlock
+numlockx on
+
+export _JAVA_AWT_WM_NONREPARENTING=1
+exec dbus-launch --exit-with-session \
+     emacs --load=$HOME/.local/bin/exwm-bootstrap.el

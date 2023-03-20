@@ -250,6 +250,11 @@ the ones in `init-data-home'."
 (setq custom-file (init-cache-path "custom.el"))
 (load custom-file t)
 
+(use-package exec-path-from-shell
+  :demand
+  :config
+  (exec-path-from-shell-initialize))
+
 ;;;
 ;;; Load Modules
 ;;;

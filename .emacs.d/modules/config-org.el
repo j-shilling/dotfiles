@@ -1,5 +1,11 @@
 ;;; config-org.el -- General Configuration -*- lexical-binding: t; -*-
 
+(use-package markdown-mode)
+(use-package grip-mode
+  :hook
+  ((markdown-mode . grip-mode)
+   (org-mode . grip-mode)))
+
 (use-package org
   :init
   (setq org-special-ctrl-a/e t

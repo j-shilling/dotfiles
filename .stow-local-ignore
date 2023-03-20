@@ -3,3 +3,4 @@
 backup
 .*~
 Makefile
+.emacs.d
