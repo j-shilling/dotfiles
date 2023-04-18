@@ -91,3 +91,12 @@
   :hook
   (utop . (lambda ()
             (setq-local company-idle-delay nil))))
+
+(use-package! exec-path-from-shell
+  :hook
+  (doom-first-buffer . exec-path-from-shell-initialize))
+
+(use-package! lisp-mode
+  :config
+  (when (executable-find "ros")
+    (setq inferiror-lisp-program "ros -Q run")))

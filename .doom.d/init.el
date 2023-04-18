@@ -45,23 +45,23 @@
  undo
 
  :lang
- (cc +lsp)
- clojure
+ (cc +lsp +tree-sitter)
+ (clojure +tree-sitter)
  common-lisp
- (csharp +lsp)
+ (scala +lsp +tree-sitter)
+ (csharp +lsp +tree-sitter)
  emacs-lisp
- (java +lsp)
- (javascript +lsp)
- (json +lsp)
- (markdown +grip)
- ocaml
- (org +pandoc +pretty +roam2)
- (python +lsp +pyenv)
- rest
-; (scheme +guile)
- (sh +lsp)
- (web +lsp)
- (yaml +lsp)
+ (java +lsp +tree-sitter)
+ (javascript +lsp +tree-sitter)
+ (json +lsp +tree-sitter)
+ (markdown)
+ (ocaml +lsp +tree-sitter)
+ (org +pandoc +pretty +roam2 +present)
+ (python +lsp +pyenv +tree-sitter)
+ (rest +jq)
+ (sh +lsp +tree-sitter)
+ (web +lsp +tree-sitter)
+ (yaml +lsp +tree-sitter)
 
  :os
  tty
@@ -83,9 +83,9 @@
  (pass +auth)
  pdf
  terraform
+ tree-sitter
 
  :ui
- (emoji +ascii +github +unicode)
  hl-todo
  indent-guides
  (ligatures +fira)
