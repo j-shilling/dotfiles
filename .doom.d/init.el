@@ -40,8 +40,8 @@
  word-wrap
 
  :emacs
- dired
- ibuffer
+ (dired +icons)
+ (ibuffer +icons)
  undo
 
  :lang
@@ -54,14 +54,15 @@
  (java +lsp +tree-sitter)
  (javascript +lsp +tree-sitter)
  (json +lsp +tree-sitter)
- (markdown)
- (ocaml +lsp +tree-sitter)
+ (markdown +grip)
+ (ocaml +tree-sitter)
  (org +pandoc +pretty +roam2 +present)
  (python +lsp +pyenv +tree-sitter)
  (rest +jq)
  (sh +lsp +tree-sitter)
  (web +lsp +tree-sitter)
  (yaml +lsp +tree-sitter)
+ (graphql +lsp)
 
  :os
  tty
@@ -75,15 +76,19 @@
  (debugger +lsp)
  direnv
  (docker +lsp)
+ editorconfig
  (eval +overlay)
  (lookup +dictionary +docsets)
  (lsp)
- (magit)
+ (magit +forge)
  make
  (pass +auth)
  pdf
  terraform
  tree-sitter
+
+ :email
+ (mu4e +gmail +org)
 
  :ui
  hl-todo
@@ -91,4 +96,7 @@
  (ligatures +fira)
  modeline
  ophints
- window-select)
+ nav-flash
+ unicode
+ window-select
+ zen)

@@ -87,11 +87,13 @@ eval "$(pyenv init -)"
 
 alias sysu="systemctl --user"
 
-if type lsd &> /dev/null ; then
+if type lsd &> /dev/null
+then
     alias ls='lsd'
+else
+  alias ls='ls -p --color=auto'
 fi
 
-alias ls='ls -p --color=auto'
 alias grep='grep --color=auto'
 
 # opam configuration
@@ -109,9 +111,19 @@ export DEV_PGUSER=postgres
 export DEV_PGPORT=5432
 export DEV_PGPASSWORD=postgres
 
-export GITHUB_PACKAGES_USER="j-shilling"
-export GITHUB_PACKAGES_TOKEN="$(pass show github/packages-token)"
+# export GITHUB_PACKAGES_USER="j-shilling"
+# export GITHUB_PACKAGES_TOKEN="$(pass show github/packages-token)"
 
 # >>> coursier install directory >>>
 export PATH="$PATH:/home/jake/.local/share/coursier/bin"
 # <<< coursier install directory <<<
+
+# Roswell
+if [ -d "${HOME}/.roswell/bin" ] ; then
+  export PATH="${PATH}:${HOME}/.roswell/bin"
+fi
+
+# go
+if [ -d "${HOME}/go/bin" ] ; then
+  export PATH="${PATH}:${HOME}/go/bin"
+fi

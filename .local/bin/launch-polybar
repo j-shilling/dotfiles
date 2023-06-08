@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+monitors() {
+    polybar -m | cut -f 1 -d ':'
+}
+
+killall polybar || true
+
+for monitor in $(monitors)
+do
+    MONITOR=${monitor} polybar &
+done

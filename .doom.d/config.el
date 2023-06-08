@@ -98,5 +98,31 @@
 
 (use-package! lisp-mode
   :config
-  (when (executable-find "ros")
-    (setq inferiror-lisp-program "ros -Q run")))
+  (let* ((roswell-dir (expand-file-name ".roswell" (getenv "HOME")))
+         (helper.el (expand-file-name "helper.el" roswell-dir))
+         (roswell-bin (expand-file-name "bin/" roswell-dir)))
+    (when (file-exists-p helper.el)
+      (load helper.el))
+    (when (file-exists-p roswell-bin)
+      (add-to-list 'exec-path roswell-bin)))
+  ;; Load any files that CL packages might have installed
+  (dolist (file '("~/.roswell/lisp/quicklisp/log4sly-setup.el"))
+    (when (file-exists-p file)
+      (load file)))
+  (when (fboundp 'global-log4sly-mode)
+    (global-log4sly-mode 1))
+  (setq sly-lisp-implementations
+        '((sbcl ("ros" "-L" "sbcl" "-Q" "-l" "~/.sbclrc" "run"))
+          (ecl ("ros" "-L" "ecl" "-Q" "run")))))
+
+(use-package! sql
+  :custom
+  (sql-connection-alist
+   (cons `(arena-analytics-portal
+           (sql-product 'postgres)
+           (sql-port 5555)
+           (sql-server "localhost")
+           (sql-database "arena_analytics_portal_db")
+           (sql-user "postgres")
+           (sql-password "postgres"))
+         sql-connection-alist)))

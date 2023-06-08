@@ -1,4 +1,4 @@
-
+;;; -*- mode: common-lisp -*-
 ;;; The following lines added by ql:add-to-init-file:
 #-quicklisp
 (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
@@ -6,3 +6,12 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
+(let ((local-projects '("~/theraphonics/adams-frontend/"
+                        "~/common-lisp/cleact/"
+                        "~/common-lisp/fp-cl/")))
+  (dolist (project local-projects)
+    (pushnew
+     (truename project)
+     ql:*local-project-directories*)))
+
+(ql:register-local-projects)

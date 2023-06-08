@@ -1,0 +1,73 @@
+font pango:Fira Sans 18
+
+set $mod Mod4
+
+set $term ${HOME}/.local/bin/emacs-eshell
+set $backup-term ${HOME}/.local/bin/emacs-vterm
+set $menu ${HOME}/.local/bin/emacs-application-launcher
+set $lock i3lock
+
+exec dbus-update-activation-environment --all
+exec ${HOME}/.screenlayout/xrandr-setup.sh
+exec xsetroot -solid dimgray
+exec ${HOME}/.local/bin/launch-polybar
+exec blueman-applet
+exec nm-applet
+exec picom
+
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+e exec i3-msg exit
+
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $backup-term
+bindsym $mod+d exec $menu
+bindsym $mod+Shift+l exec $lock
+bindsym $mod+Alt+e exec ${HOME}/.local/bin/emacs-everywhere
+bindsym $mod+e exec emacsclient -a '' -c
+
+bindsym $mod+Shift+c kill
+bindsym $mod+Shift+f fullscreen
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Ctrl+space focus mode_toggle
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+Tab workspace back_and_forth
+
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+default_border pixel 1
+default_floating_border normal
+smart_gaps on
+gaps inner 8
