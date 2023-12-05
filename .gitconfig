@@ -13,7 +13,6 @@
 [init]
 	defaultBranch = main
 [merge]
-	ff = false
 	log = true
 	renormalize = true
 [pull]

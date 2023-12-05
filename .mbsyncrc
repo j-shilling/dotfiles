@@ -1,0 +1,25 @@
+IMAPAccount shilling.jake
+Host imap.gmail.com
+User shilling.jake@gmail.com
+PassCmd "pass mail/shilling.jake@gmail.com"
+AuthMechs LOGIN
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+# remote storage (use the imap account specified above)
+IMAPStore shilling.jake-remote
+Account shilling.jake
+
+# local storage
+MaildirStore shilling.jake-local
+Path ~/.mail/shilling.jake/
+Inbox ~/.mail/shilling.jake/Inbox
+Subfolders Verbatim
+
+# channel to remote storage
+Channel shilling.jake
+Far :shilling.jake-remote:
+Near :shilling.jake-local:
+Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Bin"
+Create Both
+SyncState *

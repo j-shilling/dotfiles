@@ -5,15 +5,6 @@ set $mod Mod4
 set $term ${HOME}/.local/bin/emacs-eshell
 set $backup-term ${HOME}/.local/bin/emacs-vterm
 set $menu ${HOME}/.local/bin/emacs-application-launcher
-set $lock i3lock
-
-exec dbus-update-activation-environment --all
-exec ${HOME}/.screenlayout/xrandr-setup.sh
-exec xsetroot -solid dimgray
-exec ${HOME}/.local/bin/launch-polybar
-exec blueman-applet
-exec nm-applet
-exec picom
 
 bindsym $mod+Shift+r reload
 bindsym $mod+Shift+e exec i3-msg exit
@@ -21,11 +12,10 @@ bindsym $mod+Shift+e exec i3-msg exit
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec $backup-term
 bindsym $mod+d exec $menu
-bindsym $mod+Shift+l exec $lock
-bindsym $mod+Alt+e exec ${HOME}/.local/bin/emacs-everywhere
+bindsym $mod+w exec ${HOME}/.local/bin/emacs-everywhere
 bindsym $mod+e exec emacsclient -a '' -c
 
-bindsym $mod+Shift+c kill
+bindsym $mod+Shift+q kill
 bindsym $mod+Shift+f fullscreen
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+Ctrl+space focus mode_toggle
@@ -71,3 +61,36 @@ default_border pixel 1
 default_floating_border normal
 smart_gaps on
 gaps inner 8
+
+# >>> Plasma Integration <<<
+
+# Try to kill the wallpaper set by Plasma (it takes up the entire workspace
+# and hides everything)
+exec --no-startup-id ${HOME}/.local/bin/kill-plasma-desktop
+for_window [title="Desktop — Plasma"] kill; floating enable; border none
+
+# Plasma compatibility improvements
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="dialog"] floating enable
+for_window [window_role="toolbar"] floating enable
+for_window [window_role="splash"] floating enable
+for_window [window_role="menu"] floating enable
+for_window [window_role="dropdown_menu"] floating enable
+for_window [window_role="popup_menu"] floating enable
+for_window [window_role="tooltip"] floating enable
+for_window [window_role="notification"] floating enable
+
+for_window [class="yakuake"] floating enable
+for_window [class="systemsettings"] floating enable
+for_window [class="plasmashell"] floating enable;
+for_window [class="Plasma"] floating enable; border none
+for_window [title="plasma-desktop"] floating enable; border none
+for_window [title="win7"] floating enable; border none
+for_window [class="krunner"] floating enable; border none
+for_window [class="Kmix"] floating enable; border none
+for_window [class="Klipper"] floating enable; border none
+for_window [class="Plasmoidviewer"] floating enable; border none
+for_window [class="(?i)*nextcloud*"] floating disable
+for_window [class="plasmashell" window_type="notification"] border none, move position 70 ppt 81 ppt
+no_focus [class="plasmashell" window_type="notification"]
