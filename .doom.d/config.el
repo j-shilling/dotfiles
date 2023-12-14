@@ -95,7 +95,12 @@
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
 (after! em-term
-  (pushnew! eshell-visual-commands "pnpm" "yarn" "npm" "npx"))
+  (pushnew! eshell-visual-commands
+            "pnpm"
+            "yarn"
+            "npm"
+            "npx"
+            "flatpak"))
 
 (use-package! sql
   :custom

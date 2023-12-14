@@ -8,6 +8,7 @@ function emacs-application-launcher {
     height="${1:-10}"
     vertico_count=$((height+1))
     emacsclient --create-frame \
+                -s "utils" \
                 --eval "(progn \
 (set-frame-name \"Application Launcher\")
 (let ((current-frame (selected-frame))
@@ -19,4 +20,4 @@ function emacs-application-launcher {
                 -a ''
 }
 
-emacs-application-launcher
+emacs-application-launcher "$@"

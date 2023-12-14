@@ -7,4 +7,4 @@ else
     dirname=$HOME
 fi
 
-emacsclient -a '' -nc --eval "(dired \"$dirname\")" > /dev/null
+emacsclient -a '' -nc -s 'utils' --eval "(dired \"$dirname\")" > /dev/null

@@ -3,4 +3,4 @@
 
 # https://github.com/tecosaur/emacs-everywhere
 
-emacsclient -a '' -e '(emacs-everywhere)'
+emacsclient -a '' -e '(emacs-everywhere)' -s 'utils'
