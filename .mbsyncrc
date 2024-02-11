@@ -1,6 +1,7 @@
 IMAPAccount shilling.jake
 Host imap.gmail.com
 User shilling.jake@gmail.com
+Timeout 0
 PassCmd "pass mail/shilling.jake@gmail.com"
 AuthMechs LOGIN
 SSLType IMAPS
@@ -20,6 +21,6 @@ Subfolders Verbatim
 Channel shilling.jake
 Far :shilling.jake-remote:
 Near :shilling.jake-local:
-Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Bin"
+Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail" "[Gmail]/Trash"
 Create Both
 SyncState *

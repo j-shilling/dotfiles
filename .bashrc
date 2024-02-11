@@ -60,5 +60,11 @@ shopt -s globstar
 shopt -s nocaseglob;
 
 eval "$(direnv hook bash)"
-. /home/jake/.asdf/asdf.sh
-PROG=sg source /home/jake/.sourcegraph/sg.bash_autocomplete
+
+# pnpm
+export PNPM_HOME="/home/jake/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

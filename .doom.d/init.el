@@ -8,11 +8,12 @@
 
  :checkers
  (syntax +flymake)
- (spell +flyspell +everywhere)
+ (spell +everywhere)
  grammar
 
  :completion
  (vertico +icons)
+ (company +childframe)
 
  :config
  (default +bindings +smartparens)
@@ -42,7 +43,8 @@
  (nix +lsp +tree-sitter)
  (ocaml +tree-sitter)
  (org +pandoc +pretty +roam2 +present)
- (python +lsp +pyenv +tree-sitter)
+ (plantuml)
+ (python +lsp +conda +pyenv +tree-sitter)
  (rest +jq)
  (sh +lsp +tree-sitter)
  (web +lsp +tree-sitter)
@@ -57,6 +59,7 @@
 
  :tools
  ansible
+ biblio
  debugger
  direnv
  (docker +lsp)
@@ -82,6 +85,8 @@
  modeline
  ophints
  nav-flash
+ (popup +defaults)
  unicode
  window-select
+ (vc-gutter +pretty)
  zen)

@@ -1,0 +1,7 @@
+[Unit]
+Description=Run mbsync and mu
+
+[Service]
+Type=simple
+Environment=PASSWORD_STORE_DIR=/home/jake/.local/var/lib/password-store
+ExecStart=/home/jake/.local/bin/check-mail

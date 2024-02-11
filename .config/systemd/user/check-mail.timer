@@ -1,0 +1,11 @@
+[Unit]
+Description=Trigger check-mail.service
+
+[Timer]
+Unit=check-mail.service
+OnBootSec=15m
+OnUnitInactiveSec=15m
+OnActiveSec=1s
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,11 @@
+[Unit]
+Description=(timer) Use RClone to Backup Files
+
+[Timer]
+Unit=rclone.service
+OnBootSec=15m
+OnUnitInactiveSec=15m
+OnActiveSec=1s
+
+[Install]
+WantedBy=timers.target

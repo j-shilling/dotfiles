@@ -7,14 +7,7 @@
 (setq modus-themes-mode-line '(borderless)
       modus-themes-diffs 'desaturated
       modus-themes-deuteranopia t
-      modus-themes-fringes nil
-
-      modus-themes-operandi-color-overrides
-      '((fg-window-divider-inner . "#ffffff")
-        (fg-window-divider-outer . "#ffffff"))
-      modus-themes-vivendi-color-overrides
-      '((fg-window-divider-inner . "#000000")
-        (fg-window-divider-outer . "#000000")))
+      modus-themes-fringes nil)
 
 (setq doom-theme 'modus-vivendi)
 
@@ -47,13 +40,6 @@
           (Info-follow-reference buffer)
           (consult-yank-pop buffer))))
 
-(setq completion-in-region-function
-      (lambda (&rest args)
-        (apply (if vertico-mode
-                   #'consult-completion-in-region
-                 #'completion--in-region)
-               args)))
-
 (use-package! minibuffer
   :bind
   ("C-M-i" . completion-at-point))
@@ -70,8 +56,7 @@
 
 (use-package! copilot
   :hook
-  ((prog-mode . copilot-mode)
-   (copilot-mode . (lambda ()
+  ((copilot-mode . (lambda ()
                      (setq-local hippie-expand-try-functions-list
                                  (cons #'copilot-accept-completion
                                        hippie-expand-try-functions-list))))))
@@ -100,7 +85,9 @@
             "yarn"
             "npm"
             "npx"
-            "flatpak"))
+            "flatpak"
+            "docker"
+            "docker-compose"))
 
 (use-package! sql
   :custom
@@ -131,15 +118,41 @@
   (auth-source-pass-filename . (getenv "PASSWORD_STORE_DIR")))
 
 (after! mu4e
-  (setq mu4e-cha)
+  (setq mu4e-change-filenames-when-moving t
+        mu4e-update-interval nil)
+
   (setq sendmail-program (executable-find "sendmail")
         message-sendmail-f-is-evil t
         message-sendmail-extra-arguments '("--read-envelope-from")
-        message-send-mail-function #'message-send-mail-with-sendmail))
+        message-send-mail-function #'message-send-mail-with-sendmail)
+
+  (setq mu4e-contexts
+        `(,(make-mu4e-context
+            :name "shilling.jake"
+            :match-func (lambda (msg)
+                          (when msg
+                            (string-prefix-p "/shilling.jake" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "shilling.jake@gmail.com")
+                    (mu4e-sent-folder . "/shilling.jake/[Gmail]/Sent Mail")
+                    (mu4e-drafts-folder . "/shilling.jake/[Gmail]/Drafts")
+                    (mu4e-trash-folder . "/shilling.jake/[Gmail]/Trash")
+                    (mu4e-refile-folder . "/shilling.jake/[Gmail]/All Mail"))))))
 
 (after! elfeed
   (setq rmh-elfeed-org-files
         (list (expand-file-name "elfeed.org" doom-user-dir))))
+
+;;;
+;;; Org
+;;;
+
+(after! citar
+  (setq citar-bibiography (expand-file-name "library.bib" org-directory)))
+
+(when (file-exists-p "/usr/share/plantuml/plantuml.jar")
+  (setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"))
+
+(add-hook! 'text-mode-hook #'auto-fill-mode)
 
 ;;;
 ;;; General Programming
@@ -149,6 +162,9 @@
   :custom
   (eldoc-echo-area-use-multiline-p nil)
   (eldoc--echo-area-prefer-doc-buffer-p t))
+
+(add-hook! prog-mode-hook
+           #'whitespace-mode)
 
 (use-package! smartparens
   :bind
@@ -188,7 +204,9 @@
 (use-package! eglot
   :config
   (add-to-list 'eglot-server-programs
-               '(typescript-tsx-mode . ("typescript-language-server" "--stdio")))
+               '((typescript-tsx-mode :language-id "typescriptreact")
+                 .
+                 ("typescript-language-server" "--stdio")))
   (setq-default eglot-workspace-configuration
                 `(:typescript-language-server
                   (:maxTsServerMemory ,(* 1024 8))))
@@ -263,11 +281,7 @@
 (use-package! dap-mode
   :init
   (defun init-javascript ()
-    (require 'dap-node nil t)
-    (require 'dap-chrome nil t)
-
-    (setq-local +format-with-lsp nil)
-    (setq-local +format-with 'prettier))
+    (copilot-mode 1))
   :hook
   ((typescript . init-javascript)
    (js-mode . init-javascript)

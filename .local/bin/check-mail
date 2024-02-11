@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# -*- mode: sh -*-
+
+can_get_password() {
+    echo "Test" | \
+        gpg2 --sign --batch --no-tty \
+        --pinentry-mode cancel \
+        --local-user shilling.jake@gmail.com \
+        -o /dev/null
+}
+
+(can_get_password && mbsync -Va && mu index) || true

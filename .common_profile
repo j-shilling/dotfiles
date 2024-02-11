@@ -113,8 +113,8 @@ export DEV_PGUSER=postgres
 export DEV_PGPORT=5432
 export DEV_PGPASSWORD=postgres
 
-# export GITHUB_PACKAGES_USER="j-shilling"
-# export GITHUB_PACKAGES_TOKEN="$(pass show github/packages-token)"
+export GITHUB_PACKAGES_USER="j-shilling"
+export GITHUB_PACKAGES_TOKEN="$(pass show github/packages-token)"
 
 # >>> coursier install directory >>>
 export PATH="$PATH:/home/jake/.local/share/coursier/bin"

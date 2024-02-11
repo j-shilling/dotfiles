@@ -21,7 +21,7 @@
              "fg" (parse-color fg)))
         (bc (parsed-color-to-prop-string
              "bg" (parse-color bg))))
-    (concat "^[" fc bc str "]")))
+    (concat "^[" fc bc str "^]")))
 
 (defun color-icon (icon fg bg)
   (icon-string (color-string icon fg bg)))
