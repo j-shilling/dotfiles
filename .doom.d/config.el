@@ -11,8 +11,28 @@
 
 (setq doom-theme 'modus-vivendi)
 
-(setq doom-font (font-spec :family "Fira Code" :size 16))
-(setq doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16))
+(find-font (font-spec :name "Noto Mono"))
+
+(defun first-available-font (font-names)
+  "Return the first element of `FONT-NAMES' that can be found with `find-font'."
+  (when-let ((font-name (cl-find-if (lambda (font)
+                                      (find-font (font-spec :name font)))
+                                    font-names)))
+    (font-spec :name font-name :size 16)))
+
+(setq doom-font (first-available-font '("Fira Code" "Noto Mono")))
+(setq doom-variable-pitch-font (first-available-font '("Fira Sans" "Noto Sans")))
+
+(use-package! whitespace
+  :config
+  (setq
+    whitespace-style '(face tabs tab-mark spaces space-mark trailing newline newline-mark)
+    whitespace-display-mappings '(
+      (space-mark   ?\     [?\u00B7]     [?.])
+      (space-mark   ?\xA0  [?\u00A4]     [?_])
+      (newline-mark ?\n    [182 ?\n])
+      (tab-mark     ?\t    [?\u00BB ?\t] [?\\ ?\t])))
+  (global-whitespace-mode +1))
 
 ;;;
 ;;; Completion
@@ -79,7 +99,10 @@
    'grep-find-command
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
-(after! em-term
+(use-package! em-term
+  :custom
+  (eshell-destroy-buffer-when-process-dies nil)
+  :config
   (pushnew! eshell-visual-commands
             "pnpm"
             "yarn"
@@ -87,7 +110,8 @@
             "npx"
             "flatpak"
             "docker"
-            "docker-compose"))
+            "docker-compose"
+            "devcontainer"))
 
 (use-package! sql
   :custom
@@ -145,14 +169,54 @@
 ;;;
 ;;; Org
 ;;;
+(defun jethro/org-roam-node-from-cite (keys-entries)
+  "https://jethrokuan.github.io/org-roam-guide/"
+  (interactive (list (citar-select-ref)))
+  (let ((title (citar-format--entry keys-entries
+                                    "${author editor} :: ${title}")))
+    (org-roam-capture- :templates
+                       '(("r" "reference" plain "%?" :if-new
+                          (file+head "reference/${citekey}.org"
+                                     ":PROPERTIES:
+:ROAM_REFS: [cite:@${citekey}]
+:END:
+#+title: ${title}\n")
+                          :immediate-finish t
+                          :unnarrowed t))
+                       :info (list :citekey keys-entries)
+                       :node (org-roam-node-create :title title)
+                       :props '(:finalize find-file))))
 
-(after! citar
-  (setq citar-bibiography (expand-file-name "library.bib" org-directory)))
+(setq org-directory (expand-file-name "org" (getenv "HOME")))
+(setq org-roam-directory (expand-file-name "roam" org-directory))
+(setq citar-bibliography (expand-file-name "library.bib" org-directory))
 
 (when (file-exists-p "/usr/share/plantuml/plantuml.jar")
   (setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"))
 
 (add-hook! 'text-mode-hook #'auto-fill-mode)
+
+(setq org-agenda-skip-deadline-if-done t
+      org-agenda-skip-scheduled-if-done t
+      org-deadline-warning-days 5
+
+      org-agenda-todo-list-sublevels t
+      org-agenda-todo-ignore-scheduled 'all
+      org-agenda-todo-ignore-deadlines 'all
+      org-agenda-todo-ignore-with-date 'all
+      org-agenda-tags-todo-honor-ignore-options t
+
+      org-todo-keywords '((type "TODO(t@/!)" "WIP(w@/!)" "|" "DONE(d@/!)" "KILL(k@/!)"))
+
+      org-log-into-drawer t
+      org-log-done t
+      org-log-reschedule t
+      org-log-redeadline t
+
+      org-enable-priority-commands nil
+
+      org-agenda-deadline-leaders '("DUE:       " "In %3d d.: " "%2d d. ago: ")
+      org-agenda-scheduled-leaders '("DO: " "Sched.%2dx: "))
 
 ;;;
 ;;; General Programming
@@ -162,9 +226,6 @@
   :custom
   (eldoc-echo-area-use-multiline-p nil)
   (eldoc--echo-area-prefer-doc-buffer-p t))
-
-(add-hook! prog-mode-hook
-           #'whitespace-mode)
 
 (use-package! smartparens
   :bind
@@ -230,14 +291,20 @@
   :hook
   ((emacs-lisp-mode . dash-fontify-mode)))
 
-(use-package! ocamlformat
-  :custom
-  (ocamlformat-enable 'disable))
-
 (use-package! utop
   :hook
   (utop . (lambda ()
             (setq-local company-idle-delay nil))))
+
+(use-package! opam-switch-mode
+  :hook
+  (tuareg-mode . opam-switch-mode)
+  :bind
+  ([remap tuareg-opam-update-env] . opam-switch-set-switch))
+
+(use-package! merlin
+  :hook
+  (tuareg-mode . merlin-mode))
 
 (use-package! lisp-mode
   :config
@@ -275,6 +342,8 @@
   (add-hook hook #'init-prettier))
 
 (use-package! add-node-modules-path
+  :custom
+  (add-node-modules-path-command '("pnpm bin" "echo \"$(npm config get prefix)/bin\""))
   :hook
   (prog-mode . add-node-modules-path))
 
@@ -287,3 +356,7 @@
    (js-mode . init-javascript)
    (js2-mode . init-javascript)
    (typescript-ts-mode . init-javascript)))
+
+(use-package! pyvenv
+  :init
+  (setenv "WORKON_HOME" "~/.pyenv/versions"))

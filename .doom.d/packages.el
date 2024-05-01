@@ -19,6 +19,8 @@
 ;; Org
 ;;
 
+(package! org-super-agenda)
+
 ;;
 ;; ELisp
 ;;
@@ -37,3 +39,9 @@
 
 (package! nvm)
 (package! add-node-modules-path)
+
+;;
+;; OCAML
+;;
+
+(package! opam-switch-mode)

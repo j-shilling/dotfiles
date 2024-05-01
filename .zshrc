@@ -106,3 +106,6 @@ if [ -e $FZF_TAB_COMPLETION_DIR/zsh/fzf-zsh-completion.sh ] ; then
 fi
 
 eval "$(direnv hook zsh)"
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/terraform terraform

@@ -35,6 +35,7 @@
  (clojure +tree-sitter)
  common-lisp
  (csharp +lsp +tree-sitter)
+ (haskell +lsp +tree-sitter)
  emacs-lisp
  (javascript +lsp +tree-sitter)
  (json +lsp +tree-sitter)
@@ -44,11 +45,12 @@
  (ocaml +tree-sitter)
  (org +pandoc +pretty +roam2 +present)
  (plantuml)
- (python +lsp +conda +pyenv +tree-sitter)
+ (python +lsp +tree-sitter +pyenv +pyright)
  (rest +jq)
  (sh +lsp +tree-sitter)
  (web +lsp +tree-sitter)
  (yaml +lsp +tree-sitter)
+ (graphql +lsp)
 
  :os
  tty

@@ -25,3 +25,6 @@
 	program = gpg
 [gpg]
 	program = gpg
+[maintenance]
+	repo = /home/jake/FunctorFactory/functorfactory.com
+	repo = /home/jake/FunctorFactory/rob-email-ingest
