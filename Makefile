@@ -1,4 +1,7 @@
-.PHONY: all
+.PHONY: update
+update:
+	home-manager switch --flake .
 
-all:
-	stow --dir "${HOME}/dotfiles" --target "${HOME}" --verbose --no-fold .
+.PHONY: clean
+clean:
+	nix-collect-garbage -d
