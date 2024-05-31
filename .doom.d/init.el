@@ -33,6 +33,7 @@
 
  :lang
  (clojure +tree-sitter)
+ sml
  common-lisp
  (csharp +lsp +tree-sitter)
  (haskell +lsp +tree-sitter)
