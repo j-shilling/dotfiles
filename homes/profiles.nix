@@ -13,6 +13,7 @@
       ../modules/email
       ../modules/git
       ../modules/aws
+      ../modules/python
     ];
     packages = pkgs: with pkgs; [
       emacs-pgtk
