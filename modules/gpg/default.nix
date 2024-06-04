@@ -19,7 +19,7 @@
     sshKeys = me.sshKeys;
     extraConfig =
 ''
-pinentry-program "/mnt/c/scoop/apps/gpg4win/bin/pinentry.exe"
+pinentry-program "/mnt/c/Users/shill/scoop/apps/gpg4win/current/Gpg4win/bin/pinentry.exe"
 '';
   };
 }
