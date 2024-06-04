@@ -14,6 +14,7 @@
       ../modules/git
       ../modules/aws
       ../modules/python
+      ../modules/javascript
     ];
     packages = pkgs: with pkgs; [
       emacs-pgtk

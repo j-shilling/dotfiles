@@ -20,6 +20,6 @@
   };
 
   programs.mbsync.enable = true;
-  services.mbsync.enable = true;
+  services.mbsync.enable = false;
   programs.mu.enable = true;
 }
