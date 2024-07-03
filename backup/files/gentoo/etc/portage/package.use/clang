@@ -1,1 +1,0 @@
->=sys-devel/clang-9.0.1 default-compiler-rt default-libcxx default-lld static-analyzer llvm-libunwind -gold

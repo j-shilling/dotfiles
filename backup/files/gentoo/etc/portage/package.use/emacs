@@ -1,2 +1,0 @@
-<=app-editors/emacs-28 cairo dbus dynamic-loading gconf gfile git gmp gpm gsettings gtk gui gzip-el imagemagick inotify jit jpeg json libxml2 mailutils png sound ssl svg systemd threads tiff xwidgets zlib
->=app-editors/emacs-29 cairo dbus dynamic-loading gconf gfile git gmp gpm gsettings gtk gui gzip-el imagemagick inotify jit jpeg json libxml2 mailutils png sound ssl svg systemd threads tiff xwidgets zlib -X

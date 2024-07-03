@@ -1,5 +1,0 @@
-# required by dev-python/requests-2.23.0::gentoo
-# required by gnome-extra/chrome-gnome-shell-10-r4::gentoo[python_single_target_python3_6]
-# required by @selected
-# required by @world (argument)
->=dev-python/certifi-2019.11.28 python_targets_python3_6

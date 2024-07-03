@@ -1,2 +1,0 @@
-virtual/rust rustfmt
-dev-lang/rust rustfmt system-llvm rls rust-src

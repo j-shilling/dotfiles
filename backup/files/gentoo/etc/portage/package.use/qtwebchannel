@@ -1,5 +1,0 @@
-# required by dev-qt/qtwebengine-5.14.2::gentoo
-# required by dev-python/PyQtWebEngine-5.14.0::gentoo
-# required by app-text/calibre-4.22.0::gentoo[python_single_target_python3_7]
-# required by calibre (argument)
->=dev-qt/qtwebchannel-5.14.2 qml
