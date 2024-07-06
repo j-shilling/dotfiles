@@ -1,4 +1,4 @@
-{ me, ... }:
+{ me, pkgs, ... }:
 
 {
   accounts.email = with me; {
@@ -22,4 +22,12 @@
   programs.mbsync.enable = true;
   services.mbsync.enable = false;
   programs.mu.enable = true;
+
+  home.packages = with pkgs; [
+    isync
+    msmtp
+    mu
+    emacsPackages.mu4e
+    pass
+  ];
 }

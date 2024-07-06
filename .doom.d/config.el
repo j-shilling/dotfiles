@@ -1,6 +1,28 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;;;
+;;; Utils
+;;;
+
+(defun wslp ()
+  "Returns non-nil when the current system is WSL"
+  (and (featurep :system 'linux)
+       (string-match-p "Microsoft"
+        (shell-command-to-string "uname -a"))))
+
+;;;
+;;; WSL Fixes
+;;;
+
+(when (wslp)
+  ; WSLg breaks copy-paste from Emacs into Windows
+  ; see: https://www.lukas-barth.net/blog/emacs-wsl-copy-clipboard/
+  (setq select-active-regions nil
+        select-enable-clipboard 't
+        select-enable-primary nil
+        interprogram-cut-function #'gui-select-text))
+
+;;;
 ;;; Appearance
 ;;;
 
@@ -8,6 +30,9 @@
       modus-themes-diffs 'desaturated
       modus-themes-deuteranopia t
       modus-themes-fringes nil)
+
+(when (>= emacs-major-version 29)
+  (add-hook! 'doom-first-buffer-hook #'pixel-scroll-precision-mode))
 
 (setq doom-theme 'modus-vivendi)
 
@@ -26,13 +51,20 @@
 (use-package! whitespace
   :config
   (setq
-    whitespace-style '(face tabs tab-mark spaces space-mark trailing newline newline-mark)
-    whitespace-display-mappings '(
-      (space-mark   ?\     [?\u00B7]     [?.])
-      (space-mark   ?\xA0  [?\u00A4]     [?_])
-      (newline-mark ?\n    [182 ?\n])
-      (tab-mark     ?\t    [?\u00BB ?\t] [?\\ ?\t])))
-  (global-whitespace-mode +1))
+   whitespace-style '(face tabs tab-mark spaces space-mark trailing newline newline-mark)
+   whitespace-display-mappings '(
+                                 (space-mark   ?\     [?\u00B7]     [?.])
+                                 (space-mark   ?\xA0  [?\u00A4]     [?_])
+                                 (newline-mark ?\n    [182 ?\n])
+                                 (tab-mark     ?\t    [?\u00BB ?\t] [?\\ ?\t])))
+  :hook
+  (prog-mode . (lambda () (whitespace-mode +1)))
+  (text-mode . (lambda () (whitespace-mode -1))))
+
+(use-package! display-line-numbers
+  :hook
+  (prog-mode . (lambda () (display-line-numbers-mode +1)))
+  (text-mode . (lambda () (display-line-numbers-mode -1))))
 
 ;;;
 ;;; Completion
@@ -140,6 +172,12 @@
 (use-package! auth-source-pass
   :custom
   (auth-source-pass-filename . (getenv "PASSWORD_STORE_DIR")))
+
+;; (when-let ((nix (executable-find "nix")))
+;;   (let ((dir (concat (s-trim-right (shell-command-to-string "nix path-info nixpkgs#mu"))
+;;                      "/share/emacs/site-lisp/mu4e")))
+;;     (when (file-exists-p dir)
+;;       (add-load-path! dir))))
 
 (after! mu4e
   (setq mu4e-change-filenames-when-moving t
@@ -264,13 +302,28 @@
 
 (use-package! eglot
   :config
-  (add-to-list 'eglot-server-programs
-               '((typescript-tsx-mode :language-id "typescriptreact")
-                 .
-                 ("typescript-language-server" "--stdio")))
-  (setq-default eglot-workspace-configuration
-                `(:typescript-language-server
-                  (:maxTsServerMemory ,(* 1024 8))))
+  (when (featurep! :lang json +lsp)
+    (add-to-list 'eglot-server-programs
+                 '((js-json-mode json-mode json-ts-mode jsonc-mode)
+                   .
+                   ("npx" "vscode-json-languageserver" "--stdio"))))
+
+  (when (featurep! :lang yaml +lsp)
+    (add-to-list 'eglot-server-programs
+                 '((yaml-ts-mode yaml-mode)
+                   .
+                   ("npx" "yaml-language-server" "--stdio"))))
+
+  (when (modulep! :tools docker +lsp)
+    (add-to-list 'eglot-server-programs
+                 '((dockerfile-mode dockerfile-ts-mode)
+                   .
+                   ("npx" "-p" "dockerfile-language-server-nodejs" "docker-langserver" "--stdio"))))
+  ;; (when (featurep! :lang graphql +lsp)
+  ;;   (add-to-list 'eglot-server-programs
+  ;;                '(graphql-mode
+  ;;                  .
+  ;;                  ("npx" "graphql-language-service-cli" "--stdio"))))
   :bind
   (:map eglot-mode-map
         ("C-c C-d" . eldoc-doc-buffer)))
@@ -329,6 +382,12 @@
   :hook
   (typescript-mode js-mode js2-mode typescript-tsx-mode))
 
+(use-package! add-node-modules-path
+  :custom
+  (add-node-modules-path-command '("pnpm bin" "echo \"$(npm config get prefix)/bin\""))
+  :hook
+  (prog-mode . add-node-modules-path))
+
 (defun init-prettier ()
   (setq-local +format-with-lsp nil)
   (setq-local +format-with 'prettier))
@@ -338,24 +397,24 @@
                 typescript-tsx-mode-hook
                 json-mode-hook
                 yaml-mode-hook
-                markdown-mode-hook))
-  (add-hook hook #'init-prettier))
+                markdown-mode-hook)))
 
-(use-package! add-node-modules-path
-  :custom
-  (add-node-modules-path-command '("pnpm bin" "echo \"$(npm config get prefix)/bin\""))
-  :hook
-  (prog-mode . add-node-modules-path))
+(when (featurep! :lang javascript)
+  (dolist (hook '(typescript-mode-hook
+                  typescript-ts-mode-hook
+                  js-mode-hook
+                  js2-mode-hook
+                  js-ts-mode-hook))
+    (add-hook hook #'copilot-mode)
+    (add-hook hook #'init-prettier)))
 
-(use-package! dap-mode
-  :init
-  (defun init-javascript ()
-    (copilot-mode 1))
-  :hook
-  ((typescript . init-javascript)
-   (js-mode . init-javascript)
-   (js2-mode . init-javascript)
-   (typescript-ts-mode . init-javascript)))
+(when (featurep! :lang json)
+  (dolist (hook '(js-json-mode json-mode json-ts-mode jsonc-mode))
+    (add-hook hook #'init-prettier)))
+
+(when (featurep! :lang yaml)
+  (dolist (hook '(yaml-ts-mode yaml-mode))
+    (add-hook hook #'init-prettier)))
 
 (use-package! pyvenv
   :init

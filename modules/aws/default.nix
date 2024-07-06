@@ -7,7 +7,10 @@
       "default" = {
         "credential_process" = "${pkgs.pass}/bin/pass show FunctorFactory/aws";
       };
-      "seelthedeal" = {
+      "seeltest" = {
+        "credential_process" = "${pkgs.pass}/bin/pass show FunctorFactory/SeelTheDeal/aws-seeltest";
+      };
+      "seeldeals" = {
         "credential_process" = "${pkgs.pass}/bin/pass show FunctorFactory/SeelTheDeal/aws";
       };
     };
@@ -16,7 +19,11 @@
         region = "us-east-1";
         output = "json";
       };
-      "seelthedeal" = {
+      "seeltest" = {
+        region = "us-east-1";
+        output = "json";
+      };
+      "seeldeals" = {
         region = "us-east-1";
         output = "json";
       };

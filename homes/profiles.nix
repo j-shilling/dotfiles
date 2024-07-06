@@ -18,8 +18,8 @@
     ];
     packages = pkgs: with pkgs; [
       emacs-pgtk
-      libvterm
       nil
+      languagetool
     ];
   };
 }

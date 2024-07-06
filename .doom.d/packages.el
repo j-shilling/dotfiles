@@ -20,6 +20,8 @@
 ;;
 
 (package! org-super-agenda)
+(package! languagetool)
+(package! org-present)
 
 ;;
 ;; ELisp

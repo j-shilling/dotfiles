@@ -7,7 +7,6 @@
       use-agent = true;
       with-subkey-fingerprint = true;
       charset = "utf-8";
-
     };
   };
 

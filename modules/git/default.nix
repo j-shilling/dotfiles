@@ -22,6 +22,8 @@
       };
       pull.rebase = true;
       fetch.prune = true;
+      github.user = "j-shilling";
+      gitlab.user = "shilling.jake";
     };
   };
 }
