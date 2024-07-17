@@ -2,9 +2,9 @@
   description = "Jake's Home Manager Config";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager = {
+    home = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -16,11 +16,12 @@
   };
 
   outputs = {
-        nixpkgs
-      , home-manager
-      , emacs-overlay
-      , ...
-  }: let
+  self
+  , nixpkgs
+  , home
+  , emacs-overlay
+  , ...
+  }@inputs: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
@@ -29,6 +30,30 @@
         emacs-overlay.overlay
       ];
     };
+
+    homes = pkgs.callPackage ./hosts/homes.nix {
+      inherit self system pkgs inputs;
+    };
+
     in
-      (import ./homes/default.nix { inherit pkgs home-manager; });
+    {
+      # homeConfigurations = {
+      #   jake = home-manager.lib.homeManagerConfiguration {
+
+      #     extraSpecialArgs = { inherit inputs outputs; };
+      #     modules = [
+      #       ./home.nix
+      #       ./modules/emacs
+      #       ./modules/email
+      #       ./modules/shell
+      #       ./modules/git
+      #       ./modules/gpg
+      #       ./modules/aws
+      #       ./modules/python
+      #       ./modules/javascript
+      #     ];
+      #   };
+      # };
+      homeConfigurations = homes.homeConfigurations;
+    };
 }

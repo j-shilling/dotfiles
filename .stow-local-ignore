@@ -1,6 +1,0 @@
-\.git
-\.gitignore
-backup
-.*~
-Makefile
-.emacs.d

@@ -1,6 +1,0 @@
-[Unit]
-Description=Use RClone to Backup Files
-
-[Service]
-Type=simple
-ExecStart=rclone -v sync ~/org Google:/org
