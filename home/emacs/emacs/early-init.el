@@ -1,13 +1,40 @@
-;;; early-init.el -*- lexical-binding: t; -*-
+;;; early-init.el --- Early Initialization -*- lexical-binding: t; -*-
+;;;
+;;; Commentary:
+;;;
+;;; Code:
 
-(setq gc-cons-threshold most-positive-fixnum)
-(add-hook 'after-init-hook
+;; If started with --debug-init, then also activate `debug-on-error'
+(setq debug-on-error (and (not noninteractive)
+                          init-file-debug))
+
+;; Calculate startup time
+(add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold (* 1025 10))))
+            (message "Loaded in %.03fs"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))))
 
-(setq package-enable-at-startup nil)
+;; Disable GC during startup
+(let ((original-gc-cons-threshold gc-cons-threshold)
+      (original-gc-cons-percentage gc-cons-percentage)
+      (original-file-name-handler-alist file-name-handler-alist))
+  (add-hook 'after-init-hook
+            `(lambda ()
+               (setq gc-cons-threshold ,original-gc-cons-threshold
+                     gc-cons-percentage ,original-gc-cons-percentage
+                     file-name-handler-alist ',original-file-name-handler-alist)))
+  (setq gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 1.0
+        file-name-handler-alist nil))
 
-(setq load-prefer-newer noninteractive)
+;; Disable startup stuff that we don't want
+(setq inhibit-startup-echo-area-message t
+      inhibit-startup-screen t
+      initial-scratch-message nil
+      inhibit-default-init t
+      package-enable-at-startup nil
+      initial-major-mode 'fundamental-mode)
 
 ;; Doom says this is faster than calling the corresponding functions. See
 ;; core-ui.el
