@@ -37,23 +37,6 @@
 
     in
     {
-      # homeConfigurations = {
-      #   jake = home-manager.lib.homeManagerConfiguration {
-
-      #     extraSpecialArgs = { inherit inputs outputs; };
-      #     modules = [
-      #       ./home.nix
-      #       ./modules/emacs
-      #       ./modules/email
-      #       ./modules/shell
-      #       ./modules/git
-      #       ./modules/gpg
-      #       ./modules/aws
-      #       ./modules/python
-      #       ./modules/javascript
-      #     ];
-      #   };
-      # };
       homeConfigurations = homes.homeConfigurations;
     };
 }

@@ -1,4 +1,4 @@
-_:
+{ pkgs, ... }:
 
 {
   programs.gpg = {
@@ -15,12 +15,9 @@ _:
     enableBashIntegration = true;
     enableSshSupport = true;
     enableZshIntegration = true;
+    pinentryPackage = pkgs.pinentry-gnome3;
     sshKeys = [
       "E556265A9520AFE6C5BEC85C47B1ADB883CCBC91"
     ];
-    extraConfig =
-''
-pinentry-program "/mnt/c/Users/shill/scoop/apps/gpg4win/current/Gpg4win/bin/pinentry.exe"
-'';
   };
 }
