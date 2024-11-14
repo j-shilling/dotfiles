@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../../home
-    ../../desktop
+    ./internet
+    ./tools
   ];
 }

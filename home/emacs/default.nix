@@ -9,7 +9,6 @@
     enable = true;
     package = pkgs.emacs-pgtk;
     extraPackages = epkgs: with epkgs; [
-      magit
       ace-window
       apheleia
       consult
@@ -17,11 +16,14 @@
       diff-hl
       diminish
       envrc
+      eshell-syntax-highlighting
+      eshell-vterm
       gcmh
       haskell-mode
       helpful
       ibuffer-vc
       ligature
+      magit
       marginalia
       modus-themes
       nerd-icons
@@ -33,7 +35,10 @@
       nix-ts-mode
       no-littering
       orderless
+      poetry
       smartparens
+      terraform-doc
+      terraform-mode
       treesit-grammars.with-all-grammars
       tsc
       vertico
