@@ -1,0 +1,7 @@
+(define-module (config home home-config)
+  #:use-module (gnu)
+  #:use-module (gnu home)
+  #:use-module (gnu packages emacs))
+
+(home-environment
+ (packages (list emacs)))
