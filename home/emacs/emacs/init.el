@@ -883,7 +883,9 @@
 ;; html-ts-mode
 ;; json-ts-mode
 ;; toml-ts-mode
-;; yaml-ts-mode
+
+(use-package yaml-ts-mode
+  :mode ("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;;;
 ;;; Prose
