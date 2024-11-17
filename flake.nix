@@ -30,13 +30,18 @@
         emacs-overlay.overlay
       ];
     };
+    isWSL = (builtins.getEnv "WSL_DISTRO_NAME") != "";
 
     homes = pkgs.callPackage ./hosts/homes.nix {
       inherit self system pkgs inputs;
     };
 
+    default_home_key = (if isWSL then "jake@wsl" else "jake@linux");
+
+    default_home_value = builtins.getAttr default_home_key homes.homeConfigurations;
+
     in
     {
-      homeConfigurations = homes.homeConfigurations;
+      homeConfigurations = homes.homeConfigurations // { "jake" = default_home_value; };
     };
 }
