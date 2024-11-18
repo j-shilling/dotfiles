@@ -3,10 +3,14 @@
   #:use-module (gnu home)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
-  #:use-module (gnu home services dotfiles))
+  #:use-module (gnu packages version-control)
+  #:use-module (gnu home services dotfiles)
+  #:use-module (config home services shell)
+  #:use-module (config home services gpg))
 
 (define emacs-packages
   (list
+   emacs-compat
    emacs-ace-window
    emacs-apheleia
    emacs-consult
@@ -45,9 +49,12 @@
    emacs-guix))
 
 (home-environment
- (packages `(,emacs-next-tree-sitter ,@emacs-packages))
+ (packages `(,emacs-next-tree-sitter ,@emacs-packages ,git))
  (services
-  (list
-   (service home-dotfiles-service-type
-	    (home-dotfiles-configuration
-	     (directories '("../../files")))))))
+  `(
+    ,@shell-services
+    ,@gpg-services
+    ,@(list
+       (service home-dotfiles-service-type
+                (home-dotfiles-configuration
+                 (directories '("../../files"))))))))

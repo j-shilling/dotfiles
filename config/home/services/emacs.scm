@@ -50,8 +50,8 @@
 (define emacs-services
   (list
    (service home-emacs-service-type
-	    (home-emacs-configuration
-	     (package emacs-next-tree-sitter)
-	     (elisp-packages emacs-packages)
-	     (init-el (slurp-file-like (local-file "../../../files/init.el")))
-	     (early-init-el (slurp-file-like (local-file "../../../files/early-init.el")))))))
+        (home-emacs-configuration
+         (package emacs-next-tree-sitter)
+         (elisp-packages emacs-packages)
+         (init-el (slurp-file-like (local-file "../../../files/init.el")))
+         (early-init-el (slurp-file-like (local-file "../../../files/early-init.el")))))))

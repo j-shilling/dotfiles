@@ -327,17 +327,17 @@
   (prog-mode-hook . (lambda () (whitespace-mode +1)))
   (text-mode-hook . (lambda () (whitespace-mode -1))))
 
-(use-package nerd-icons
-  :autoload
-  nerd-icons-icon-for-dir
-  nerd-icons-icon-for-file
-  nerd-icons-icon-for-extension
-  nerd-icons-icon-for-mode
-  nerd-icons-icon-for-url
-  nerd-icons-icon-for-buffer
-  :commands
-  nerd-icons-install-fonts
-  nerd-icons-insert)
+;; (use-package nerd-icons
+;;   :autoload
+;;   nerd-icons-icon-for-dir
+;;   nerd-icons-icon-for-file
+;;   nerd-icons-icon-for-extension
+;;   nerd-icons-icon-for-mode
+;;   nerd-icons-icon-for-url
+;;   nerd-icons-icon-for-buffer
+;;   :commands
+;;   nerd-icons-install-fonts
+;;   nerd-icons-insert)
 
 ;;;
 ;;; Completion
@@ -433,11 +433,11 @@
   :hook
   (after-init-hook . marginalia-mode))
 
-(use-package nerd-icons-completion
-  :diminish nerd-icons-completion-mode
-  :hook
-  (marginalia-mode-hook . nerd-icons-completion-marginalia-setup)
-  (marginalia-mode-hook . nerd-icons-completion-mode))
+;; (use-package nerd-icons-completion
+;;   :diminish nerd-icons-completion-mode
+;;   :hook
+;;   (marginalia-mode-hook . nerd-icons-completion-marginalia-setup)
+;;   (marginalia-mode-hook . nerd-icons-completion-mode))
 
 (use-package vertico-multiform
   :disabled
@@ -488,13 +488,13 @@
   :hook
   (corfu-mode-hook . corfu-popupinfo-mode))
 
-(use-package nerd-icons-corfu
-  :defines nerd-icons-corfu-formatter
-  :hook
-  (corfu-mode-hook . (lambda ()
-                       (require 'nerd-icons-corfu)
-                       (add-to-list 'corfu-margin-formatters
-                                    #'nerd-icons-corfu-formatter))))
+;; (use-package nerd-icons-corfu
+;;   :defines nerd-icons-corfu-formatter
+;;   :hook
+;;   (corfu-mode-hook . (lambda ()
+;;                        (when (require 'nerd-icons-corfu nil t)
+;;                          (add-to-list 'corfu-margin-formatters
+;;                                       #'nerd-icons-corfu-formatter)))))
 
 (use-package minibuffer
   :bind
@@ -621,18 +621,18 @@
   ((dired-mode-hook . dired-omit-mode)
    (dired-mode-hook . dired-hide-details-mode)))
 
-(use-package nerd-icons-dired
-  :hook
-  (dired-mode-hook . nerd-icons-dired-mode))
+;; (use-package nerd-icons-dired
+;;   :hook
+;;   (dired-mode-hook . nerd-icons-dired-mode))
 
 (use-package ibuffer
   :bind
   (("C-x C-b" . ibuffer)))
 
-(use-package nerd-icons-ibuffer
-  :diminish nerd-icons-ibuffer-mode
-  :hook
-  (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
+;; (use-package nerd-icons-ibuffer
+;;   :diminish nerd-icons-ibuffer-mode
+;;   :hook
+;;   (ibuffer-mode-hook . nerd-icons-ibuffer-mode))
 
 (use-package proced
   :custom
