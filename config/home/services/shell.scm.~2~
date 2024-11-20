@@ -1,0 +1,11 @@
+(define-module (config home services shell)
+  #:use-module (gnu home)
+  #:use-module (gnu packages emacs)
+  #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu services)
+  #:use-module (gnu home services)
+  #:export (shell-services))
+
+(define shell-services
+  (list
+   (service home-bash-service-type)))
