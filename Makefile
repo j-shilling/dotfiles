@@ -1,3 +1,3 @@
 .PHONY: home
 home:
-	guix home --fallback reconfigure --no-grafts --allow-downgrades ./config/home.scm
+	guix home reconfigure -L ~/dotfiles ./config/home.scm
