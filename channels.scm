@@ -1,3 +1,5 @@
+(use-modules (guix channels))
+
 (cons*
  (channel
   (name 'rde)

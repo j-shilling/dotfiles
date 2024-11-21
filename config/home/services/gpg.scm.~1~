@@ -1,7 +1,0 @@
-(define-module (config home services gpg)
-  #:use-module (guix gexp)
-  #:use-module (gnu services)
-  #:use-module (gnu packages readline)
-  #:use-module (gnu home services)
-  #:use-module (gnu home services shells)
-  #:export (shell-services))

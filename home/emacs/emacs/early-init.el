@@ -1,1 +1,0 @@
-/gnu/store/8bqp05jkdwi4nwxx23srcd1xxvdccznd-home-dotfiles--config-emacs-early-init-el

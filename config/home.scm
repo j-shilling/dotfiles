@@ -15,6 +15,8 @@
   #:use-module (rde features terminals)
   #:use-module (rde features shells)
   #:use-module (rde features shellutils)
+  #:use-module (rde features fontutils)
+  #:use-module (gnu packages emacs)
   #:use-module (contrib features json)
   #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz))
@@ -34,11 +36,15 @@
       #:home-packages
       (list
        devcontainers-cli-0.72.0))
+     (feature-fonts)
      ;; EMACS
      (feature-emacs
-      #:native-comp? #t)
+      ;; #:emacs emacs-next
+      #:native-comp? #f
+      #:emacs-server-mode? #t)
      (feature-emacs-appearance)
-     (feature-emacs-modus-themes)
+     (feature-emacs-modus-themes
+      #:dark? #t)
      (feature-emacs-which-key)
      (feature-emacs-all-the-icons)
      (feature-emacs-tramp)
