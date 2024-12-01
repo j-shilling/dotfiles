@@ -6,6 +6,13 @@ CONFIG=${SRC_DIR}/config.scm
 
 all: apply
 
+.PHONY=upgrade
+upgrade:
+	echo -e "(use-modules (guix channels))\n" > channels-lock-tmp.scm
+	guix time-machine -C channels.scm -- \
+	describe -f channels >> channels-lock-tmp.scm
+	mv channels-lock-tmp.scm channels-lock.scm
+
 channels-lock.scm: channels.scm
 	echo -e "(use-modules (guix channels))\n" > channels-lock-tmp.scm
 	guix time-machine -C channels.scm -- \

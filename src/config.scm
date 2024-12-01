@@ -21,7 +21,8 @@
   #:use-module (contrib features json)
   #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz)
-  #:use-module (config emacs))
+  #:use-module (config emacs)
+  #:use-module (config shell))
 
 ;;; Code:
 
@@ -41,31 +42,30 @@
       #:locales (list "en_US"))))
    (feature-fonts)
    (feature-vterm)
-   (feature-ssh)
+
    (feature-xdg)
-   (feature-bash)
+
    (feature-markdown)
    (feature-tex)
    (feature-python)
-   (feature-direnv)
+
    (feature-compile)
    (feature-docker)
-   (feature-manpages)
+
    (feature-javascript)
-   (feature-gnupg
-    #:gpg-primary-key "0FCC8E6A96FF109F"
-    #:ssh-keys
-    '(("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")))
-   (feature-git
-    #:sign-commits? #t)
+
    (feature-guile)))
 
 (define %emacs-features
   (emacs-features))
 
+(define %shell-features
+  (shell-features))
+
 (define %all-features
   `(,@%base-features
-    ,@%emacs-features))
+    ,@%emacs-features
+    ,@%shell-features))
 
 (define minimal-rde-config
   (rde-config
