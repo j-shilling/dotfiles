@@ -26,6 +26,9 @@
 
 ;;; Code:
 
+(define is-wsl?
+  (getenv "WSL_DISTRO_NAME"))
+
 (define %base-features
   (list
    (feature-user-info
@@ -57,7 +60,8 @@
    (feature-guile)))
 
 (define %emacs-features
-  (emacs-features))
+  (emacs-features
+   #:wayland? is-wsl?))
 
 (define %shell-features
   (shell-features))
