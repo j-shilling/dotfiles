@@ -16,6 +16,28 @@
 (define %extra-early-init-el '())
 (define %additional-elisp-packages '())
 
+(define (feature-emacs-base-config)
+  (define emacs-f-name 'base-config)
+  (define f-name (symbol-append 'emacs- emacs-f-name))
+
+  (define (get-home-services config)
+    (list
+     (simple-service
+        'emacs-extensions
+        home-emacs-service-type
+        (home-emacs-extension
+         (init-el
+          `((eval-when-compile
+             (require 'use-package))
+            (use-package emacs
+                         :custom
+                         (user-full-name ,(get-value 'full-name config))
+                         (user-mail-address ,(get-value 'email config)))))))))
+
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter  get-home-services)))
 
 (define* (emacs-features
           #:key
@@ -29,18 +51,7 @@
       #:emacs-server-mode? #t
       #:default-terminal? #f
       #:default-application-launcher? #f))
-   (feature
-    (name 'emacs-custom)
-    (home-services-getter
-     (const
-      (list
-       (simple-service
-        'emacs-extensions
-        home-emacs-service-type
-        (home-emacs-extension
-         (init-el %extra-init-el)
-         (early-init-el %extra-early-init-el)
-         (elisp-packages %additional-elisp-packages)))))))
+   (feature-emacs-base-config)
    (feature-emacs-appearance)
    (feature-emacs-modus-themes
     #:dark? #t)
