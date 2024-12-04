@@ -76,8 +76,7 @@
 
                          (setq-default indent-tabs-mode nil)
                          (setq-default tab-width 4))))
-         (elisp-packages (list emacs-use-pacakge
-                               emacs-diminish))))))
+         (elisp-packages (list emacs-diminish))))))
 
   (feature
    (name f-name)
@@ -118,6 +117,166 @@
    (values `((,f-name . #t)))
    (home-services-getter  get-home-services)))
 
+(define* (feature-emacs-appearance-config #:key
+          (wayland? #f))
+  (define emacs-f-name 'appearance-config)
+  (define f-name (symbol-append 'emacs- emacs-f-name))
+
+  (define (get-home-services config)
+    (list
+     (simple-service
+        'emacs-extensions
+        home-emacs-service-type
+        (home-emacs-extension
+         (init-el
+          `((eval-when-compile
+             (require 'use-package))
+
+            ,@(if wayland?
+                  (list
+                   '(use-package pixel-scroll
+                                 :diminish pixel-scroll-precision-mode
+                                 :hook (after-init . pixel-scroll-precision-mode)))
+                  (list))
+
+            (use-package display-line-numbers
+                         :diminish display-line-numbers-mode
+                         :hook
+                         (prog-mode . (lambda () display-line-numbers-mode +1))
+                         (text-mode . (lambda () display-line-numbers-mode -1)))
+
+            (use-package whitespace
+                         :diminish whitespace-mode
+                         :custom (whitepsace-action '(cleanup auto-cleanup))
+                         :hook
+                         (prog-mode . (lambda () whitepsace-mode +1))
+                         (text-mode . (lambda () whitespace-mode -1)))
+
+            (use-package ligature
+                         :functions ligature-set-ligatures
+                         :hook
+                         (init-hook . global-ligature-mode)
+                         :config
+                         (ligature-set-ligatures 't '("www"))
+                         (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+                         (ligature-set-ligatures 'prog-mode
+                                                 '(;; == === ==== => =| =>>=>=|=>==>> ==< =/=//=// =~
+                                                   ;; =:= =!=
+                                                   ("=" (rx (+ (or ">" "<" "|" "/" "~" ":" "!" "="))))
+                                                   ;; ;; ;;;
+                                                   (";" (rx (+ ";")))
+                                                   ;; && &&&
+                                                   ("&" (rx (+ "&")))
+                                                   ;; !! !!! !. !: !!. != !== !~
+                                                   ("!" (rx (+ (or "=" "!" "\\." ":" "~"))))
+                                                   ;; ?? ??? ?:  ?=  ?.
+                                                   ("?" (rx (or ":" "=" "\\." (+ "?"))))
+                                                   ;; %% %%%
+                                                   ("%" (rx (+ "%")))
+                                                   ;; |> ||> |||> ||||> |] |} || ||| |-> ||-||
+                                                   ;; |->>-||-<<-| |- |== ||=||
+                                                   ;; |==>>==<<==<=>==//==/=!==:===>
+                                                   ("|" (rx (+ (or ">" "<" "|" "/" ":" "!" "}" "\\]"
+                                                                   "-" "=" ))))
+                                                   ;; \\ \\\ \/
+                                                   ("\\" (rx (or "/" (+ "\\"))))
+                                                   ;; ++ +++ ++++ +>
+                                                   ("+" (rx (or ">" (+ "+"))))
+                                                   ;; :: ::: :::: :> :< := :// ::=
+                                                   (":" (rx (or ">" "<" "=" "//" ":=" (+ ":"))))
+                                                   ;; // /// //// /\ /* /> /===:===!=//===>>==>==/
+                                                   ("/" (rx (+ (or ">"  "<" "|" "/" "\\" "\\*" ":" "!"
+                                                                   "="))))
+                                                   ;; .. ... .... .= .- .? ..= ..<
+                                                   ("\\." (rx (or "=" "-" "\\?" "\\.=" "\\.<" (+ "\\."))))
+                                                   ;; -- --- ---- -~ -> ->> -| -|->-->>->--<<-|
+                                                   ("-" (rx (+ (or ">" "<" "|" "~" "-"))))
+                                                   ;; *> */ *)  ** *** ****
+                                                   ("*" (rx (or ">" "/" ")" (+ "*"))))
+                                                   ;; www wwww
+                                                   ("w" (rx (+ "w")))
+                                                   ;; <> <!-- <|> <: <~ <~> <~~ <+ <* <$ </  <+> <*>
+                                                   ;; <$> </> <|  <||  <||| <|||| <- <-| <-<<-|-> <->>
+                                                   ;; <<-> <= <=> <<==<<==>=|=>==/==//=!==:=>
+                                                   ;; << <<< <<<<
+                                                   ("<" (rx (+ (or "\\+" "\\*" "\\$" "<" ">" ":" "~"  "!"
+                                                                   "-"  "/" "|" "="))))
+                                                   ;; >: >- >>- >--|-> >>-|-> >= >== >>== >=|=:=>>
+                                                   ;; >> >>> >>>>
+                                                   (">" (rx (+ (or ">" "<" "|" "/" ":" "=" "-"))))
+                                                   ;; #: #= #! #( #? #[ #{ #_ #_( ## ### #####
+                                                   ("#" (rx (or ":" "=" "!" "(" "\\?" "\\[" "{" "_(" "_"
+                                                                (+ "#"))))
+                                                   ;; ~~ ~~~ ~=  ~-  ~@ ~> ~~>
+                                                   ("~" (rx (or ">" "=" "-" "@" "~>" (+ "~"))))
+                                                   ;; __ ___ ____ _|_ __|____|_
+                                                   ("_" (rx (+ (or "_" "|"))))
+                                                   ;; Fira code: 0xFF 0x12
+                                                   ("0" (rx (and "x" (+ (in "A-F" "a-f" "0-9")))))
+                                                   ;; Fira code:
+                                                   "Fl"  "Tl"  "fi"  "fj"  "fl"  "ft"
+                                                   ;; The few not covered by the regexps.
+                                                   "{|"  "[|"  "]#"  "(*"  "}#"  "$>"  "^=")))))
+
+         (elisp-packages (list emacs-ligature))))))
+
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter  get-home-services)))
+
+(define* (feature-emacs-editing-config)
+  (define emacs-f-name 'editing-config)
+  (define f-name (symbol-append 'emacs- emacs-f-name))
+
+  (define (get-home-services config)
+    (list
+     (simple-service
+        'emacs-extensions
+        home-emacs-service-type
+        (home-emacs-extension
+         (init-el
+          `((eval-when-compile
+             (require 'use-package))
+
+            (use-package delsel
+                         :diminish delete-selection-mode
+                         :hook (after-init . delete-selection-mode))
+
+            (use-package autorevert
+                         :diminish global-auto-revert-mode
+                         :custom (global-auto-revert-non-file-buffers t)
+                         :hook (after-init . global-auto-revert-mode))
+
+            (use-package flyspell
+                         :diminish (flyspell-prog-mode flyspell-mode)
+                         :hook
+                         (prog-mode . flyspell-prog-mode)
+                         (text-mode . flyspell-mode))
+
+            (use-package subword
+                         :diminish subword-mode
+                         :hook (prog-mode . subword-mode))
+
+            (use-package wgrep
+                         :hook (grep-setup . wgrep-setup))
+
+            (use-package multiple-cursors
+                         :commands mc/sort-regions
+                         :bind
+                         ("C-S-c C-S-c" . mc/edit-lines)
+                         ("C->" . mc/mark-next-like-this)
+                         ("C-<" . mc/mark-previous-like-this)
+                         ("C-c C-<" . mc/mark-all-like-this))))
+
+         (elisp-packages (list emacs-wgrep
+                               emacs-multiple-cursors))))))
+
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter  get-home-services)))
+
 (define* (emacs-features
           #:key
           (wayland? #f))
@@ -131,7 +290,9 @@
       #:default-terminal? #f
       #:default-application-launcher? #f))
    (feature-emacs-base-config)
-   (feature-emacs-vlf-config)
+   (feature-emacs-performance-config)
+   (feature-emacs-appearance-config #:wayland? wayland?)
+   (feature-emacs-editing-config)
    (feature-emacs-appearance)
    (feature-emacs-modus-themes
     #:dark? #t)
