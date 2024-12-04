@@ -41,7 +41,11 @@ apply: guix ${CONFIG}
 repl:
 	${GUIX} shell guile-next guile-ares-rs \
 	-- guile \
-	-L ${SRC_DIR}
+        -L ${GUIX_PROFILE}/share/guile/site/3.0 \
+	-L ${SRC_DIR} \
+	-c \
+"(begin (use-modules (guix gexp))) \
+((@ (ares server) run-nrepl-server) #:nrepl-port-path \"./.nrepl-port\")"
 
 clean-target:
 	rm -rfv ./target

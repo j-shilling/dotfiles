@@ -22,7 +22,9 @@
   #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz)
   #:use-module (config emacs)
-  #:use-module (config shell))
+  #:use-module (config shell)
+  #:use-module (config development python)
+  #:use-module (config development guile))
 
 ;;; Code:
 
@@ -36,13 +38,7 @@
     #:full-name "Jake Shilling"
     #:email "shilling.jake@gmail.com"
     #:emacs-advanced-user? #t)
-   (feature-base-packages
-    #:home-packages
-    (list
-     devcontainers-cli-0.72.0
-     (make-glibc-utf8-locales
-      glibc
-      #:locales (list "en_US"))))
+   (feature-foreign-distro)
    (feature-fonts)
    (feature-vterm)
 
@@ -50,14 +46,11 @@
 
    (feature-markdown)
    (feature-tex)
-   (feature-python)
 
    (feature-compile)
    (feature-docker)
 
-   (feature-javascript)
-
-   (feature-guile)))
+   (feature-javascript)))
 
 (define %emacs-features
   (emacs-features
@@ -66,10 +59,15 @@
 (define %shell-features
   (shell-features))
 
+(define %development-features
+  `(,@(python-features)
+    ,@(guile-features)))
+
 (define %all-features
   `(,@%base-features
     ,@%emacs-features
-    ,@%shell-features))
+    ,@%shell-features
+    ,@%development-features))
 
 (define minimal-rde-config
   (rde-config
