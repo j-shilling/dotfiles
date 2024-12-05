@@ -18,6 +18,8 @@
   #:use-module (rde features fontutils)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages docker)
+  #:use-module (gnu packages certs)
   #:use-module (contrib features json)
   #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz)
@@ -38,18 +40,18 @@
     #:full-name "Jake Shilling"
     #:email "shilling.jake@gmail.com"
     #:emacs-advanced-user? #t)
+   (feature-base-packages
+    #:home-packages
+    (list docker-compose
+          nss-certs))
    (feature-foreign-distro)
    (feature-fonts)
    (feature-vterm)
-
    (feature-xdg)
-
    (feature-markdown)
    (feature-tex)
-
    (feature-compile)
    (feature-docker)
-
    (feature-javascript)))
 
 (define %emacs-features

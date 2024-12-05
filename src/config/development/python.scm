@@ -19,14 +19,15 @@
      (simple-service
       'add-python-tree-sitter
       home-profile-service-type
-      (list tree-sitter-python))
+      (list tree-sitter-python
+            poetry
+            python-wrapper))
      (simple-service
       'emacs-extensions
       home-emacs-service-type
       (home-emacs-extension
        (elisp-packages
         (list
-         ;; TODO poetry
          emacs-pyvenv))
        (init-el
         `((eval-when-compile (require 'use-package))
@@ -34,11 +35,12 @@
                        :mode "\\.py[iw]?\\'"
                        :interpreter ,(file-append python-3.12 "/bin/python3.12")
                        :hook (python-ts-mode . eglot-ensure))
-          (use-package elgot
+          (use-package eglot
                        :config
                        (add-to-list 'eglot-server-programs
-                                    '((python-mode python-ts-mode)
-                                      "basedpyright-langserver" "--stdio")))))))))
+                                    (cons '(python-mode python-ts-mode)
+                                          (eglot-alternatives
+                                           '("pylsp" "pyls" ("basedpyright-langserver" "--stdio") ("pyright-langserver" "--stdio") "jedi-language-server" "ruff-lsp")))))))))))
 
   (feature
    (name f-name)
