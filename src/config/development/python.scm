@@ -33,7 +33,12 @@
           (use-package python-ts-mode
                        :mode "\\.py[iw]?\\'"
                        :interpreter ,(file-append python-3.12 "/bin/python3.12")
-                       :hook (python-ts-mode . eglot-ensure))))))))
+                       :hook (python-ts-mode . eglot-ensure))
+          (use-package elgot
+                       :config
+                       (add-to-list 'eglot-server-programs
+                                    '((python-mode python-ts-mode)
+                                      "basedpyright-langserver" "--stdio")))))))))
 
   (feature
    (name f-name)

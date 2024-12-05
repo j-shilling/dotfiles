@@ -6,6 +6,7 @@
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu services)
+  #:use-module (config packages emacs-xyz)
   #:export (emacs-features))
 
 (define %extra-init-el
@@ -76,7 +77,8 @@
 
                          (setq-default indent-tabs-mode nil)
                          (setq-default tab-width 4))))
-         (elisp-packages (list emacs-diminish))))))
+         (elisp-packages (list emacs-diminish
+                               emacs-codeium))))))
 
   (feature
    (name f-name)
@@ -149,8 +151,8 @@
                          :diminish whitespace-mode
                          :custom (whitepsace-action '(cleanup auto-cleanup))
                          :hook
-                         (prog-mode . (lambda () whitepsace-mode +1))
-                         (text-mode . (lambda () whitespace-mode -1)))
+                         (prog-mode . (lambda () (whitespace-mode +1)))
+                         (text-mode . (lambda () (whitespace-mode -1))))
 
             (use-package ligature
                          :functions ligature-set-ligatures
