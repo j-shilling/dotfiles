@@ -2,6 +2,7 @@
   #:use-module (rde features)
   #:use-module (rde features guile)
   #:use-module (rde features emacs-xyz)
+  #:use-module (rde packages emacs-xyz)
   #:use-module (rde home services emacs)
   #:use-module (gnu services)
   #:use-module (gnu home services)
@@ -26,12 +27,18 @@
         'emacs-extensions
         home-emacs-service-type
         (home-emacs-extension
-         (elisp-packages (list emacs-arei))
+         (elisp-packages (list emacs-arei-latest
+                               emacs-geiser-latest
+                               emacs-geiser-guile-latest
+                               emacs-guix-latest))
          (init-el
           `((eval-when-compile 'use-package)
             (use-package arei
                          :init
-                         (remove-hook 'scheme-mode-hook (function geiser-mode--maybe-activate)))))))))
+                         (remove-hook 'scheme-mode-hook (function geiser-mode--maybe-activate)))
+            (use-package geiser
+                         :custom
+                         (geiser-mode-auto-p nil))))))))
 
   (feature
    (name f-name)
