@@ -279,6 +279,34 @@
    (values `((,f-name . #t)))
    (home-services-getter  get-home-services)))
 
+(define (feature-emacs-development-config)
+  (define emacs-f-name 'development-config)
+  (define f-name (symbol-append 'emacs- emacs-f-name))
+
+  (define (get-home-services config)
+    (list
+     (simple-service
+      'emacs-extensions
+      home-emacs-service-type
+      (home-emacs-extension
+       (elisp-packages (list emacs-codeium))
+       (init-el
+        `((eval-when-compile
+           (require 'use-package))
+
+          (use-package codeium
+                       :hook
+                       (eglot-managed-mode . (lambda ()
+                                               (when (eglot-managed-p)
+                                                 (setq-local completion-at-point-functions
+                                                             (list (cape-capf-super (function codeium-completion-at-point)
+                                                                                    (function eglot-completion-at-point))))))))))))))
+
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter  get-home-services)))
+
 (define* (emacs-features
           #:key
           (wayland? #f))

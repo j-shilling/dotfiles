@@ -25,6 +25,7 @@
   #:use-module (config emacs)
   #:use-module (config tools shell)
   #:use-module (config tools syncthing)
+  #:use-module (config tools aws)
   #:use-module (config development python)
   #:use-module (config development guile))
 
@@ -60,7 +61,8 @@
 
 (define %tools-features
   `(,@(shell-features)
-    ,@(syncthing-features)))
+    ,@(syncthing-features)
+    ,@(aws-features)))
 
 (define %development-features
   `(,@(python-features)
