@@ -26,6 +26,7 @@
   #:use-module (config tools shell)
   #:use-module (config tools syncthing)
   #:use-module (config tools aws)
+  #:use-module (config tools mail)
   #:use-module (config development python)
   #:use-module (config development guile))
 
@@ -57,12 +58,14 @@
 
 (define %emacs-features
   (emacs-features
-   #:wayland? is-wsl?))
+   #:wayland? is-wsl?
+   #:wsl? is-wsl?))
 
 (define %tools-features
   `(,@(shell-features)
     ,@(syncthing-features)
-    ,@(aws-features)))
+    ,@(aws-features)
+    ,@(mail-features)))
 
 (define %development-features
   `(,@(python-features)
