@@ -1,4 +1,7 @@
 (define-module (config tools shell)
+  #:use-module (gnu services)
+  #:use-module (gnu home services shells)
+  #:use-module (rde features)
   #:use-module (rde features gnupg)
   #:use-module (rde features version-control)
   #:use-module (rde features documentation)
@@ -8,9 +11,37 @@
   #:use-module (rde features password-utils)
   #:export (shell-features))
 
+(define (feature-bash-config)
+  (define f-name 'base-config)
+
+  (define (get-home-services config)
+    (list
+     (simple-service
+      'bash-config
+      home-bash-service-type
+      (home-bash-extension
+       (bashrc
+        (list  "HISTCONTROL=erasedups"
+               "HISTFILESIZE=100000"
+               "HISTIGNORE=ls:exit:history:clear"
+               "shopt -s histappend"
+               "shopt -s cmdhist"
+               "shopt -s checkwinsize"
+               "shopt -s autocd"
+               "shopt -s dirspell"
+               "shopt -s cdspell"
+               "shopt -s globstar"
+               "shopt -s nocaseglob"))))))
+
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter  get-home-services)))
+
 (define (shell-features)
   (list
    (feature-bash)
+   ;; (feature-bash-config)
    (feature-manpages)
    (feature-direnv)
    (feature-gnupg
@@ -19,6 +50,7 @@
     '(("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")))
    (feature-ssh)
    (feature-git
-    #:sign-commits? #t)
+    #:sign-commits? #t
+    #:git-send-email? #t)
    (feature-password-store
     #:remote-password-store-url "git@github.com:j-shilling/password-store.git")))
