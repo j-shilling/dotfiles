@@ -17,27 +17,17 @@ features that have been enabled."
 
   (define (get-home-services config)
     (list
-     (when (get-value 'isync config #f)
-       (let* ((mbsync (get-value 'mbsync config))
-              (mail-acc->isync-args (get-value 'mail-acc->isync-args config))
-              (mail-accounts
-               (filter (lambda (x) (eq? (mail-account-synchronizer x) 'isync))
-                       (get-value 'mail-accounts config)))
-              (sync-cmds (map (lambda (acc) #~(#$(mbsync config) (mail-acc->isync-args acc)))
-                              mail-accounts))
-              (notmuch-cmds (if (get-value 'notmuch config #f)
-                                (list "notmuch new")
-                                (list)))
-              (l2md-cmds (if (get-value 'l2md config #f)
-                             (list "l2md")
-                             (list))))
-         (let ((cmds (append l2md-cmds sync-cmds notmuch-cmds)))
-           (simple-service
-            'isync-mcron-job
-            home-mcron-service-type
-            (list
-             #~(job '#$time-spec
-                    '(for-each system '#$cmds)))))))))
+     (simple-service 'mcron-jobs
+                     home-mcron-service-type
+                     (list
+                      #~(job '(next-minute (range 0 60 5))
+                             (lambda ()
+                               (system* "mbsync -Va"))
+                             "mbsync")
+                      #~(job '(next-minute (range 1 60 5))
+                             (lambda ()
+                               (system* "notmuch new"))
+                             "notmuch")))))
 
   (feature
    (name f-name)

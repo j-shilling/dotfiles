@@ -1,9 +1,11 @@
 (define-module (config development guile)
+  #:use-module (guix gexp)
   #:use-module (rde features)
   #:use-module (rde features guile)
   #:use-module (rde features emacs-xyz)
   #:use-module (rde packages emacs-xyz)
   #:use-module (rde home services emacs)
+  #:use-module (rde serializers lisp)
   #:use-module (gnu services)
   #:use-module (gnu home services)
   #:use-module (gnu packages emacs-xyz)
@@ -22,7 +24,19 @@
       home-profile-service-type
       (list
        guile-next
-       guile-ares-rs))
+       guile-ares-rs
+       guile-readline
+       guile-colorized))
+     (simple-service
+      'add-guile-config
+      home-files-service-type
+      `((".guile"
+         ,(mixed-text-file "guile"
+           (sexp-serialize
+           '((use-modules (ice-9 readline)
+                          (ice-9 colorized))
+             (activate-readline)
+             (activate-colorized)))))))
      (simple-service
         'emacs-extensions
         home-emacs-service-type
