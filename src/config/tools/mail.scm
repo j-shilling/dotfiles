@@ -22,11 +22,11 @@ features that have been enabled."
                      (list
                       #~(job '(next-minute (range 0 60 5))
                              (lambda ()
-                               (system* "mbsync -Va"))
+                               (system* "mbsync" "-Va"))
                              "mbsync")
                       #~(job '(next-minute (range 1 60 5))
                              (lambda ()
-                               (system* "notmuch new"))
+                               (system* "notmuch" "new"))
                              "notmuch")))))
 
   (feature

@@ -1,6 +1,8 @@
 (define-module (config tools syncthing)
   #:use-module (rde features)
+  #:use-module (gnu services)
   #:use-module (gnu home services)
+  #:use-module (gnu packages syncthing)
   #:use-module (gnu home services syncthing)
   #:export (syncthing-features))
 
@@ -11,7 +13,13 @@
     (list
      (service home-syncthing-service-type
               (for-home
-               (syncthing-configuration)))))
+               (syncthing-configuration)))
+     (simple-service
+      'add-syncthing-to-profile
+      home-profile-service-type
+      (list
+       syncthing
+       syncthing-gtk))))
 
   (feature
    (name f-name)
