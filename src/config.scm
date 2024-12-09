@@ -28,7 +28,8 @@
   #:use-module (config tools aws)
   #:use-module (config tools mail)
   #:use-module (config development python)
-  #:use-module (config development guile))
+  #:use-module (config development guile)
+  #:use-module (config development common-lisp))
 
 ;;; Code:
 
@@ -69,7 +70,8 @@
 
 (define %development-features
   `(,@(python-features)
-    ,@(guile-features)))
+    ,@(guile-features)
+    ,@(common-lisp-features)))
 
 (define %all-features
   `(,@%base-features
