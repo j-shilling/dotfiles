@@ -20,8 +20,7 @@
       'add-python-tree-sitter
       home-profile-service-type
       (list tree-sitter-python
-            poetry
-            python-wrapper))
+            poetry))
      (simple-service
       'emacs-extensions
       home-emacs-service-type
@@ -40,7 +39,12 @@
                        (add-to-list 'eglot-server-programs
                                     (cons '(python-mode python-ts-mode)
                                           (eglot-alternatives
-                                           '("pylsp" "pyls" ("basedpyright-langserver" "--stdio") ("pyright-langserver" "--stdio") "jedi-language-server" "ruff-lsp")))))))))))
+                                           '(("basedpyright-langserver" "--stdio")
+                                             "pylsp"
+                                             "pyls"
+                                             ("pyright-langserver" "--stdio")
+                                             "jedi-language-server"
+                                             "ruff-lsp")))))))))))
 
   (feature
    (name f-name)
