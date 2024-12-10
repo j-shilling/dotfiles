@@ -6,6 +6,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages tree-sitter)
+  #:use-module (gnu packages file)
   #:use-module (rde features)
   #:use-module (rde features python)
   #:use-module (rde home services emacs)
@@ -20,7 +21,8 @@
       'add-python-tree-sitter
       home-profile-service-type
       (list tree-sitter-python
-            poetry))
+            poetry
+            file))
      (simple-service
       'emacs-extensions
       home-emacs-service-type

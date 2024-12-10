@@ -29,7 +29,8 @@
   #:use-module (config tools mail)
   #:use-module (config development python)
   #:use-module (config development guile)
-  #:use-module (config development common-lisp))
+  #:use-module (config development common-lisp)
+  #:use-module (config development haskell))
 
 ;;; Code:
 
@@ -71,7 +72,8 @@
 (define %development-features
   `(,@(python-features)
     ,@(guile-features)
-    ,@(common-lisp-features)))
+    ,@(common-lisp-features)
+    ,@(haskell-features)))
 
 (define %all-features
   `(,@%base-features
