@@ -58,7 +58,15 @@ features that have been enabled."
     #:erc-align-nicknames? #t
     #:erc-images? #t
     #:erc-autojoin-channels-alist
-    '(("irc.libera.chat" "#guix" "#rde" "#emacs" "#emacs-beginners")))
+    '(("irc.libera.chat" . ("#guix"
+                            "#rde"
+                            "#emacs"
+                            "#emacs-beginners"
+                            "#emacs-til"
+                            "#emacs-social"
+                            "#lisp"
+                            "#scheme"
+                            "#clojure"))))
    (feature-isync)
    (feature-mail-mcron)
    (feature-msmtp)
