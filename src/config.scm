@@ -30,7 +30,8 @@
   #:use-module (config development python)
   #:use-module (config development guile)
   #:use-module (config development common-lisp)
-  #:use-module (config development haskell))
+  #:use-module (config development haskell)
+  #:use-module (config development terraform))
 
 ;;; Code:
 
@@ -73,7 +74,8 @@
   `(,@(python-features)
     ,@(guile-features)
     ,@(common-lisp-features)
-    ,@(haskell-features)))
+    ,@(haskell-features)
+    ,@(terraform-features)))
 
 (define %all-features
   `(,@%base-features
