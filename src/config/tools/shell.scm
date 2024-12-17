@@ -1,6 +1,8 @@
 (define-module (config tools shell)
   #:use-module (gnu services)
+  #:use-module (guix gexp)
   #:use-module (gnu home services shells)
+  #:use-module (gnu packages shells)
   #:use-module (rde features)
   #:use-module (rde features gnupg)
   #:use-module (rde features version-control)
@@ -11,37 +13,42 @@
   #:use-module (rde features password-utils)
   #:export (shell-features))
 
-(define (feature-bash-config)
-  (define f-name 'base-config)
+(define (feature-bash)
+  (define f-name 'bash)
 
   (define (get-home-services config)
     (list
-     (simple-service
-      'bash-config
-      home-bash-service-type
-      (home-bash-extension
-       (bashrc
-        (list  "HISTCONTROL=erasedups"
-               "HISTFILESIZE=100000"
-               "HISTIGNORE=ls:exit:history:clear"
-               "shopt -s histappend"
-               "shopt -s cmdhist"
-               "shopt -s checkwinsize"
-               "shopt -s autocd"
-               "shopt -s dirspell"
-               "shopt -s cdspell"
-               "shopt -s globstar"
-               "shopt -s nocaseglob"))))))
+     (service home-bash-service-type
+              (home-bash-configuration
+               (package bash)
+               (environment-variables
+                '(("HISTFILE" . "$XDG_CACHE_HOME/.bash_history")))
+               (bashrc
+                (list
+                 (mixed-text-file "bash-settings"
+                                  (string-join '("HISTCONTROL=erasedups"
+                                                 "HISTFILESIZE=100000"
+                                                 "HISTIGNORE=ls:exit:history:clear"
+                                                 "shopt -s histappend"
+                                                 "shopt -s cmdhist"
+                                                 "shopt -s checkwinsize"
+                                                 "shopt -s autocd"
+                                                 "shopt -s dirspell"
+                                                 "shopt -s cdspell"
+                                                 "shopt -s globstar"
+                                                 "shopt -s nocaseglob")
+                                               "\n"))))))))
 
   (feature
    (name f-name)
    (values `((,f-name . #t)))
    (home-services-getter  get-home-services)))
 
+
+
 (define (shell-features)
   (list
    (feature-bash)
-   ;; (feature-bash-config)
    (feature-manpages)
    (feature-direnv)
    (feature-gnupg

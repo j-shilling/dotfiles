@@ -11,7 +11,7 @@
   (feature
    (name f-name)
    (values `((,f-name . #t)))
-   (home-services-getter  geta-home-services)))
+   (home-services-getter  get-home-services)))
 
 (define (terraform-features)
   (list))

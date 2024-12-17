@@ -1,5 +1,7 @@
 (define-module (config)
   #:use-module (rde features)
+  #:use-module (gnu services)
+  #:use-module (gnu home services shells)
   #:use-module (rde features base)
   #:use-module (rde features gnupg)
   #:use-module (rde features version-control)
