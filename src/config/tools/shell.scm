@@ -2,7 +2,7 @@
   #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (gnu home services shells)
-  #:use-module (gnu packages shells)
+  #:use-module (gnu packages bash)
   #:use-module (rde features)
   #:use-module (rde features gnupg)
   #:use-module (rde features version-control)
