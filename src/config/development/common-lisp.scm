@@ -3,6 +3,7 @@
   #:use-module (gnu packages lisp)
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages lisp-check)
+  #:use-module (nongnu packages emacs)
   #:export (common-lisp-features))
 
 (define (common-lisp-features)
@@ -10,6 +11,7 @@
    (feature-lisp
     #:extra-lisp-packages
     (list
+     clhs
      cl-asdf
      cl-quickproject
      cl-fiveam
