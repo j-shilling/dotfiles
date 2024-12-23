@@ -309,6 +309,29 @@
       'emacs-extensions
       home-emacs-service-type
       (home-emacs-extension
+       (elisp-packages (list emacs-yaml-mode))
+       (init-el
+        `((eval-when-compile
+           (require 'use-package))
+          (use-package yaml-mode
+                       :mode "\\.y[a]?ml\\'")))))))
+
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter  get-home-services)))
+
+(define (feature-emacs-yaml)
+  (define emacs-f-name 'yaml)
+
+  (define f-name (symbol-append 'emacs- emacs-f-name))
+
+  (define (get-home-services config)
+    (list
+     (simple-service
+      'emacs-extensions
+      home-emacs-service-type
+      (home-emacs-extension
        (init-el
         `((setq select-active-regions nil
                 select-enable-clipboard 't
@@ -318,7 +341,7 @@
   (feature
    (name f-name)
    (values `((,f-name . #t)))
-   (home-services-getter  get-home-services)))
+   (home-services-getter  get-home-services))  )
 
 (define* (emacs-features
           #:key
@@ -335,6 +358,7 @@
         #:emacs-server-mode? #t
         #:default-terminal? #f
         #:default-application-launcher? #f))
+     (feature-emacs-yaml)
      (feature-emacs-base-config)
      (feature-emacs-performance-config)
      (feature-emacs-appearance-config #:wayland? wayland?)

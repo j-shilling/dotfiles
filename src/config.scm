@@ -1,4 +1,6 @@
 (define-module (config)
+  #:use-module (guix channels)
+  #:use-module (guix profiles)
   #:use-module (rde features)
   #:use-module (gnu services)
   #:use-module (gnu home services shells)
@@ -21,6 +23,7 @@
   #:use-module (gnu packages certs)
   #:use-module (gnu home services)
   #:use-module (gnu home services syncthing)
+  #:use-module (config features guix)
   #:use-module (contrib features json)
   #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz)
@@ -47,6 +50,7 @@
     #:full-name "Jake Shilling"
     #:email "shilling.jake@gmail.com"
     #:emacs-advanced-user? #t)
+   (feature-guix #:profile (getenv "GUIX_PROFILE"))
    (feature-base-packages
     #:home-packages
     (list docker-compose
