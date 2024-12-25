@@ -341,7 +341,7 @@
   (feature
    (name f-name)
    (values `((,f-name . #t)))
-   (home-services-getter  get-home-services))  )
+   (home-services-getter  get-home-services)))
 
 (define* (emacs-features
           #:key

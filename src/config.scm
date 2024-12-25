@@ -25,7 +25,7 @@
   #:use-module (gnu home services syncthing)
   #:use-module (config features guix)
   #:use-module (contrib features json)
-  #:use-module (contrib features javascript)
+  ;; #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz)
   #:use-module (config emacs)
   #:use-module (config tools shell)
@@ -55,7 +55,7 @@
     #:home-packages
     (list docker-compose
           nss-certs))
-   (feature-foreign-distro)
+   ;; (feature-foreign-distro)
    (feature-fonts)
    (feature-vterm)
    (feature-xdg)
@@ -63,7 +63,8 @@
    (feature-tex)
    (feature-compile)
    (feature-docker)
-   (feature-javascript)))
+   ;; (feature-javascript)
+   ))
 
 (define %emacs-features
   (emacs-features
