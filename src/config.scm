@@ -1,8 +1,10 @@
 (define-module (config)
   #:use-module (guix channels)
+  #:use-module (guix gexp)
   #:use-module (guix profiles)
   #:use-module (rde features)
   #:use-module (gnu services)
+  #:use-module (gnu home services)
   #:use-module (gnu home services shells)
   #:use-module (rde features base)
   #:use-module (rde features gnupg)
@@ -43,6 +45,9 @@
 (define is-wsl?
   (getenv "WSL_DISTRO_NAME"))
 
+(define locale
+  (make-glibc-utf8-locales glibc #:locales (list "en_US")))
+
 (define %base-features
   (list
    (feature-user-info
@@ -51,11 +56,22 @@
     #:email "shilling.jake@gmail.com"
     #:emacs-advanced-user? #t)
    (feature-guix #:profile (getenv "GUIX_PROFILE"))
-   (feature-base-packages
-    #:home-packages
-    (list docker-compose
-          nss-certs))
-   ;; (feature-foreign-distro)
+   (feature-custom-services
+    #:home-services
+    (list
+     (simple-service 'install-glibc-locales
+                     home-profile-service-type
+                     (list locale))
+     (simple-service 'set-nss-certs-path
+                     home-environment-variables-service-type
+                     `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale"))))
+     (simple-service 'install-nss-certs
+                     home-profile-service-type
+                     (list nss-certs))
+     (simple-service 'set-nss-certs-path
+                     home-environment-variables-service-type
+                     `(("SSL_CERT_DIR" . ,(file-append nss-certs "/etc/ssl/certs"))
+                       ("SSL_CERT_FILE" . "${HOME}/.guix-home/profile/etc/ssl/certs/ca-certificates.crt")))))
    (feature-fonts)
    (feature-vterm)
    (feature-xdg)

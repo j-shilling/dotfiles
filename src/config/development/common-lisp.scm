@@ -11,6 +11,7 @@
    (feature-lisp
     #:extra-lisp-packages
     (list
+     roswell
      clhs
      cl-asdf
      cl-quickproject
