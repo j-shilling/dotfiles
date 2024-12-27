@@ -26,6 +26,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services syncthing)
   #:use-module (config features guix)
+  #:use-module (config features nix)
   #:use-module (contrib features json)
   ;; #:use-module (contrib features javascript)
   #:use-module (config packages node-xyz)
@@ -56,6 +57,7 @@
     #:email "shilling.jake@gmail.com"
     #:emacs-advanced-user? #t)
    (feature-guix #:profile (getenv "GUIX_PROFILE"))
+   (feature-nix)
    (feature-custom-services
     #:home-services
     (list
