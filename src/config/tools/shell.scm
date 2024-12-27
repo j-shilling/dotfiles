@@ -44,8 +44,6 @@
    (values `((,f-name . #t)))
    (home-services-getter  get-home-services)))
 
-
-
 (define (shell-features)
   (list
    (feature-bash)
@@ -58,6 +56,23 @@
    (feature-ssh)
    (feature-git
     #:sign-commits? #t
-    #:git-send-email? #t)
+    #:git-send-email? #t
+    #:extra-config
+    `((core
+       ((autocrlf . "input")
+        (whitespace . "-trailing-space,-space-before-tab,-cr-at-eol")))
+      (init
+       ((defaultBranch . "main")))
+      (merge
+       ((log . #t)
+        (renormalize . #t)
+        (ff . #f)
+        (renames . #t)))
+      (pull
+       ((rebase . #t)
+        (ff . #f)
+        (autoSetupRemote . #t)))
+      (fetch
+       ((prune . #t)))))
    (feature-password-store
     #:remote-password-store-url "git@github.com:j-shilling/password-store.git")))

@@ -62,7 +62,7 @@
      (simple-service 'install-glibc-locales
                      home-profile-service-type
                      (list locale))
-     (simple-service 'set-nss-certs-path
+     (simple-service 'set-locale-path
                      home-environment-variables-service-type
                      `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale"))))
      (simple-service 'install-nss-certs
