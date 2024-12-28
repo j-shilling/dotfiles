@@ -91,7 +91,6 @@
 
 (define %tools-features
   `(,@(shell-features)
-    ,@(syncthing-features)
     ,@(aws-features)
     ,@(mail-features)))
 

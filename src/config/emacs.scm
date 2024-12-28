@@ -355,7 +355,7 @@
                           emacs)))
        (feature-emacs
         #:emacs emacs-pkg
-        #:emacs-server-mode? #t
+        #:emacs-server-mode? (not wsl?)
         #:default-terminal? #f
         #:default-application-launcher? #f))
      (feature-emacs-yaml)

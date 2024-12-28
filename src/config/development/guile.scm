@@ -42,12 +42,7 @@
         (home-emacs-extension
          (elisp-packages (list emacs-geiser-latest
                                emacs-geiser-guile-latest
-                               emacs-guix-latest))
-         (init-el
-          `((eval-when-compile 'use-package)
-            (use-package geiser
-                         :custom
-                         (geiser-mode-auto-p nil))))))))
+                               emacs-guix-latest))))))
 
   (feature
    (name f-name)
