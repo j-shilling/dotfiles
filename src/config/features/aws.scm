@@ -1,19 +1,11 @@
-(define-module (config tools aws)
+(define-module (config features aws)
   #:use-module (rde features)
   #:use-module (gnu services)
   #:use-module (gnu home services)
   #:use-module (gnu packages python-web)
   #:use-module (guix gexp)
   #:use-module (rde serializers ini)
-  #:export (aws-features))
-
-(define sample-ini
-  `((global ((daemon)
-             (log . file)))
-    (http ((host . 127.0.0.1)
-           (port . 1234)))))
-
-(serialize-ini-config sample-ini)
+  #:export (feature-aws))
 
 (define (feature-aws)
   (define f-name 'aws)
@@ -68,7 +60,3 @@ credential_process = " pass " show FunctorFactory/SeelTheDeal/aws\n"))))))
    (name f-name)
    (values `((,f-name . #t)))
    (home-services-getter  get-home-services)))
-
-(define (aws-features)
-  (list
-   (feature-aws)))

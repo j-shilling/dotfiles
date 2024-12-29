@@ -2,7 +2,7 @@ SRC_DIR=./src
 GUIX_PROFILE=target/profiles/guix
 GUIX=GUILE_LOAD_PATH="./src:${GUIX_PROFILE}/share/guile/site/3.0" GUIX_LOAD_COMPILED_PATH="" GUIX_PROFILE=${GUIX_PROFILE} ${GUIX_PROFILE}/bin/guix
 PULL_EXTRA_OPTIONS=
-CONFIG=${SRC_DIR}/config.scm
+CONFIG=${SRC_DIR}/home.scm
 
 all: apply
 
