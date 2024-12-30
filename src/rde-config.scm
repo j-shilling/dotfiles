@@ -39,6 +39,7 @@
   #:use-module (gnu home services guix)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services mcron)
+  #:use-module (gnu home services syncthing)
 
   #:use-module (gnu packages base)
   #:use-module (gnu packages emacs)
@@ -154,7 +155,11 @@
                     (home-emacs-extension
                      (elisp-packages elisp-packages)
                      (init-el
-                      `(,(slurp-file-like (local-file (path-in-root "files/emacs/init.el")))))))))
+                      `(,(slurp-file-like (local-file (path-in-root "files/emacs/init.el")))))))
+    ,(simple-service 'syncthing
+                     home-syncthing-service-type
+                     (syncthing-configuration
+                      (user "jake")))))
 
 (define-public config
   (rde-config
@@ -166,7 +171,7 @@
       #:full-name "Jake Shilling"
       #:email "shilling.jake@gmail.com"
       #:emacs-advanced-user? #t)
-     ((@ (config features base) feature-foreign-distro)
+     (feature-foreign-distro
       #:glibc-locales locale)
      (feature-custom-services
       #:home-services custom-home-services)
@@ -175,7 +180,7 @@
      (feature-xdg)
      (feature-fonts)
 
-     ;; Shell     
+     ;; Shell
      (feature-vterm)
      (feature-manpages)
      (feature-direnv)
@@ -297,11 +302,11 @@
      (feature-lisp
       #:extra-lisp-packages
       (list
-       cl-asdf
-       cl-quickproject
-       cl-fiveam
-       cl-trivia
-       cl-alexandria
-       cl-check-it))))))
+       (@ (config packages lisp-xyz) sbcl-cl-transducers)
+       sbcl-quickproject
+       sbcl-fiveam
+       sbcl-trivia
+       sbcl-alexandria
+       sbcl-check-it))))))
 
 config

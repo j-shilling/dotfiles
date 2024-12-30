@@ -1,4 +1,4 @@
-(define-module (config package lisp-xyz)
+(define-module (config packages lisp-xyz)
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
@@ -8,109 +8,38 @@
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages lisp-check))
 
-(define-public sbcl-quicklisp-bootstrap
-  (let ((commit "290a126c89839e79261438ac0a069db76ebe2432")
+(define-public sbcl-cl-transducers
+  (let ((commit "9b424bd7a2eec7ad4bc258501f28170c6f00eaf2")
         (revision "0"))
     (package
-      (name "sbcl-quicklisp-bootstrap")
-      (version (git-version "0.0.0" revision commit))
+      (name "sbcl-cl-transducers")
+      (version (git-version "1.3.0" revision commit))
       (source
        (origin
          (method git-fetch)
          (uri (git-reference
-               (url "https://github.com/quicklisp/quicklisp-bootstrap")
+               (url "https://github.com/fosskers/cl-transducers")
                (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "0lpqkkhz8k3bs22rbqnpjh9r77jjcpamrkiw5dw9dilap75xsr2g"))))
+          (base32 "0p7fqkmv0rfi5d7mmm9600qpix003bqr7as148pk157s1d44vncg"))))
       (build-system asdf-build-system/sbcl)
-      (inputs
-       (list))
-      (home-page "www.quicklisp.org/")
-      (synopsis "Quicklisp bootstrap")
-      (description "")
-      (license license:expat))))
-
-(define-public sbcl-quicklisp
-  (let ((commit "8b63e00b3a2b3f96e24c113d7601dd03a128ce94")
-        (revision "0"))
-    (package
-      (name "sbcl-quicklisp")
-      (version (git-version "0.0.0" revision commit))
-      (source
-       (origin
-         (method git-fetch)
-         (uri (git-reference
-               (url "https://github.com/quicklisp/quicklisp-client")
-               (commit commit)))
-         (file-name (git-file-name name version))
-         (sha256
-          (base32 "102f1chpx12h5dcf659a9kzifgfjc482ylf73fg1cs3w34zdawnl"))))
-      (build-system asdf-build-system/sbcl)
-      (inputs
-       (list))
-      (home-page "www.quicklisp.org/")
-      (synopsis "Quicklisp client")
-      (description "")
-      (license license:expat))))
-
-(define-public sbcl-fuzzy-match
-  (let ((commit "e46ca41ef4641461f7be006782e3cfdcf73ba98")
-        (revision "0"))
-    (package
-      (name "sbcl-fuzzy-match")
-      (version (git-version "0.0.0" revision commit))
-      (source
-       (origin
-         (method git-fetch)
-         (uri (git-reference
-               (url "https://github.com/vindarel/fuzzy-match")
-               (commit commit)))
-         (file-name (git-file-name "cl-fuzzy-match" version))
-         (sha256
-          (base32 "1lawndmzkl6f9sviy7ngn2s3xkc4akp8l505kvpslaz6qq0ayyqv"))))
-      (build-system asdf-build-system/sbcl)
+      (arguments
+       '(#:asd-systems '("transducers" "transducers/jzon" "transducers/fset")))
       (inputs
        (list
         sbcl-cl-str
-        sbcl-mk-string-metrics))
-      (home-page "https://github.com/vindarel/fuzzy-match")
-      (synopsis "Fuzzy match candidates from an input string.")
-      (description "")
+        sbcl-parachute))
+      (propagated-inputs
+       (list
+        sbcl-fset
+        sbcl-trivia
+        sbcl-jzon))
+      (home-page "https://fosskers.github.io/cl-transducers/")
+      (synopsis "Transducers: Ergonomic, efficient data processing")
+      (description "Transducers are an ergonomic and extremely memory-efficient way to process a
+data source. Here \"data source\" means simple collections like Lists or
+Vectors, but also potentially large files or generators of infinite data.")
       (license license:expat))))
 
-(define-public sbcl-qlot
-  (let ((commit "4d1b69729f4dc378051ed0d7edee37684eaf9db3")
-        (revision "0"))
-    (package
-      (name "sbcl-qlot")
-      (version (git-version "1.6.0" revision commit))
-      (source
-       (origin
-         (method git-fetch)
-         (uri (git-reference
-               (url "https://github.com/fukamachi/qlot")
-               (commit commit)))
-         (file-name (git-file-name name version))
-         (sha256
-          (base32 "1hslxplmkfc8rjy1kxc84iax6phzndfbi5i59xcc8wqpqmlnfx68"))))
-      (build-system asdf-build-system/sbcl)
-      (arguments
-       `(#:asd-systems '("qlot" "qlot/subcommands" "qlot/command")))
-      (inputs
-       (list sbcl-dexador
-             sbcl-yason
-             sbcl-lparallel
-             sbcl-ironclad
-             sbcl-fuzzy-match
-             sbcl-deflate
-             sbcl-archive
-             sbcl-rove
-             sbcl-assoc-utils
-             sbcl-quicklisp))
-      (home-page "https://qlot.tech/")
-      (synopsis "A project-local library installer for Common Lisp")
-      (description "")
-      (license license:expat))))
-
-sbcl-qlot
+sbcl-cl-transducers
