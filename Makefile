@@ -1,53 +1,48 @@
+# Local File Paths
 SRC_DIR=./src
-GUIX_PROFILE=target/profiles/guix
-GUIX=GUILE_LOAD_PATH="./src:${GUIX_PROFILE}/share/guile/site/3.0" GUIX_LOAD_COMPILED_PATH="" GUIX_PROFILE=${GUIX_PROFILE} ${GUIX_PROFILE}/bin/guix
-GUIX_PULL_EXTRA_OPTIONS=--allow-downgrades
 CONFIG=${SRC_DIR}/home.scm
+CHANNEL_FILE=./channels.scm
+CHANNEL_LOCK_FILE=./channels-lock.scm
 
+# Executable
+GUIXTM=GUILE_LOAD_PATH="${SRC_DIR}" guix time-machine -C "${CHANNEL_LOCK_FILE}"
+
+.PHONY=all
 all: apply
 
+$(CHANNEL_LOCK_FILE): $(CHANNEL_FILE)
+	echo -e "(use-modules (guix channels))\n" > channels-lock-tmp.scm
+	guix time-machine -C channels.scm -- \
+	describe -f channels >> channels-lock-tmp.scm
+	mv channels-lock-tmp.scm channels-lock.scm
+
 .PHONY=upgrade
-upgrade:
-	echo -e "(use-modules (guix channels))\n" > channels-lock-tmp.scm
-	guix time-machine -C channels.scm -- \
-	describe -f channels >> channels-lock-tmp.scm
-	mv channels-lock-tmp.scm channels-lock.scm
+upgrade: $(CHANNEL_FILE)
+	rm -v $(CHANNEL_LOCK_FILE)
+	make $(CHANNEL_LOCK_FILE)
 
-channels-lock.scm: channels.scm
-	echo -e "(use-modules (guix channels))\n" > channels-lock-tmp.scm
-	guix time-machine -C channels.scm -- \
-	describe -f channels >> channels-lock-tmp.scm
-	mv channels-lock-tmp.scm channels-lock.scm
+.PHONY=pull
+pull: $(CHANNEL_LOCK_FILE)
+	guix pull -C channels-lock.scm --allow-downgrades
 
-target/profiles:
-	mkdir -p target/profiles
-
-target/profiles/guix: target/profiles channels-lock.scm
-	guix pull -C channels-lock.scm -p ${GUIX_PROFILE} \
-	${GUIX_PULL_EXTRA_OPTIONS}
-
-target/guix-time-marker: channels-lock.scm
-	make target/profiles/guix
+.guix-time-marker: $(CHANNEL_LOCK_FILE)
+	make pull
 	touch $@
 
-guix: target/guix-time-marker
+guix: .guix-time-marker
 
-build: guix ${CONFIG}
-	${GUIX} home build ${CONFIG}
+.PHONY=build
+build: guix $(CONFIG)
+	$(GUIXTM) -- home build $(CONFIG)
 
-apply: guix ${CONFIG}
-	${GUIX} home reconfigure ${CONFIG}
+.PHONY=apply
+apply: guix $(CONFIG)
+	$(GUIXTM) -- home reconfigure $(CONFIG)
 
+.PHONY=repl
 repl:
-	${GUIX} shell guile-next guile-ares-rs \
+	$(GUIXTM) -- shell guile-next guile-ares-rs \
 	-- guile \
-        -L ${GUIX_PROFILE}/share/guile/site/3.0 \
-	-L ${SRC_DIR} \
+	-L $(SRC_DIR) \
 	-c \
-"(begin (use-modules (guix gexp))) \
-((@ (ares server) run-nrepl-server) #:nrepl-port-path \"./.nrepl-port\")"
-
-clean-target:
-	rm -rfv ./target
-
-clean: clean-target
+"((@ (ares server) run-nrepl-server) #:nrepl-port-path \"./.nrepl-port\")"

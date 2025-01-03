@@ -189,3 +189,5 @@
   :hook
   (haskell-mode . eglot-ensure))
 (use-package haskell-cabal :mode ("\\.cabal\\'" . haskell-cabal-mode))
+(setq geiser-mode-auto-p nil)
+(setq ares-mode-auto-p t)

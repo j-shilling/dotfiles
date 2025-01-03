@@ -29,6 +29,7 @@
   #:use-module (rde gexp)
 
   #:use-module (rde packages emacs-xyz)
+  #:use-module (rde packages guile-xyz)
 
   #:use-module (guix channels)
   #:use-module (guix gexp)
@@ -295,7 +296,9 @@
      ;; Language Specific
      (feature-markdown)
      (feature-tex)
-     (feature-guile)
+     (feature-guile
+      #:emacs-arei emacs-arei-latest
+      #:guile-ares-rsq guile-ares-rs-latest)
      (feature-python
       #:python python-3.12
       #:black? #t)
