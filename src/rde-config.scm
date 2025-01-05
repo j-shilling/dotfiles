@@ -298,7 +298,7 @@
      (feature-tex)
      (feature-guile
       #:emacs-arei emacs-arei-latest
-      #:guile-ares-rsq guile-ares-rs-latest)
+      #:guile-ares-rs guile-ares-rs-latest)
      (feature-python
       #:python python-3.12
       #:black? #t)
