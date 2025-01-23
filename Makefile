@@ -37,7 +37,7 @@ build: guix $(CONFIG)
 
 .PHONY=apply
 apply: guix $(CONFIG)
-	$(GUIXTM) -- home reconfigure $(CONFIG)
+	$(GUIXTM) -- home reconfigure --allow-downgrades $(CONFIG)
 
 .PHONY=repl
 repl:
