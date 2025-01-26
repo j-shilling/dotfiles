@@ -33,7 +33,7 @@ guix: .guix-time-marker
 
 .PHONY=build
 build: guix $(CONFIG)
-	$(GUIXTM) -- home build $(CONFIG)
+	$(GUIXTM) -- home build --allow-downgrades $(CONFIG)
 
 .PHONY=apply
 apply: guix $(CONFIG)
