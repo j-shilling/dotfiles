@@ -41,8 +41,14 @@ apply: guix $(CONFIG)
 
 .PHONY=repl
 repl:
-	$(GUIXTM) -- shell guile-next guile-ares-rs \
-	-- guile \
+	$(GUIXTM) -- shell \
+	guile-next guile-ares-rs guile-gnutls guile-avahi guile-gcrypt \
+	guile-json guile-lib guile-semver guile-sqlite3 guile-ssh guile-git \
+	guile-zlib guile-lzlib guile-zstd \
+	-- \
+	guile \
+	--no-auto-compile \
 	-L $(SRC_DIR) \
+	-L ~/.config/guix/current/share/guile/site/3.0/ \
 	-c \
 "((@ (ares server) run-nrepl-server) #:nrepl-port-path \"./.nrepl-port\")"
