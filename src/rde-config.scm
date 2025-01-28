@@ -55,6 +55,7 @@
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages file)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages package-management)
   
   #:export (config))
 
@@ -86,12 +87,13 @@
 
 (define home-packages
   (list file
+        (guix-for-channels channels)
         guile-colorized
         guile-next
         guile-readline
-        poetry
         tree-sitter-haskell
-        tree-sitter-python))
+        tree-sitter-python
+        (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
 (define elisp-packages
   (list emacs-geiser-latest
