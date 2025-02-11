@@ -110,6 +110,9 @@
         emacs-so-long
         emacs-gcmh
         emacs-yaml-mode
+        emacs-no-littering
+        emacs-apheleia
+        emacs-diff-hl
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 (define custom-home-services
