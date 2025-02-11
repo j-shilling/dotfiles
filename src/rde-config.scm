@@ -280,6 +280,7 @@
      (feature-emacs-dape)
      (feature-emacs-flymake)
      (feature-emacs-git)
+     (feature-emacs-elisp)
      (feature-emacs-guix)
      (feature-emacs-xref)
      (feature-emacs-pdf-tools)
@@ -291,6 +292,7 @@
       #:org-roam-directory "~/org/roam"
       #:org-roam-todo? #t)
      (feature-emacs-citation)
+     (feature-emacs-zotra)
      (feature-emacs-spelling)
 
      ;; Tools
