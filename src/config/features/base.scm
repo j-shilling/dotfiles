@@ -7,7 +7,7 @@
 
   #:use-module (gnu packages base)
   #:use-module (gnu packages certs)
-  
+
   #:use-module (guix gexp)
   #:export (feature-foreign-distro))
 

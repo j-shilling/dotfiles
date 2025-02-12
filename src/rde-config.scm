@@ -56,7 +56,8 @@
   #:use-module (gnu packages file)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages package-management)
-  
+  #:use-module (gnu packages rust-apps)
+
   #:export (config))
 
 (define wsl?
@@ -93,6 +94,7 @@
         guile-readline
         tree-sitter-haskell
         tree-sitter-python
+        ripgrep
         (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
 (define elisp-packages
@@ -114,6 +116,36 @@
         emacs-apheleia
         emacs-diff-hl
         (@ (config packages emacs-xyz) emacs-codeium)))
+
+(define (feature-emacs-values-from-guix)
+  (define emacs-f-name 'values-from-guix)
+  (define f-name (symbol-append 'emacs- emacs-f-name))
+
+  (define elisp-values-from-guix-service-type
+    (make-home-elisp-service-type 'elisp-values-from-guix))
+
+  (define (get-home-services config)
+    (list
+     (service
+      elisp-values-from-guix-service-type
+      (home-elisp-configuration
+       (name 'elisp-values-from-guix)
+       (summary "Symbols referencing values from the current guix derivation.")
+       (commentary
+        "This package provides an interface between guix and emacs. It is created by a
+home service that can use values from the guix store and inject them in here
+as elisp constants. This is mostly useful for referencing paths into the store.")))
+     (simple-service
+      'add-ripgrep
+      elisp-values-from-guix-service-type
+      (home-elisp-extension
+       (config
+        `((defconst %ripgrep ,(file-append ripgrep "/bin/rg"))))))))
+  
+  (feature
+   (name f-name)
+   (values `((,f-name . #t)))
+   (home-services-getter get-home-services)))
 
 (define custom-home-services
   `(,(simple-service 'set-locale-path
@@ -262,6 +294,7 @@
       #:emacs-server-mode? (not wsl?)
       #:default-terminal? #f
       #:default-application-launcher? #f)
+     (feature-emacs-values-from-guix)
      (feature-emacs-appearance)
      (feature-emacs-modus-themes
       #:dark? #t)
