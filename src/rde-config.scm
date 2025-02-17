@@ -94,7 +94,21 @@
         guile-readline
         tree-sitter-haskell
         tree-sitter-python
+        tree-sitter-javascript
+        tree-sitter-typescript
+        tree-sitter-css
+        tree-sitter-bash
+        tree-sitter-dockerfile
+        tree-sitter-json
+        tree-sitter-markdown
+        tree-sitter-markdown-gfm
+        tree-sitter-nix
+        tree-sitter-org
+        tree-sitter-scheme
+        tree-sitter-latex
+        tree-sitter-html
         ripgrep
+        fd
         (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
 (define elisp-packages
@@ -140,8 +154,9 @@ as elisp constants. This is mostly useful for referencing paths into the store."
       elisp-values-from-guix-service-type
       (home-elisp-extension
        (config
-        `((defconst %ripgrep ,(file-append ripgrep "/bin/rg"))))))))
-  
+        `((defconst %ripgrep ,(file-append ripgrep "/bin/rg"))
+          (defconst %fd ,(file-append ripgrep "/bin/fd"))))))))
+
   (feature
    (name f-name)
    (values `((,f-name . #t)))
