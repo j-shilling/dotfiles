@@ -40,15 +40,26 @@ apply: guix $(CONFIG)
 	$(GUIXTM) -- home reconfigure --allow-downgrades $(CONFIG)
 
 .PHONY=repl
+repl: export GUILE_AUTO_COMPILE=0
+repl: export GUILE_LOAD_COMPILED_PATH=0
 repl:
 	$(GUIXTM) -- shell \
 	guile-next guile-ares-rs guile-gnutls guile-avahi guile-gcrypt \
 	guile-json guile-lib guile-semver guile-sqlite3 guile-ssh guile-git \
 	guile-zlib guile-lzlib guile-zstd \
 	-- \
-	guile \
-	--no-auto-compile \
-	-L $(SRC_DIR) \
-	-L ~/.config/guix/current/share/guile/site/3.0/ \
-	-c \
-"((@ (ares server) run-nrepl-server) #:nrepl-port-path \"./.nrepl-port\")"
+	guix repl ares.scm
+
+# .PHONY=repl
+# repl:
+#	$(GUIXTM) -- shell \
+#	guile-next guile-ares-rs guile-gnutls guile-avahi guile-gcrypt \
+#	guile-json guile-lib guile-semver guile-sqlite3 guile-ssh guile-git \
+#	guile-zlib guile-lzlib guile-zstd \
+#	-- \
+#	guile \
+#	--no-auto-compile \
+#	-L $(SRC_DIR) \
+#	-L ~/.config/guix/current/share/guile/site/3.0/ \
+#	-c \
+# "((@ (ares server) run-nrepl-server) #:nrepl-port-path \"./.nrepl-port\")"
