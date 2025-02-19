@@ -140,6 +140,7 @@
         emacs-consult-dir
         emacs-consult-org-roam
         emacs-consult-yasnippet
+        emacs-devdocs
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 (define (feature-emacs-values-from-guix)

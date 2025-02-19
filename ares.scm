@@ -1,7 +1,7 @@
 (use-modules (ares server)
              (ice-9 popen)
              (ice-9 textual-ports)
-             (rnrs io ports (6)))
+             (rnrs io ports))
 
 (define root
   (canonicalize-path

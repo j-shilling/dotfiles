@@ -670,7 +670,7 @@
 
 (use-package arei
   :init
-  (setq geiser-mode-auto-p nil)
-  (setq ares-mode-auto-p t))
+  (setq geiser-mode-auto-p t)
+  (setq ares-mode-auto-p nil))
 
 ;;; init.el ends here
