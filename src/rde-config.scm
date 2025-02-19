@@ -111,6 +111,11 @@
         fd
         (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
+;; TODO:
+;; - https://github.com/Qkessler/consult-project-extra/
+;; - Maybe TempEL:
+;;   - https://github.com/Crandel/tempel-collection
+;;   - https://github.com/minad/tempel
 (define elisp-packages
   (list emacs-geiser-latest
         emacs-geiser-guile-latest
@@ -129,6 +134,12 @@
         emacs-no-littering
         emacs-apheleia
         emacs-diff-hl
+        emacs-diredfl
+        emacs-dirvish
+        emacs-consult-notmuch
+        emacs-consult-dir
+        emacs-consult-org-roam
+        emacs-consult-yasnippet
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 (define (feature-emacs-values-from-guix)
