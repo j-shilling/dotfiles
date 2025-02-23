@@ -141,6 +141,7 @@
         emacs-consult-org-roam
         emacs-consult-yasnippet
         emacs-devdocs
+        emacs-web-mode
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 (define (feature-emacs-values-from-guix)
