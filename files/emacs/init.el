@@ -605,6 +605,12 @@
                '((python-mode python-ts-mode)
                  .
                  ("basedpyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               '(astro-mode
+                 .
+                 ("npx" "-p" "@astrojs/language-server" "astro-ls" "--stdio"
+                  :initializationOptions
+                  (:typescript (:tsdk "./node_modules/typescript/lib")))))
   :bind
   (:map eglot-mode-map
         ("C-c C-d" . eldoc-doc-buffer)))
@@ -672,5 +678,12 @@
   :init
   (setq geiser-mode-auto-p t)
   (setq ares-mode-auto-p nil))
+
+;; TODO: Update this to use astro-ts-mode instead
+
+(require 'web-mode)
+(define-derived-mode astro-mode web-mode "astro")
+(add-to-list 'auto-mode-alist '((".*\\.astro\\'" . astro-mode)))
+
 
 ;;; init.el ends here
