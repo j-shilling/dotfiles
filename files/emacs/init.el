@@ -683,7 +683,7 @@
 
 (require 'web-mode)
 (define-derived-mode astro-mode web-mode "astro")
-(add-to-list 'auto-mode-alist '((".*\\.astro\\'" . astro-mode)))
+(add-to-list 'auto-mode-alist (".*\\.astro\\'" . astro-mode))
 
 
 ;;; init.el ends here
