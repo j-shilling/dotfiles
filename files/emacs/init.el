@@ -625,7 +625,9 @@
 
 (use-package typescript-ts-mode
   :mode (("\\.[m]?ts\\'" . typescript-ts-mode)
-         ("\\.[m]?tsx?\\'" . tsx-ts-mode))
+         ("\\.[m]?js\\'" . typescript-ts-mode)
+         ("\\.[m]?tsx?\\'" . tsx-ts-mode)
+         ("\\.[m]?jsx?\\'" . tsx-ts-mode))
   :interpreter "ts-node"
   :hook
   (typescript-ts-base-mode-hook . eglot-ensure))
@@ -683,7 +685,7 @@
 
 (require 'web-mode)
 (define-derived-mode astro-mode web-mode "astro")
-(add-to-list 'auto-mode-alist (".*\\.astro\\'" . astro-mode))
+(add-to-list 'auto-mode-alist '(".*\\.astro\\'" . astro-mode))
 
 
 ;;; init.el ends here
