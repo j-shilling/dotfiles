@@ -49,3 +49,7 @@ repl:
 	guile-zlib guile-lzlib guile-zstd \
 	-- \
 	guix repl ares.scm
+
+.PHONY=repl
+guix-repl:
+	INSIDE_EMACS=true guix repl --listen=tcp:37146
