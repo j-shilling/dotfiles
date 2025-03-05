@@ -52,4 +52,4 @@ repl:
 
 .PHONY=repl
 guix-repl:
-	INSIDE_EMACS=true guix repl --listen=tcp:37146
+	INSIDE_EMACS=true guix repl -L ./src --listen=tcp:37146
