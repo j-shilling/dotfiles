@@ -37,10 +37,12 @@
   #:use-module (gnu services)
 
   #:use-module (gnu home services)
+  #:use-module (gnu home services dotfiles)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services syncthing)
+  #:use-module (gnu home-services version-control)
 
   #:use-module (gnu packages base)
   #:use-module (gnu packages emacs)
@@ -218,16 +220,20 @@ as elisp constants. This is mostly useful for referencing paths into the store."
                              (lambda ()
                                (system* "notmuch" "new"))
                              "notmuch")))
-    ,(simple-service 'base-emacs-config
-                    home-emacs-service-type
-                    (home-emacs-extension
-                     (elisp-packages elisp-packages)
-                     (init-el
-                      `(,(slurp-file-like (local-file (path-in-root "files/emacs/init.el")))))))
+    ;; ,(simple-service 'base-emacs-config
+    ;;                 home-emacs-service-type
+    ;;                 (home-emacs-extension
+    ;;                  (elisp-packages elisp-packages)
+    ;;                  (init-el
+    ;;                   `(,(slurp-file-like (local-file (path-in-root "files/emacs/init.el")))))))
     ,(simple-service 'syncthing
                      home-syncthing-service-type
                      (syncthing-configuration
-                      (user "jake")))))
+                      (user "jake")))
+    ,(service home-dotfiles-service-type
+              (home-dotfiles-configuration
+               (source-directory root)
+               (directories '("./files"))))))
 
 (define-public config
   (rde-config
@@ -244,7 +250,7 @@ as elisp constants. This is mostly useful for referencing paths into the store."
      (feature-custom-services
       #:home-services custom-home-services)
      (feature-base-packages
-      #:home-packages home-packages)
+      #:home-packages `(,@home-packages ,@elisp-packages))
      (feature-xdg)
      (feature-fonts)
 
@@ -253,6 +259,7 @@ as elisp constants. This is mostly useful for referencing paths into the store."
      (feature-manpages)
      (feature-direnv)
      (feature-gnupg
+      #:pinentry-flavor 'emacs
       #:gpg-primary-key "0FCC8E6A96FF109F"
       #:ssh-keys
       '(("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")))
