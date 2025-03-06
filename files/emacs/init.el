@@ -615,6 +615,10 @@
   (:map eglot-mode-map
         ("C-c C-d" . eldoc-doc-buffer)))
 
+(use-package eglot-booster
+  :after eglot
+  :config (eglot-booster-mode))
+
 ;;;
 ;;; Language Specific
 ;;;

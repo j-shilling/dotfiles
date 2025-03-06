@@ -142,6 +142,8 @@
         emacs-consult-yasnippet
         emacs-devdocs
         emacs-web-mode
+        emacs-lsp-booster
+        emacs-eglot-booster
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 (define (feature-emacs-values-from-guix)
