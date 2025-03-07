@@ -81,10 +81,7 @@
        (string-append root "/" path))))
 
 (define channels
-  (let ((maybe-profile (getenv "GUIX_PROFILE")))
-    (if maybe-profile
-        (profile-channels maybe-profile)
-        (primitive-load (path-in-root "channels.scm")))))
+  (primitive-load (path-in-root "channels.scm")))
 
 (define locale
   (make-glibc-utf8-locales glibc #:locales (list "en_US")))
@@ -180,6 +177,16 @@ as elisp constants. This is mostly useful for referencing paths into the store."
    (values `((,f-name . #t)))
    (home-services-getter get-home-services)))
 
+(define %locale-path-service
+  (simple-service 'set-locale-path
+                  home-environment-variables-service-type
+                  `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale")))))
+
+(define %guix-channels-service
+  (simple-service 'set-guix-channels
+                  home-channels-service-type
+                  channels))
+
 (define %open-ssh-service
   (service home-openssh-service-type
            (home-openssh-configuration
@@ -188,62 +195,61 @@ as elisp constants. This is mostly useful for referencing paths into the store."
                                        (host-name "github.com")
                                        (identity-file "~/.ssh/id_github")))))))
 
+(define %syncthing-service
+  (simple-service 'syncthing
+                  home-syncthing-service-type
+                  (syncthing-configuration
+                   (user "jake"))))
+
+(define %dotfiles-service
+  (service home-dotfiles-service-type
+           (home-dotfiles-configuration
+            (source-directory root)
+            (directories '("./files")))))
+
+(define %bash-service
+  (service home-bash-service-type
+           (home-bash-configuration
+            (package bash)
+            (environment-variables
+             '(("HISTFILE" . "$XDG_CACHE_HOME/.bash_history")))
+            (bashrc
+             (list
+              (mixed-text-file "bash-settings"
+                               (string-join '("HISTCONTROL=erasedups"
+                                              "HISTFILESIZE=100000"
+                                              "HISTIGNORE=ls:exit:history:clear"
+                                              "shopt -s histappend"
+                                              "shopt -s cmdhist"
+                                              "shopt -s checkwinsize"
+                                              "shopt -s autocd"
+                                              "shopt -s dirspell"
+                                              "shopt -s cdspell"
+                                              "shopt -s globstar"
+                                              "shopt -s nocaseglob")
+                                            "\n")))))))
+
+(define %mcron-jobs-service
+  (simple-service 'mcron-jobs
+                  home-mcron-service-type
+                  (list
+                   #~(job '(next-minute (range 0 60 5))
+                          (lambda ()
+                            (system* "mbsync" "-Va"))
+                          "mbsync")
+                   #~(job '(next-minute (range 1 60 5))
+                          (lambda ()
+                            (system* "notmuch" "new"))
+                          "notmuch"))))
+
 (define custom-home-services
-  `(,(simple-service 'set-locale-path
-                     home-environment-variables-service-type
-                     `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale"))))
-    ,@(if channels
-          (list
-           (simple-service 'set-guix-channels
-                           home-channels-service-type
-                           channels))
-          (list))
-    ,(service home-bash-service-type
-              (home-bash-configuration
-               (package bash)
-               (environment-variables
-                '(("HISTFILE" . "$XDG_CACHE_HOME/.bash_history")))
-               (bashrc
-                (list
-                 (mixed-text-file "bash-settings"
-                                  (string-join '("HISTCONTROL=erasedups"
-                                                 "HISTFILESIZE=100000"
-                                                 "HISTIGNORE=ls:exit:history:clear"
-                                                 "shopt -s histappend"
-                                                 "shopt -s cmdhist"
-                                                 "shopt -s checkwinsize"
-                                                 "shopt -s autocd"
-                                                 "shopt -s dirspell"
-                                                 "shopt -s cdspell"
-                                                 "shopt -s globstar"
-                                                 "shopt -s nocaseglob")
-                                               "\n"))))))
-    ,(simple-service 'mcron-jobs
-                     home-mcron-service-type
-                     (list
-                      #~(job '(next-minute (range 0 60 5))
-                             (lambda ()
-                               (system* "mbsync" "-Va"))
-                             "mbsync")
-                      #~(job '(next-minute (range 1 60 5))
-                             (lambda ()
-                               (system* "notmuch" "new"))
-                             "notmuch")))
-    ;; ,(simple-service 'base-emacs-config
-    ;;                 home-emacs-service-type
-    ;;                 (home-emacs-extension
-    ;;                  (elisp-packages elisp-packages)
-    ;;                  (init-el
-    ;;                   `(,(slurp-file-like (local-file (path-in-root "files/emacs/init.el")))))))
-    ,(simple-service 'syncthing
-                     home-syncthing-service-type
-                     (syncthing-configuration
-                      (user "jake")))
-    ,(service home-dotfiles-service-type
-              (home-dotfiles-configuration
-               (source-directory root)
-               (directories '("./files"))))
-    ,%open-ssh-service))
+  (list %bash-service
+        %mcron-jobs-service
+        %locale-path-service
+        %guix-channels-service
+        %dotfiles-service
+        %syncthing-service
+        %open-ssh-service))
 
 (define-public config
   (rde-config
