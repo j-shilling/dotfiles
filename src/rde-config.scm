@@ -37,6 +37,7 @@
   #:use-module (gnu services)
 
   #:use-module (gnu home services)
+  #:use-module (gnu home services ssh)
   #:use-module (gnu home services dotfiles)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services shells)
@@ -179,6 +180,14 @@ as elisp constants. This is mostly useful for referencing paths into the store."
    (values `((,f-name . #t)))
    (home-services-getter get-home-services)))
 
+(define %open-ssh-service
+  (service home-openssh-service-type
+           (home-openssh-configuration
+            (hosts (list (openssh-host (name "github.com")
+                                       (user "j-shilling")
+                                       (host-name "github.com")
+                                       (identity-file "~/.ssh/id_github")))))))
+
 (define custom-home-services
   `(,(simple-service 'set-locale-path
                      home-environment-variables-service-type
@@ -233,7 +242,8 @@ as elisp constants. This is mostly useful for referencing paths into the store."
     ,(service home-dotfiles-service-type
               (home-dotfiles-configuration
                (source-directory root)
-               (directories '("./files"))))))
+               (directories '("./files"))))
+    ,%open-ssh-service))
 
 (define-public config
   (rde-config
@@ -259,11 +269,8 @@ as elisp constants. This is mostly useful for referencing paths into the store."
      (feature-manpages)
      (feature-direnv)
      (feature-gnupg
-      #:pinentry-flavor 'emacs
       #:gpg-primary-key "0FCC8E6A96FF109F"
-      #:ssh-keys
-      '(("E556265A9520AFE6C5BEC85C47B1ADB883CCBC91")))
-     (feature-ssh)
+      #:gpg-ssh-agent? #f)
      (feature-git
       #:sign-commits? #t
       #:git-send-email? #t
