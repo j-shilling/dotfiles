@@ -391,6 +391,10 @@
 ;;; Editing
 ;;;
 
+(use-package envrc
+  :diminish (envrc-global-mode envrc-mode)
+  :hook (after-init-hook . envrc-global-mode))
+
 (use-package delsel
   :diminish delete-selection-mode
   :hook (after-init-hook . delete-selection-mode))
@@ -503,10 +507,6 @@
 (use-package eshell-syntax-highlighting
   :hook
   (eshell-mode-hook . eshell-syntax-highlighting-mode))
-
-(use-package eshell-vterm
-  :hook
-  (eshell-mode-hook . eshell-vterm-mode))
 
 (use-package diff-hl
   :diminish (diff-hl-mode diff-hl-dir-mode)

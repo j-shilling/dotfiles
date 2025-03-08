@@ -1,0 +1,32 @@
+[core]
+	editor = emacsclient --reuse-frame
+[merge]
+	conflictStyle = diff3
+[diff]
+	algorithm = histogram
+[commit]
+	gpgsign = true
+[sendemail]
+	annotate = true
+[core]
+	autocrlf = "input"
+	whitespace = "-trailing-space,-space-before-tab,-cr-at-eol"
+[init]
+	defaultBranch = "main"
+[merge]
+	log = true
+	renormalize = true
+	ff = false
+	renames = true
+[pull]
+	rebase = true
+	ff = false
+	autoSetupRemote = true
+[fetch]
+	prune = true
+[sendemail]
+	sendmailcmd = msmtp --read-envelope-from
+[include]
+    path = "~/.config/git/config_personal"
+[includeIf "gitdir/i:**/functorfactory/**/"]
+    path = "~/.config/git/config_functorfactory"

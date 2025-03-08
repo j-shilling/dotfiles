@@ -46,6 +46,7 @@
   #:use-module (gnu home-services version-control)
 
   #:use-module (gnu packages base)
+  #:use-module (gnu packages certs)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages bash)
@@ -60,6 +61,8 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages version-control)
+  #:use-module (gnu packages shellutils)
 
   #:export (config))
 
@@ -109,6 +112,8 @@
         tree-sitter-html
         ripgrep
         fd
+        direnv
+        gnu-make
         (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
 ;; TODO:
@@ -144,48 +149,42 @@
         emacs-web-mode
         emacs-lsp-booster
         emacs-eglot-booster
+        emacs-vterm
+        emacs-envrc
         (@ (config packages emacs-xyz) emacs-codeium)))
 
-(define (feature-emacs-values-from-guix)
-  (define emacs-f-name 'values-from-guix)
-  (define f-name (symbol-append 'emacs- emacs-f-name))
-
-  (define elisp-values-from-guix-service-type
-    (make-home-elisp-service-type 'elisp-values-from-guix))
-
-  (define (get-home-services config)
-    (list
-     (service
-      elisp-values-from-guix-service-type
-      (home-elisp-configuration
-       (name 'elisp-values-from-guix)
-       (summary "Symbols referencing values from the current guix derivation.")
-       (commentary
-        "This package provides an interface between guix and emacs. It is created by a
-home service that can use values from the guix store and inject them in here
-as elisp constants. This is mostly useful for referencing paths into the store.")))
-     (simple-service
-      'add-ripgrep
-      elisp-values-from-guix-service-type
-      (home-elisp-extension
-       (config
-        `((defconst %ripgrep ,(file-append ripgrep "/bin/rg"))
-          (defconst %fd ,(file-append ripgrep "/bin/fd"))))))))
-
-  (feature
-   (name f-name)
-   (values `((,f-name . #t)))
-   (home-services-getter get-home-services)))
-
-(define %locale-path-service
-  (simple-service 'set-locale-path
-                  home-environment-variables-service-type
-                  `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale")))))
+;; Base
 
 (define %guix-channels-service
   (simple-service 'set-guix-channels
                   home-channels-service-type
                   channels))
+
+(define %dotfiles-service
+  (service home-dotfiles-service-type
+           (home-dotfiles-configuration
+            (source-directory root)
+            (directories '("./files")))))
+
+(define %foreign-distro-packages-service
+  (simple-service 'add-foreign-distro-packages
+                  home-profile-service-type
+                  (list locale nss-certs)))
+
+(define %foreign-distro-env-vars-service
+  (simple-service 'set-foreign-distro-env-vars
+                  home-environment-variables-service-type
+                  `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale"))
+                    ("SSL_CERT_DIR" . ,(file-append nss-certs "/etc/ssl/certs"))
+                    ("SSL_CERT_FILE" . "${GUIX_PROFILE}/etc/ssl/certs/ca-certificates.crt"))))
+
+;; Git, GPG, SSH
+
+(define %git-package-service
+  (simple-service
+   'git-send-email-package
+   home-profile-service-type
+   (list (list git "send-email"))))
 
 (define %open-ssh-service
   (service home-openssh-service-type
@@ -201,11 +200,7 @@ as elisp constants. This is mostly useful for referencing paths into the store."
                   (syncthing-configuration
                    (user "jake"))))
 
-(define %dotfiles-service
-  (service home-dotfiles-service-type
-           (home-dotfiles-configuration
-            (source-directory root)
-            (directories '("./files")))))
+
 
 (define %bash-service
   (service home-bash-service-type
@@ -245,7 +240,9 @@ as elisp constants. This is mostly useful for referencing paths into the store."
 (define custom-home-services
   (list %bash-service
         %mcron-jobs-service
-        %locale-path-service
+        %foreign-distro-env-vars-service
+        %foreign-distro-packages-service
+        %git-package-service
         %guix-channels-service
         %dotfiles-service
         %syncthing-service
@@ -261,42 +258,16 @@ as elisp constants. This is mostly useful for referencing paths into the store."
       #:full-name "Jake Shilling"
       #:email "shilling.jake@gmail.com"
       #:emacs-advanced-user? #t)
-     (feature-foreign-distro
-      #:glibc-locales locale)
      (feature-custom-services
       #:home-services custom-home-services)
      (feature-base-packages
       #:home-packages `(,@home-packages ,@elisp-packages))
      (feature-xdg)
      (feature-fonts)
-
      ;; Shell
-     (feature-vterm)
-     (feature-manpages)
-     (feature-direnv)
      (feature-gnupg
       #:gpg-primary-key "0FCC8E6A96FF109F"
       #:gpg-ssh-agent? #f)
-     (feature-git
-      #:sign-commits? #t
-      #:git-send-email? #t
-      #:extra-config
-      `((core
-         ((autocrlf . "input")
-          (whitespace . "-trailing-space,-space-before-tab,-cr-at-eol")))
-        (init
-         ((defaultBranch . "main")))
-        (merge
-         ((log . #t)
-          (renormalize . #t)
-          (ff . #f)
-          (renames . #t)))
-        (pull
-         ((rebase . #t)
-          (ff . #f)
-          (autoSetupRemote . #t)))
-        (fetch
-         ((prune . #t)))))
      (feature-password-store
       #:remote-password-store-url "git@github.com:j-shilling/password-store.git")
 
@@ -344,7 +315,6 @@ as elisp constants. This is mostly useful for referencing paths into the store."
       #:emacs-server-mode? (not wsl?)
       #:default-terminal? #f
       #:default-application-launcher? #f)
-     (feature-emacs-values-from-guix)
      (feature-emacs-appearance)
      (feature-emacs-modus-themes
       #:dark? #t)
@@ -381,7 +351,6 @@ as elisp constants. This is mostly useful for referencing paths into the store."
      ;; Tools
      ((@ (config features aws) feature-aws))
      (feature-docker)
-     (feature-compile)
 
      ;; Language Specific
      (feature-markdown)
