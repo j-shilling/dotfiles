@@ -208,6 +208,35 @@
 ;;; Appearance
 ;;;
 
+(use-package fontset
+  :init
+  (setq use-default-font-for-symbols nil)
+  :config
+  (set-fontset-font t 'symbol "Noto Emoji" nil 'append)
+  (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
+  (set-fontset-font "fontset-default" nil
+                    (font-spec :name "Noto Emoji")))
+
+(use-package fontaine
+  :after fontset
+  :config
+  (setq fontaine-current-preset t
+        fontaine-presets
+        '((t
+           :default-family "Iosevka"
+           :default-height 11
+           :fixed-pitch-family "Iosevka"
+           :fixed-pitch-height 1.0
+           :variable-pitch-family "Iosevka Etoile"
+           :variable-pitch-height 1.0
+           :variable-pitch-weight regular)
+          (regular)
+          (large :default-weight semilight
+                 :default-height ,(+ 11 40)
+                 :bold-weight extrabold)))
+  :hook
+  (after-init-hook . 'fontaine-mode))
+
 (use-package ligature
   :functions ligature-set-ligatures
   :hook

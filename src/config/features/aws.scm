@@ -14,7 +14,7 @@
     (define (add-aws-config-files config)
       `((".aws-config" ,(mixed-text-file "foo"))))
 
-    (define pass (file-append (get-value 'password-store config #f) "/bin/pass"))
+    (define pass "pass")
 
     (define (pass-show v)
       (string->symbol (string-join (list "pass" "show" v))))

@@ -37,6 +37,7 @@
   #:use-module (gnu services)
 
   #:use-module (gnu home services)
+  #:use-module (gnu home services fontutils)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services dotfiles)
   #:use-module (gnu home services guix)
@@ -44,8 +45,11 @@
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services syncthing)
   #:use-module (gnu home-services version-control)
+  #:use-module (gnu home services gnupg)
 
   #:use-module (gnu packages base)
+  #:use-module (gnu packages fonts)
+  #:use-module (gnu packages gnupg)
   #:use-module (gnu packages certs)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
@@ -114,6 +118,8 @@
         fd
         direnv
         gnu-make
+        font-gnu-unifont
+        font-liberation
         (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
 ;; TODO:
@@ -150,6 +156,7 @@
         emacs-eglot-booster
         emacs-vterm
         emacs-envrc
+        emacs-fontaine
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 ;; Base
@@ -177,6 +184,51 @@
                     ("SSL_CERT_DIR" . ,(file-append nss-certs "/etc/ssl/certs"))
                     ("SSL_CERT_FILE" . "${GUIX_PROFILE}/etc/ssl/certs/ca-certificates.crt"))))
 
+;; Appearance
+
+(define %default-font-size 11)
+(define %monospace-font
+  `((name . "Iosevka")
+    (package . ,font-iosevka)))
+(define %serif-font
+  `((name . "Iosevka Etoile")
+    (package . ,font-iosevka-etoile)))
+(define %sans-font
+  `((name . "Iosevka Aile")
+    (package . ,font-iosevka-aile)))
+(define %unicode-font
+  `((name . "Noto Emoji")
+    (package . ,font-google-noto-emoji)))
+
+(define %add-font-packages
+  (simple-service
+   'add-extra-fonts
+   home-profile-service-type
+   (map (lambda (f) (assq-ref f 'package))
+        (list %monospace-font %serif-font %sans-font %unicode-font))))
+
+(define %fontconfig-service
+  (simple-service
+   'add-fontconfig-font-families
+   home-fontconfig-service-type
+   (list
+    `(alias
+      (family "sans-serif")
+      (prefer
+       (family ,(assq-ref %sans-font 'name))))
+    `(alias
+      (family "serif")
+      (prefer
+       (family ,(assq-ref %serif-font 'name))))
+    `(alias
+      (family "monospace")
+      (prefer
+       (family ,(assq-ref %monospace-font 'name))))
+    `(alias
+      (family "emoji")
+      (prefer
+       (family ,(assq-ref %unicode-font 'name)))))))
+
 ;; Git, GPG, SSH
 
 (define %git-package-service
@@ -186,6 +238,12 @@
    (list
     git
     (list git "send-email"))))
+
+(define %gpg-agent-service
+  (service home-gpg-agent-service-type
+           (home-gpg-agent-configuration
+            (pinentry-program
+             (file-append pinentry-emacs "/bin/pinentry-emacs")))))
 
 (define %open-ssh-service
   (service home-openssh-service-type
@@ -247,7 +305,10 @@
         %guix-channels-service
         %dotfiles-service
         %syncthing-service
-        %open-ssh-service))
+        %gpg-agent-service
+        %open-ssh-service
+        %add-font-packages
+        %fontconfig-service))
 
 (define-public config
   (rde-config
@@ -264,13 +325,6 @@
      (feature-base-packages
       #:home-packages `(,@home-packages ,@elisp-packages))
      (feature-xdg)
-     (feature-fonts)
-     ;; Shell
-     (feature-gnupg
-      #:gpg-primary-key "0FCC8E6A96FF109F"
-      #:gpg-ssh-agent? #f)
-     (feature-password-store
-      #:remote-password-store-url "git@github.com:j-shilling/password-store.git")
      ;; Messaging
      (feature-mail-settings
       #:mail-accounts
@@ -348,7 +402,6 @@
      (feature-emacs-spelling)
 
      ;; Tools
-     ((@ (config features aws) feature-aws))
      (feature-docker)
 
      ;; Language Specific
