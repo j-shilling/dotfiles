@@ -432,17 +432,6 @@
 ;;; Tools
 ;;;
 
-;; TODO: inject paths from guix
-;; (use-package grep
-;;   :autoload grep-apply-setting
-;;   :config
-;;   (grep-apply-setting
-;;    'grep-command
-;;    "rg -n -H --no-heading ")
-;;   (grep-apply-setting
-;;    'grep-find-command
-;;    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
-
 (use-package dired
   :custom
   (dired-dwim-target t)
@@ -455,10 +444,6 @@
   :hook
   ((dired-mode-hook . dired-omit-mode)
    (dired-mode-hook . dired-hide-details-mode)))
-
-(use-package dirvish
-  :hook
-  (after-init-hook . dirvish-override-dired-mode))
 
 (use-package diredfl
   :hook

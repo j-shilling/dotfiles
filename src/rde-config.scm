@@ -140,7 +140,6 @@
         emacs-apheleia
         emacs-diff-hl
         emacs-diredfl
-        emacs-dirvish
         emacs-consult-notmuch
         emacs-consult-dir
         emacs-consult-org-roam
@@ -184,7 +183,9 @@
   (simple-service
    'git-send-email-package
    home-profile-service-type
-   (list (list git "send-email"))))
+   (list
+    git
+    (list git "send-email"))))
 
 (define %open-ssh-service
   (service home-openssh-service-type
@@ -270,7 +271,6 @@
       #:gpg-ssh-agent? #f)
      (feature-password-store
       #:remote-password-store-url "git@github.com:j-shilling/password-store.git")
-
      ;; Messaging
      (feature-mail-settings
       #:mail-accounts
@@ -319,7 +319,6 @@
      (feature-emacs-modus-themes
       #:dark? #t)
      (feature-emacs-which-key)
-     (feature-emacs-all-the-icons)
      (feature-emacs-tramp)
      (feature-emacs-dired)
      (feature-emacs-eshell)
