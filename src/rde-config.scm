@@ -243,7 +243,11 @@
   (service home-gpg-agent-service-type
            (home-gpg-agent-configuration
             (pinentry-program
-             (file-append pinentry-emacs "/bin/pinentry-emacs")))))
+             (file-append pinentry-emacs "/bin/pinentry-emacs"))
+            (extra-content
+             (string-join (list "allow-emacs-pinentry"
+                                "allow-loopback-pinentry")
+                          "\n")))))
 
 (define %open-ssh-service
   (service home-openssh-service-type
@@ -258,8 +262,6 @@
                   home-syncthing-service-type
                   (syncthing-configuration
                    (user "jake"))))
-
-
 
 (define %bash-service
   (service home-bash-service-type
@@ -277,10 +279,13 @@
                                               "shopt -s cmdhist"
                                               "shopt -s checkwinsize"
                                               "shopt -s autocd"
+                                              "shopt -s cdable_vars"
                                               "shopt -s dirspell"
                                               "shopt -s cdspell"
                                               "shopt -s globstar"
-                                              "shopt -s nocaseglob")
+                                              "shopt -s nocaseglob"
+                                              "shopt -s checkhash"
+                                              "shopt -s lithist")
                                             "\n")))))))
 
 (define %mcron-jobs-service
