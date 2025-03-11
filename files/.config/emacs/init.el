@@ -516,7 +516,9 @@
   (eshell-error-if-no-glob t)
   :hook
   (eshell-mode-hook . (lambda ()
-                        (setenv "TERM" "xterm-256color"))))
+                        (setenv "TERM" "xterm-256color")))
+  (eshell-load-hook . eat-eshell-mode)
+  (eshell-load-hook . eat-eshell-visual-command-mode))
 
 (use-package eshell-syntax-highlighting
   :hook
@@ -550,6 +552,12 @@
 
 (use-package apheleia
   :diminish apheleia-mode
+  :config
+  (add-to-list 'apheleia-formatters
+               '(prettier-astro . ("apheleia-npx" "prettier" "--stdin-filepath" filepath "--plugin=prettier-plugin-astro")))
+  (add-to-list 'apheleia-mode-alist
+               '(astro-mode . prettier-astro))
+
   :hook
   (after-init-hook . apheleia-global-mode))
 

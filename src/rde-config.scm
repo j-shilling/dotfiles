@@ -135,6 +135,8 @@
 (define elisp-packages
   (list emacs-geiser-latest
         emacs-geiser-guile-latest
+        emacs-apheleia
+        emacs-pinentry
         emacs-guix-latest
         emacs-pyvenv
         emacs-haskell-mode
@@ -159,9 +161,9 @@
         emacs-web-mode
         emacs-lsp-booster
         emacs-eglot-booster
-        emacs-vterm
         emacs-envrc
         emacs-fontaine
+        emacs-eat
         (@ (config packages emacs-xyz) emacs-codeium)))
 
 ;; Base
@@ -301,7 +303,8 @@
                                               "shopt -s globstar"
                                               "shopt -s nocaseglob"
                                               "shopt -s checkhash"
-                                              "shopt -s lithist")
+                                              "shopt -s lithist"
+                                              "[ -n \"$EAT_SHELL_INTEGRATION_DIR\"] && source \"$EAT_SHELL_INTEGRATION_DIR/bash\"")
                                             "\n")))))))
 
 (define %mcron-jobs-service
