@@ -1,0 +1,12 @@
+notmuch tag +personal -- path:accounts/personal/**
+notmuch tag +inbox -- path:/accounts\\/.*\\/inbox/
+notmuch tag +draft -- path:/accounts\\/.*\\/drafts/
+notmuch tag +sent -- path:/accounts\\/.*\\/sent/
+notmuch tag +trash -- path:/accounts\\/.*\\/trash/
+notmuch tag +spam -- path:/accounts\\/.*\\/spam/
+notmuch tag +list -- path:/lists\\/.*/
+notmuch tag +todo -inbox -sent -- tag:inbox and tag:sent
+notmuch tag -inbox -- not path:/accounts\\/.*\\/inbox/ and tag:inbox
+notmuch tag -trash -- not path:/accounts\\/.*\\/trash/ and tag:trash
+notmuch tag -spam -- not path:/accounts\\/.*\\/spam/ and tag:spam
+notmuch tag -new -- tag:new

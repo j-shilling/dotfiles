@@ -1,0 +1,18 @@
+[user]
+name=Jake Shilling
+primary_email=shilling.jake@gmail.com
+other_email=
+
+[database]
+path=/home/jake/mail
+mail_root=/home/jake/mail
+
+[maildir]
+synchronize_flags=true
+
+[search]
+exclude_tags=trash;spam;deleted
+
+[new]
+tags=new
+ignore=.mbsyncstate;.uidvalidity;.mbsyncstate.new;.mbsyncstate.journal

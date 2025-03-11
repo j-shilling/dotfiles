@@ -1,0 +1,52 @@
+Create Both
+Expunge Both
+SyncState *
+
+# Account 'personal starts here
+IMAPAccount personal
+Host "imap.gmail.com"
+User "shilling.jake@gmail.com"
+PassCmd "pass show mail/shilling.jake@gmail.com"
+TLSType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore personal-remote
+Account personal
+
+MaildirStore personal-local
+SubFolders Verbatim
+Path "/home/jake/mail/accounts/personal/"
+Inbox "/home/jake/mail/accounts/personal/inbox"
+
+Channel personal-inbox
+Near ":personal-local:inbox"
+Far ":personal-remote:INBOX"
+
+Channel personal-sent
+Near ":personal-local:sent"
+Far ":personal-remote:[Gmail]/Sent Mail"
+
+Channel personal-drafts
+Near ":personal-local:drafts"
+Far ":personal-remote:[Gmail]/Drafts"
+
+Channel personal-archive
+Near ":personal-local:archive"
+Far ":personal-remote:[Gmail]/All Mail"
+
+Channel personal-trash
+Near ":personal-local:trash"
+Far ":personal-remote:[Gmail]/Trash"
+
+Channel personal-spam
+Near ":personal-local:spam"
+Far ":personal-remote:[Gmail]/Spam"
+
+Group personal
+Channel personal-inbox
+Channel personal-sent
+Channel personal-drafts
+Channel personal-archive
+Channel personal-trash
+Channel personal-spam
+

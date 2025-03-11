@@ -1,0 +1,11 @@
+defaults
+tls on
+auth on
+logfile /home/jake/.local/var/lib/log/msmtp.log
+
+account personal-shilling.jake@gmail.com
+from shilling.jake@gmail.com
+user shilling.jake@gmail.com
+passwordeval pass show mail/shilling.jake@gmail.com
+host smtp.gmail.com
+tls_starttls on

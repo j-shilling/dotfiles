@@ -42,12 +42,14 @@
   #:use-module (gnu home services dotfiles)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services shells)
+  #:use-module (gnu home services xdg)
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services syncthing)
   #:use-module (gnu home-services version-control)
   #:use-module (gnu home services gnupg)
 
   #:use-module (gnu packages base)
+  #:use-module (gnu packages mail)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages certs)
@@ -120,6 +122,9 @@
         gnu-make
         font-gnu-unifont
         font-liberation
+        isync
+        msmtp
+        notmuch
         (@ (config packages node-xyz) devcontainers-cli-0.72.0)))
 
 ;; TODO:
@@ -183,6 +188,17 @@
                   `(("GUIX_LOCPATH" . ,(file-append locale "/lib/locale"))
                     ("SSL_CERT_DIR" . ,(file-append nss-certs "/etc/ssl/certs"))
                     ("SSL_CERT_FILE" . "${GUIX_PROFILE}/etc/ssl/certs/ca-certificates.crt"))))
+
+(define %xdg-base-directories-service
+  (simple-service
+   'xdg-base-directories-values
+   home-xdg-base-directories-service-type
+   (home-xdg-base-directories-configuration
+    (state-home "$HOME/.local/var/lib"))))
+
+(define %xdg-user-directories-service
+  (service home-xdg-user-directories-service-type
+           (home-xdg-user-directories-configuration)))
 
 ;; Appearance
 
@@ -307,6 +323,8 @@
         %foreign-distro-env-vars-service
         %foreign-distro-packages-service
         %git-package-service
+        %xdg-base-directories-service
+        %xdg-user-directories-service
         %guix-channels-service
         %dotfiles-service
         %syncthing-service
@@ -329,16 +347,8 @@
       #:home-services custom-home-services)
      (feature-base-packages
       #:home-packages `(,@home-packages ,@elisp-packages))
-     (feature-xdg)
+
      ;; Messaging
-     (feature-mail-settings
-      #:mail-accounts
-      (list
-       (mail-account
-        (id 'personal)
-        (type 'gmail)
-        (fqda "shilling.jake@gmail.com")
-        (pass-cmd "pass show mail/shilling.jake@gmail.com"))))
      (feature-irc-settings
       #:irc-accounts
       (list
@@ -362,11 +372,11 @@
                               "#lisp"
                               "#scheme"
                               "#clojure"))))
-     (feature-isync)
-     (feature-msmtp)
-     (feature-emacs-message)
+
+
+     ;; (feature-emacs-message)
      (feature-emacs-org-mime)
-     (feature-notmuch)
+
 
      ;; Emacs
      (feature-emacs

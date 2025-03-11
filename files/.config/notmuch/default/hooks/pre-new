@@ -1,0 +1,13 @@
+notmuch search --output=files 'path:/.*\\/inbox/ and not tag:inbox' | grep '/inbox/' | while IFS= read -r f; do mv -v "$f" "$(echo ${f} | sed 's;/inbox/;/archive/;' | sed 's/,U=[0-9]*:/:/')"; done
+
+notmuch search --output=files 'path:/.*\\/trash/ and not tag:trash' | grep '/trash/' | while IFS= read -r f; do mv -v "$f" "$(echo ${f} | sed 's;/trash/;/archive/;' | sed 's/,U=[0-9]*:/:/')"; done
+
+notmuch search --output=files 'path:/.*\\/spam/ and not tag:spam' | grep '/spam/' | while IFS= read -r f; do mv -v "$f" "$(echo ${f} | sed 's;/spam/;/archive/;' | sed 's/,U=[0-9]*:/:/')"; done
+
+notmuch search --output=files 'not path:/.*\\/trash/ and tag:trash' | grep -v "/nothing-will-match-this/" | while IFS= read -r f; do mv -v "$f" "$(echo ${f} | sed 's;/[[:alnum:]]*/cur/;/trash/cur/;' | sed 's/,U=[0-9]*:/:/')"; done
+
+notmuch search --output=files 'not path:/.*\\/spam/ and tag:spam' | grep -v "/nothing-will-match-this/" | while IFS= read -r f; do mv -v "$f" "$(echo ${f} | sed 's;/[[:alnum:]]*/cur/;/spam/cur/;' | sed 's/,U=[0-9]*:/:/')"; done
+
+notmuch search --output=files 'not path:/.*\\/inbox/ and tag:inbox' | grep -v "/archive/" | while IFS= read -r f; do mv -v "$f" "$(echo ${f} | sed 's;/[[:alnum:]]*/cur/;/inbox/cur/;' | sed 's/,U=[0-9]*:/:/')"; done
+
+notmuch search --output=files tag:deleted | while IFS= read -r f; do rm -v "$f"; done
