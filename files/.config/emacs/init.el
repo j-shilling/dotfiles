@@ -2,6 +2,10 @@
 ;;;
 ;;; Commentary:
 ;;;
+;;; This is pretty much all copied from other sources. Here are some
+;;; configs I read:
+;;; - https://github.com/terlar/emacs-config
+;;;
 ;;; Code:
 
 ;;;
@@ -250,7 +254,7 @@
         fontaine-presets
         '((t
            :default-family "Iosevka"
-           :default-height 11
+           :default-height 16
            :fixed-pitch-family "Iosevka"
            :fixed-pitch-height 1.0
            :variable-pitch-family "Iosevka Etoile"
@@ -349,6 +353,16 @@
   (text-mode-hook . (lambda () (whitespace-mode -1))))
 
 (use-package modus-themes
+  :defines
+  modus-themes-mode-line
+  modus-themes-diffs
+  modus-themes-deuteranopia
+  modus-themes-fringes
+  :config
+  (setq modus-themes-mode-line '(borderless)
+        modus-themes-diffs 'desaturated
+        modus-themes-deuteranopia t
+        modus-themes-fringes nil)
   :init
   (load-theme 'modus-vivendi t (not (display-graphic-p)))
   :hook
@@ -359,15 +373,56 @@
 ;;; Completion
 ;;;
 
+(setq completion-cycle-threshold nil)
+(setq enable-recursive-minibuffers t)
+(setq tab-always-indent 'complete)
+(setq minibuffer-prompt-properties
+      '(readonly t cursor-intagible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
 (use-package vertico
   :hook
   (after-init-hook .vertico-mode))
 
+(use-package vertico-multiform
+  :diminish vertico-multiform-mode
+  :hook (vertico-mode-hook . vertico-multiform-mode)
+  :init
+  (setq vertico-multiform-categories
+        '((consult-grep buffer)
+          (imenu buffer)
+          (buffer)
+          (info-menu buffer)
+          (consult-org-heading buffer)
+          (consult-history buffer)
+          (consult-lsp-symbols buffer)
+          (consult-xref buffer)
+          (embark-keybinding buffer)
+          (consult-location buffer))
+        vertico-multiform-commands
+        '((telega-chat-with buffer)
+          (magit:--author flat)
+          (Info-goto-node buffer)
+          (info-lookup-symbol buffer)
+          (Info-follow-reference buffer)
+          (consult-yank-pop buffer))))
+
 (use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+  :hook
+  (after-init-hook .
+                   (lambda (&rest _)
+                     (require 'orderless)
+                     (setq completion-styles '(orderless basic))
+                     (setq completion-category-overrides
+                           '((project-file (styles . (partial-completion basic orderless)))
+                             (file (styles . (partial-completion basic orderless))))))))
+
+(use-package marginalia
+  :bind
+  (:map minibuffer-local-map
+        ("M-A" . marginalia-cycle))
+  :hook
+  (after-init-hook . marginalia-mode))
 
 (use-package consult
   :bind ;; C-c bindings (mode-specific-map)
@@ -425,6 +480,11 @@
 
   (advice-add #'register-preview :override #'consult-register-window))
 
+(use-package consult-imenu
+  :bind
+  ("M-g i" . consult-imenu)
+  ("M-g I" . consult-imenu-multi))
+
 (use-package consult-dir
   :bind (("C-x C-d" . consult-dir)
          :map minibuffer-local-completion-map
@@ -445,6 +505,31 @@
   (yas-minor-mode-hook . (lambda ()
                            (setq-local hippie-expand-try-functions-list
                                        (cons #'yas-hippie-try-expand hippie-expand-try-functions-list)))))
+
+(use-package corfu
+  :diminish global-corfu-mode
+  :custom
+  (corfu-auto t)
+  (corfu-quite-no-match 'separator)
+  :hook
+  (after-init-hook . global-corfu-mode))
+
+(use-package corfu-history
+  :diminish corfu-history-mode
+  :hook
+  (corfu-mode-hook . corfu-history-mode))
+
+(use-package corfu-info
+  :defines corfu-mode-map
+  :bind
+  (:map corfu-mode-map
+        ("M-g" . corfu-info-location)
+        ("M-h" . corfu-info-documentation)))
+
+(use-package corfu-popupinfo
+  :diminish corfu-popupinfo-mode
+  :hook
+  (corfu-mode-hook . corfu-popupinfo-mode))
 
 (use-package embark
   :autoload embark-prefix-help-command
@@ -504,6 +589,37 @@
 ;;; Tools
 ;;;
 
+(use-package helpful
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)))
+
+(use-package pass
+  :commands pass)
+
+(use-package auth-source-pass
+  :hook
+  (after-init-hook . auth-source-pass-enable))
+
+(use-package which-key
+  :diminish which-key-mode
+  :hook
+  (after-init-hook . which-key-mode))
+
+(use-package envrc
+  :hook (after-init-hook . envrc-global-mode))
+
+(use-package grep
+  :autoload grep-apply-setting
+  :config
+  (grep-apply-setting
+   'grep-command
+   "rg -n -H --no-heading ")
+  (grep-apply-setting
+   'grep-find-command
+   '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
+
 (use-package dired
   :custom
   (dired-dwim-target t)
@@ -526,6 +642,10 @@
   (proced-auto-update-flag t)
   (proced-auto-update-interval 1)
   (proced-enable-color-flag t))
+
+(use-package ibuffer
+  :bind
+  (("C-x C-b" . ibuffer)))
 
 (use-package eshell
   :custom
@@ -578,6 +698,17 @@
 (use-package diff-hl-dired
   :diminish diff-hl-dired-mode
   :hook (dired-mode-hook . diff-hl-dired-mode))
+
+(use-package magit
+  :bind ("C-x g" . magit-status))
+
+(use-package forge
+  :after magit)
+
+(use-package magit-todos
+  :after magit
+  :commands magit-todos-list
+  :config (magit-todos-mode +1))
 
 ;;;
 ;;; General Programming
@@ -684,6 +815,22 @@
   :after eglot
   :config (eglot-booster-mode))
 
+(use-package consult-xref
+  :autoload consult-xref
+  :custom
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref))
+
+(use-package flymake
+  :diminish flymake-mode
+  :hook
+  (eglot-mode-hook . flymake-mode)
+  (emacs-lisp-mode . flymake-mode)
+  :bind
+  (:map flymake-mode-map
+        ("M-n" . flymake-goto-next-error)
+        ("M-p" . flymake-goto-prev-error)))
+
 ;;;
 ;;; Language Specific
 ;;;
@@ -744,11 +891,6 @@
 
 (use-package yaml-ts-mode
   :mode ("\\.ya?ml\\'" . yaml-ts-mode))
-
-(use-package arei
-  :init
-  (setq geiser-mode-auto-p t)
-  (setq ares-mode-auto-p nil))
 
 ;; TODO: Update this to use astro-ts-mode instead
 

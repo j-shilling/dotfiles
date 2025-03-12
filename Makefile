@@ -35,6 +35,12 @@ guix: .guix-time-marker
 build: guix $(CONFIG)
 	$(GUIXTM) -- home build --allow-downgrades $(CONFIG)
 
+.PHONY=debug-init
+debug-init: guix $(CONFIG)
+	$(GUIXTM) -- home container --network \
+		$(CONFIG) -- emacs --debug-init
+
+
 .PHONY=apply
 apply: guix $(CONFIG)
 	$(GUIXTM) -- home reconfigure --allow-downgrades $(CONFIG)

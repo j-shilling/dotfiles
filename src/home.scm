@@ -157,7 +157,7 @@
                "shopt -s cdspell\n"
                "shopt -s globstar\n"
                "shopt -s nocaseglob\n"
-               "shopt -S checkhash\n"
+               "shopt -s checkhash\n"
                "shopt -s lithist\n")
               (mixed-text-file
                "sourcing"
@@ -238,6 +238,8 @@
   (specifications->packages
    '("emacs-geiser"
      "emacs-geiser-guile"
+     "emacs-which-key"
+     "emacs-corfu"
      "emacs-apheleia"
      "emacs-pinentry"
      "emacs-guix"
@@ -247,6 +249,7 @@
      "emacs-haskell-mode"
      "emacs-haskell-snippets"
      "emacs-diminish"
+     "emacs-marginalia"
      "emacs-ligature"
      "emacs-wgrep"
      "emacs-multiple-cursors"
