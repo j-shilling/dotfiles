@@ -363,6 +363,12 @@
   :hook
   (after-init-hook .vertico-mode))
 
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
 (use-package consult
   :bind ;; C-c bindings (mode-specific-map)
   (("C-c h" . consult-history)
