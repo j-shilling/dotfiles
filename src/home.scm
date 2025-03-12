@@ -275,7 +275,8 @@
      "emacs-modus-themes"
      "emacs-eshell-syntax-highlighting"
      "emacs-vertico"
-     "emacs-orderless")))
+     "emacs-orderless"
+     "emacs-helpful")))
 
 (define emacs-services
   (list
