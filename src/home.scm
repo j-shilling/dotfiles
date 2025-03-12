@@ -25,7 +25,6 @@
              (gnu packages emacs)
              (gnu packages certs)
              (gnu packages fonts)
-             (gnu packages version-control)
              (gnu packages package-management))
 
 (define wsl?
@@ -276,7 +275,24 @@
      "emacs-eshell-syntax-highlighting"
      "emacs-vertico"
      "emacs-orderless"
-     "emacs-helpful")))
+     "emacs-helpful"
+
+     ;; Tree Sitter Grammars
+     "tree-sitter-haskell"
+     "tree-sitter-python"
+     "tree-sitter-javascript"
+     "tree-sitter-typescript"
+     "tree-sitter-css"
+     "tree-sitter-bash"
+     "tree-sitter-dockerfile"
+     "tree-sitter-json"
+     "tree-sitter-markdown"
+     "tree-sitter-markdown-gfm"
+     "tree-sitter-nix"
+     "tree-sitter-org"
+     "tree-sitter-scheme"
+     "tree-sitter-latex"
+     "tree-sitter-html")))
 
 (define emacs-services
   (list
@@ -306,120 +322,91 @@
                                            "/log/emacs-server.log")))
                      (stop #~(make-systemd-destructor)))))))
 
-;; Appearance
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Email
 
-(define %default-font-size 11)
-(define %monospace-font
-  `((name . "Iosevka")
-    (package . ,font-iosevka)))
-(define %serif-font
-  `((name . "Iosevka Etoile")
-    (package . ,font-iosevka-etoile)))
-(define %sans-font
-  `((name . "Iosevka Aile")
-    (package . ,font-iosevka-aile)))
-(define %unicode-font
-  `((name . "Noto Emoji")
-    (package . ,font-google-noto-emoji)))
+(define %mbsync
+  (specification->package "isync"))
 
-(define %add-font-packages
-  (simple-service
-   'add-extra-fonts
-   home-profile-service-type
-   (map (lambda (f) (assq-ref f 'package))
-        (list %monospace-font %serif-font %sans-font %unicode-font))))
+(define %mbsync-bin
+  (file-append %mbsync "/bin/mbsync"))
 
-(define %fontconfig-service
-  (simple-service
-   'add-fontconfig-font-families
-   home-fontconfig-service-type
-   (list
-    `(alias
-      (family "sans-serif")
-      (prefer
-       (family ,(assq-ref %sans-font 'name))))
-    `(alias
-      (family "serif")
-      (prefer
-       (family ,(assq-ref %serif-font 'name))))
-    `(alias
-      (family "monospace")
-      (prefer
-       (family ,(assq-ref %monospace-font 'name))))
-    `(alias
-      (family "emoji")
-      (prefer
-       (family ,(assq-ref %unicode-font 'name)))))))
+(define %notmuch
+  (specification->package "notmuch"))
 
-;; Git, GPG, SSH
+(define %notmuch-bin
+  (file-append %notmuch "/bin/notmuch"))
 
+(define email-services
+  (list
+   (simple-service 'add-email-packages
+                   home-profile-service-type
+                   (cons* %mbsync %notmuch
+                          (specifications->packages
+                           '("msmtp"))))
+   (simple-service 'mcron-jobs
+                   home-mcron-service-type
+                   (list
+                    #~(job '(next-minute (range 0 60 5))
+                           (lambda ()
+                             (system* #$%mbsync-bin "-Va"))
+                           "mbsync")
+                    #~(job '(next-minute (range 1 60 5))
+                           (lambda ()
+                             (system* #$%notmuch-bin "new"))
+                           "notmuch")))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Backups
 
-(define %syncthing-service
-  (simple-service 'syncthing
-                  home-syncthing-service-type
-                  (syncthing-configuration
-                   (user "jake"))))
+(define backup-services
+  (list
+   (simple-service 'syncthing
+                   home-syncthing-service-type
+                   (syncthing-configuration
+                    (user "jake")))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Fonts
 
+(define font-services
+  (list (simple-service
+         'add-extra-fonts
+         home-profile-service-type
+         (list font-iosevka font-iosevka-etoile font-google-noto-emoji))
+        (simple-service
+         'add-fontconfig-font-families
+         home-fontconfig-service-type
+         (list
+          `(alias
+            (family "sans-serif")
+            (prefer
+             (family "Iosevka Aile")))
+          `(alias
+            (family "serif")
+            (prefer
+             (family "Iosevka Etoile")))
+          `(alias
+            (family "monospace")
+            (prefer
+             (family "Iosevka")))
+          `(alias
+            (family "emoji")
+            (prefer
+             (family "Noto Emoji")))))))
 
-(define %mcron-jobs-service
-  (simple-service 'mcron-jobs
-                  home-mcron-service-type
-                  (list
-                   #~(job '(next-minute (range 0 60 5))
-                          (lambda ()
-                            (system* "mbsync" "-Va"))
-                          "mbsync")
-                   #~(job '(next-minute (range 1 60 5))
-                          (lambda ()
-                            (system* "notmuch" "new"))
-                          "notmuch"))))
-
-(define %home-services
-  (append
-   (list %mcron-jobs-service
-         %syncthing-service
-         %add-font-packages
-         %fontconfig-service)
-   dotfile-services
-   guix-core-services
-   shell-services
-   emacs-services))
-
-(define %home-packages
-  (append (list
-           (@ (config packages node-xyz) devcontainers-cli-0.72.0))
-          (specifications->packages
-           (list
-           "guile-colorized"
-           "guile-next"
-           "guile-readline"
-           "tree-sitter-haskell"
-           "tree-sitter-python"
-           "tree-sitter-javascript"
-           "tree-sitter-typescript"
-           "tree-sitter-css"
-           "tree-sitter-bash"
-           "tree-sitter-dockerfile"
-           "tree-sitter-json"
-           "tree-sitter-markdown"
-           "tree-sitter-markdown-gfm"
-           "tree-sitter-nix"
-           "tree-sitter-org"
-           "tree-sitter-scheme"
-           "tree-sitter-latex"
-           "tree-sitter-html"
-           "direnv"
-           "font-gnu-unifont"
-           "font-liberation"
-           "isync"
-           "msmtp"
-           "notmuch"))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Home Environment
 
 (define-public he
   (home-environment
-   (services %home-services)
-   (packages %home-packages)))
+   (services (append
+              backup-services
+              email-services
+              font-services
+              dotfile-services
+              guix-core-services
+              shell-services
+              emacs-services))))
 
 he
