@@ -208,6 +208,32 @@
 ;;; Appearance
 ;;;
 
+(use-package emacs
+  :init
+  (set-default 'cursor-type '(bar . 1))
+  (setq-default cursor-in-non-selected-windows nil)
+  (setq bookmark-set-fringe-mark nil)
+  (set-frame-parameter (selected-frame) 'internal-border-width 8)
+  (setq window-divider-default-right-width 8)
+  :hook
+  (after-init-hook . window-divider-mode))
+
+(use-package menu-bar
+  :config
+  (menu-bar-mode 0))
+
+(use-package tool-bar
+  :config
+  (tool-bar-mode 0))
+
+(use-package scroll-bar
+  :config
+  (scroll-bar-mode 0))
+
+(use-package fringe
+  :config
+  (set-fringe-mode 8))
+
 (use-package fontset
   :init
   (setq use-default-font-for-symbols nil)
@@ -322,9 +348,20 @@
   (prog-mode-hook . (lambda () (whitespace-mode +1)))
   (text-mode-hook . (lambda () (whitespace-mode -1))))
 
+(use-package modus-themes
+  :init
+  (load-theme 'modus-vivendi t (not (display-graphic-p)))
+  :hook
+  (server-after-make-frame-hook . (lambda ()
+                                    (enable-theme 'modus-vivendi))))
+
 ;;;
 ;;; Completion
 ;;;
+
+(use-package vertico
+  :hook
+  (after-init-hook .vertico-mode))
 
 (use-package consult
   :bind ;; C-c bindings (mode-specific-map)
