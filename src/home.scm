@@ -17,7 +17,6 @@
              (gnu home services xdg)
              (gnu home services mcron)
              (gnu home services syncthing)
-             (gnu home-services version-control)
              (gnu home services gnupg)
 
              (gnu packages)
@@ -165,6 +164,12 @@
                "[ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && source \"$EAT_SHELL_INTEGRATION_DIR/bash\"\n"
                "[[ -f " %bash-completion-file " ]] && source " %bash-completion-file "\n")
               (mixed-text-file
+               "pyenv"
+               "# PyEnv\n"
+               "export PYENV_ROOT=\"${HOME}/.pyenv\"\n"
+               "[[ -d \"${PYENV_ROOT}/bin\" ]] && export PATH=\"${PYENV_ROOT}/bin:${PATH}\"\n"
+               "eval \"$(pyenv init - bash)\"\n")
+              (mixed-text-file
                "fzf-setup"
                "# FZF Shell Integration\n"
                "eval $(fzf --bash)\n")))))
@@ -290,7 +295,7 @@
      "emacs-org-super-agenda"
      "emacs-org-roam"
      "emacs-citar-org-roam"
-     "emacs-zotra"
+     ;; "emacs-zotra"
 
      ;; Tree Sitter Grammars
      "tree-sitter-haskell"
