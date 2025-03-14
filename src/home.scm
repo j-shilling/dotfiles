@@ -100,16 +100,17 @@
                    `(("GUIX_LOCPATH" . ,(file-append %locale "/lib/locale"))
                      ("SSL_CERT_DIR" . ,(file-append nss-certs "/etc/ssl/certs"))
                      ("SSL_CERT_FILE" . "${GUIX_PROFILE}/etc/ssl/certs/ca-certificates.crt")))
-   (simple-service 'run-guix-repl
-                   home-shepherd-service-type
-                   (list (shepherd-service
-                            (provision '(guix-repl))
-                            (start #~(make-forkexec-constructor
-                                      (list
-                                       #$(file-append %guix "/bin/guix") "repl" "--listen=tcp:37146")
-                                      #:environment-variables (cons "INSIDE_EMACS=1")))
-                            (stop #~(make-kill-destructor))
-                            (documentation "REPL to me, like lovers do"))))))
+   ;; (simple-service 'run-guix-repl
+   ;;                 home-shepherd-service-type
+   ;;                 (list (shepherd-service
+   ;;                          (provision '(guix-repl))
+   ;;                          (start #~(make-forkexec-constructor
+   ;;                                    (list
+   ;;                                     #$(file-append %guix "/bin/guix") "repl" "--listen=tcp:37146")
+   ;;                                    #:environment-variables (cons "INSIDE_EMACS=1")))
+   ;;                          (stop #~(make-kill-destructor))
+   ;;                          (documentation "REPL to me, like lovers do"))))
+   ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XDG + Shell
@@ -141,7 +142,7 @@
              '(("HISTFILE" . "$XDG_CACHE_HOME/.bash_history")
                ("HISTFILESIZE" . "100000")
                ("HISTIGNORE" . "ls:exit:history:clear")
-               ("PASSWORD_STORE" . "$XDG_STATE_HOME/password-store")))
+               ("PASSWORD_STORE_DIR" . "$XDG_STATE_HOME/password-store")))
             (bashrc
              (list
               (mixed-text-file
@@ -276,6 +277,20 @@
      "emacs-vertico"
      "emacs-orderless"
      "emacs-helpful"
+     "emacs-org"
+     "emacs-org-contrib"
+     "emacs-ox-html-stable-ids"
+     "emacs-olivetti"
+     "emacs-org-appear"
+     "emacs-org-modern"
+     "emacs-notmuch"
+     "emacs-ol-notmuch"
+     "emacs-terraform-mode"
+     "emacs-org-wild-notifier"
+     "emacs-org-super-agenda"
+     "emacs-org-roam"
+     "emacs-citar-org-roam"
+     "emacs-zotra"
 
      ;; Tree Sitter Grammars
      "tree-sitter-haskell"
@@ -299,28 +314,29 @@
    (simple-service 'add-emacs-packages
                    home-profile-service-type
                    (cons* %emacs %elisp-packages))
-   (simple-service 'add-emacs-server
-                   home-shepherd-service-type
-                   (list
-                    (shepherd-service
-                     (documentation
-                      "Emacs server.  Use @code{emacsclient} to connect to it.")
-                     (provision '(emacs-server))
-                     (modules '((shepherd support)))
-                     (start #~(make-systemd-constructor
-                               (list #$(file-append %emacs "/bin/emacs") "--fg-daemon")
-                               (list (endpoint
-                                      (make-socket-address
-                                       AF_UNIX
-                                       (string-append %user-runtime-dir
-                                                      "/emacs/server"))
-                                      #:name 'emacs-server
-                                      #:socket-directory-permissions #o700))
-                               #:lazy-start? #false
-                               #:log-file (string-append
-                                           (getenv "XDG_STATE_HOME")
-                                           "/log/emacs-server.log")))
-                     (stop #~(make-systemd-destructor)))))))
+   ;; (simple-service 'add-emacs-server
+   ;;                 home-shepherd-service-type
+   ;;                 (list
+   ;;                  (shepherd-service
+   ;;                   (documentation
+   ;;                    "Emacs server.  Use @code{emacsclient} to connect to it.")
+   ;;                   (provision '(emacs-server))
+   ;;                   (modules '((shepherd support)))
+   ;;                   (start #~(make-systemd-constructor
+   ;;                             (list #$(file-append %emacs "/bin/emacs") "--fg-daemon")
+   ;;                             (list (endpoint
+   ;;                                    (make-socket-address
+   ;;                                     AF_UNIX
+   ;;                                     (string-append %user-runtime-dir
+   ;;                                                    "/emacs/server"))
+   ;;                                    #:name 'emacs-server
+   ;;                                    #:socket-directory-permissions #o700))
+   ;;                             #:lazy-start? #false
+   ;;                             #:log-file (string-append
+   ;;                                         (getenv "XDG_STATE_HOME")
+   ;;                                         "/log/emacs-server.log")))
+   ;;                   (stop #~(make-systemd-destructor)))))
+   ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Email

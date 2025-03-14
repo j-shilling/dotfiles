@@ -25,7 +25,8 @@
 ;;;
 
 (eval-when-compile
-  (require 'use-package))
+  (require 'use-package)
+  (require 'xdg))
 
 (eval-and-compile
   (require 'diminish)
@@ -586,6 +587,160 @@
   (grep-setup-hook . 'wgrep-setup))
 
 ;;;
+;;; Org
+;;;
+
+(use-package org
+  :custom
+  (org-M-RET-may-split-line '((default . nil)))
+  (org-insert-heading-respect-content t)
+  (org-adapt-indentation nil)
+  (org-startup-indented nil)
+  (org-ellipsis "⤵")
+  (org-hide-emphasis-markers t)
+  (org-log-into-drawer t)
+  (org-default-notes-file (concat org-directory "/todo.org")))
+
+(use-package org-src
+  :custom
+  (org-edit-src-content-indentation 0))
+
+(use-package org-refile
+  :custom
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-use-outline-path 'full-file-path)
+  (org-refile-allow-creating-parent-nodes 'confirm)
+  (org-refile-targets `((nil . (:maxlevel . 3))
+                        (org-agenda-files . (:maxlevel . 3)))))
+
+(use-package org-id
+  :custom
+  (org-id-locations-file (concat (xdg-cache-home) "/emacs/org-id-locations")))
+
+(use-package org-capture
+  :bind
+  (:map mode-specific-map
+        ("c" . org-capture)))
+
+(use-package ox-html-stable-ids
+  :after ox-html
+  :config
+  (org-html-stable-ids-add))
+
+(use-package ol-notmuch
+  :after notmuch)
+
+(use-package org-modern
+  :custom
+  (org-modern-todo nil)
+  (org-modern-timestamp nil)
+  (org-modern-statistics nil)
+  (org-modern-tag nil)
+  (org-modern-priority nil)
+  (org-modern-hide-stars nil)
+  (org-hide-leading-stars t)
+  :hook
+  (after-init-hook . global-org-modern-mode))
+
+(use-package olivetti-mode
+  :hook
+  (org-mode-hook . olivetti-mode))
+
+(let*
+    ((init-org-super-agenda-config
+      `((org-super-agenda-unmatched-name 'none)
+        (org-super-agenda-unmatched-order 5)
+        (org-super-agenda-header-separator "\n")
+        (org-super-agenda-groups
+         `((:name "Clocked today"
+                  :log t
+                  :order 100)
+           (:name none
+                  :todo ("IDEA")
+                  :order 1)
+           (:name none
+                  :todo ("PROJ")
+                  :order 2)
+           (:name none
+                  :todo ,org-done-keywords-for-agenda
+                  :order 10)))))
+     (init-org-agenda-custom-commands
+      `(((kbd "C-d") "Agenda for the day"
+         ((agenda
+           ""
+           ((org-agenda-span 1)
+            (org-agenda-scheduled-leaders '("" "Sched.%2dx: "))
+            (org-agenda-block-separator nil)
+            (org-scheduled-past-days 0)
+            ,@init-org-super-agenda-config
+            (org-agenda-day-face-function (lambda (date) 'org-agenda-date))
+            (org-agenda-format-date "%A %-e %B %Y")
+            (org-agenda-overriding-header "\nAgenda for the day\n")))
+          (todo
+           "NEXT"
+           ((org-agenda-block-separator nil)
+            (org-agenda-overriding-header "\nCurrent Tasks\n")))))
+        (list
+         (kbd "C-o") "Overview"
+         ((agenda
+           "*"
+           ((org-agenda-scheduled-leaders '("" "Sched. %2dx:"))
+            ,@init-org-super-agenda-config
+            (org-agenda-block-separator nil)
+            (org-agenda-span 14)
+            (org-agenda-show-future-repeats nil)
+            (org-agenda-skip-deadline-prewarning-if-scheduled t)
+            (org-agenda-overriding-header "\nAgenda\n")))
+          (agenda
+           ""
+           ((org-agenda-start-on-weekday nil)
+            (org-agenda-start-day "+1d")
+            (org-agenda-span 14)
+            (org-agenda-show-all-dates nil)
+            (org-agenda-time-grid nil)
+            (org-agenda-show-future-repeats nil)
+            (org-agenda-block-separator nil)
+            (org-agenda-entry-types '(:deadline))
+            (org-agenda-skip-function '(org-agenda-skip-entry-if 'done))
+            (org-agenda-overriding-header "\nUpcoming deadlines (+14d)\n")))
+          (alltodo
+           ""
+           ((org-agenda-block-separator nil)
+            (org-agenda-skip-function '(or (org-agenda-skip-if nil '(scheduled))))
+            ,@init-org-super-agenda-config
+            (org-agenda-overriding-header "\nBacklog\n"))))))))
+  (use-package org-agenda
+    :custom
+    (org-agenda-custom-commands init-org-agenda-custom-commands)
+    (org-agenda-tags-column 0)
+    (org-agenda-sticky t)
+    (org-agenda-block-separator ?-)
+    (org-agenda-time-grid '((daily today require-timed)
+                            (800 1000 1200 1400 1600 1800 2000)
+                            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+    (org-agenda-current-time-string
+     "⭠ now ─────────────────────────────────────────────────")
+    (org-agenda-start-with-log-mode t)
+    (org-agenda-dim-blocked-tasks t)
+    (org-agenda-skip-scheduled-if-done nil)
+    (org-agenda-skip-deadline-if-done nil)
+    (org-agenda-compact-blocks nil)
+    (org-agenda-log-mode-add-notes nil)
+    (org-agenda-bulk-custom-functions
+     '((?P (lambda nil
+             (org-agenda-priority 'set)))))))
+
+(use-package org-super-agenda-mode
+  :after org-agenda
+  :config
+  (org-super-agenda-mode))
+
+;; TODO: org-roam
+;; TODO: org-roam-todo
+;; TODO; zotra
+;; TODO: citar-org-roam
+
+;;;
 ;;; Tools
 ;;;
 
@@ -594,6 +749,16 @@
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
    ("C-h k" . helpful-key)))
+
+(use-package devdocs
+  :bind
+  (("C-h D" . devdocs-lookup)))
+
+(use-package pinentry
+  :custom
+  (epa-pinentry-mode 'loopback)
+  :hook
+  (after-init-hook . pinentry-start))
 
 (use-package pass
   :commands pass)
