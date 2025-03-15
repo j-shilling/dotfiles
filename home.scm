@@ -4,6 +4,7 @@
              (guix channels)
              (guix gexp)
 
+             (gnu)
              (gnu services)
 
              (gnu home)
@@ -101,11 +102,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; XDG + Shell
 
-(define %bash-completion
-  (specification->package "bash-completion"))
+(use-package-modules bash)
 
 (define %bash-completion-file
-  (file-append %bash-completion "/share/bash-completion/bash_completion"))
+  (file-append bash-completion "/share/bash-completion/bash_completion"))
 
 (define shell-services
   (list
@@ -121,7 +121,7 @@
    ;; Bash
    (simple-service 'add-bash-completion
                    home-profile-service-type
-                   (list %bash-completion))
+                   (list bash-completion))
    (service home-bash-service-type
            (home-bash-configuration
             (environment-variables
@@ -222,83 +222,89 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs
 
+(use-package-modules emacs
+                     emacs-xyz
+                     tree-sitter
+                     rust-apps ;; emacs-lsp-booster
+                     mail)
+
 (define %emacs
   (if wayland? emacs-pgtk emacs))
 
 (define %elisp-packages
-  (specifications->packages
-   '("emacs-geiser"
-     "emacs-geiser-guile"
-     "emacs-which-key"
-     "emacs-corfu"
-     "emacs-apheleia"
-     "emacs-pinentry"
-     "emacs-guix"
-     "emacs-pyvenv"
-     "emacs-pass"
-     "emacs-smartparens"
-     "emacs-haskell-mode"
-     "emacs-haskell-snippets"
-     "emacs-diminish"
-     "emacs-marginalia"
-     "emacs-ligature"
-     "emacs-wgrep"
-     "emacs-multiple-cursors"
-     "emacs-vlf"
-     "emacs-so-long"
-     "emacs-gcmh"
-     "emacs-yaml-mode"
-     "emacs-no-littering"
-     "emacs-apheleia"
-     "emacs-diff-hl"
-     "emacs-diredfl"
-     "emacs-consult-notmuch"
-     "emacs-consult-dir"
-     "emacs-consult-org-roam"
-     "emacs-consult-yasnippet"
-     "emacs-devdocs"
-     "emacs-web-mode"
-     "emacs-lsp-booster"
-     "emacs-eglot-booster"
-     "emacs-envrc"
-     "emacs-fontaine"
-     "emacs-eat"
-     "emacs-modus-themes"
-     "emacs-eshell-syntax-highlighting"
-     "emacs-vertico"
-     "emacs-orderless"
-     "emacs-helpful"
-     "emacs-org"
-     "emacs-org-contrib"
-     "emacs-ox-html-stable-ids"
-     "emacs-olivetti"
-     "emacs-org-appear"
-     "emacs-org-modern"
-     "emacs-notmuch"
-     "emacs-ol-notmuch"
-     "emacs-terraform-mode"
-     "emacs-org-wild-notifier"
-     "emacs-org-super-agenda"
-     "emacs-org-roam"
-     "emacs-citar-org-roam"
-     ;; "emacs-zotra"
+  (list emacs-geiser
+        emacs-geiser-guile
+        emacs-which-key
+        emacs-corfu
+        emacs-apheleia
+        emacs-pinentry
+        emacs-guix
+        emacs-pyvenv
+        emacs-pass
+        emacs-smartparens
+        emacs-haskell-mode
+        emacs-haskell-snippets
+        emacs-diminish
+        emacs-marginalia
+        emacs-ligature
+        emacs-wgrep
+        emacs-multiple-cursors
+        emacs-vlf
+        emacs-so-long
+        emacs-gcmh
+        emacs-yaml-mode
+        emacs-no-littering
+        emacs-apheleia
+        emacs-diff-hl
+        emacs-diredfl
+        emacs-consult-notmuch
+        emacs-consult-dir
+        emacs-consult-org-roam
+        emacs-consult-yasnippet
+        emacs-devdocs
+        emacs-web-mode
+        emacs-lsp-booster
+        emacs-eglot-booster
+        emacs-envrc
+        emacs-fontaine
+        emacs-eat
+        emacs-modus-themes
+        emacs-eshell-syntax-highlighting
+        emacs-vertico
+        emacs-orderless
+        emacs-helpful
+        emacs-org
+        emacs-org-contrib
+        emacs-ox-html-stable-ids
+        emacs-olivetti
+        emacs-org-appear
+        emacs-org-modern
+        emacs-notmuch
+        emacs-ol-notmuch
+        emacs-terraform-mode
+        emacs-org-wild-notifier
+        emacs-org-super-agenda
+        emacs-org-roam
+        emacs-citar-org-roam
+        ;; emacs-zotra
 
-     ;; Tree Sitter Grammars
-     "tree-sitter-haskell"
-     "tree-sitter-python"
-     "tree-sitter-javascript"
-     "tree-sitter-typescript"
-     "tree-sitter-css"
-     "tree-sitter-bash"
-     "tree-sitter-dockerfile"
-     "tree-sitter-json"
-     "tree-sitter-markdown"
-     "tree-sitter-markdown-gfm"
-     "tree-sitter-nix"
-     "tree-sitter-org"
-     "tree-sitter-scheme"
-     "tree-sitter-latex"
-     "tree-sitter-html")))
+        ;; Tree Sitter Grammars
+        tree-sitter-haskell
+        tree-sitter-python
+        tree-sitter-javascript
+        tree-sitter-typescript
+        tree-sitter-css
+        tree-sitter-bash
+        tree-sitter-dockerfile
+        tree-sitter-json
+        tree-sitter-markdown
+        tree-sitter-markdown-gfm
+        tree-sitter-nix
+        tree-sitter-org
+        tree-sitter-scheme
+        tree-sitter-latex
+        tree-sitter-html
+        (@ (my packages tree-sitter) tree-sitter-yaml)))
 
 (define emacs-services
   (list
