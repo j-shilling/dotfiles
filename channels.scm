@@ -1,7 +1,17 @@
 (use-modules (guix ci)
              (guix channels))
 
+(define current-directory
+  (string-append "file://"
+                 (if (current-filename)
+                     (dirname (current-filename))
+                     (string-append (getenv "HOME")
+                                    "/dotfiles/"))))
+
 (list
+ (channel
+  (name 'my)
+  (url current-directory))
  (channel
   (name 'guix)
   (url "https://codeberg.org/guix/guix-mirror.git")

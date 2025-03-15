@@ -5,8 +5,8 @@
 
 (define-public python-3.11
   (package
-    (inherit python-3.10)
-    (name "python3.11")
+    (inherit python-3.12)
+    (name "python")
     (version "3.11.9")
     (source (origin
               (inherit (package-source python-3.10))
@@ -14,7 +14,4 @@
                                   version "/Python-" version ".tar.xz"))
               (sha256
                (base32
-                "11svljymlyx5rmcxmjvak0g3s2inv43491kc2a8hclgw4djqj7lv"))
-              (patches '())))))
-
-python-3.11
+                "11svljymlyx5rmcxmjvak0g3s2inv43491kc2a8hclgw4djqj7lv"))))))
