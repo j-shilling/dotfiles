@@ -1,5 +1,5 @@
 # Local File Paths
-SRC_DIR=./src
+SRC_DIR=./
 CONFIG=${SRC_DIR}/home.scm
 CHANNEL_FILE=./channels.scm
 CHANNEL_LOCK_FILE=./channels-lock.scm
@@ -40,22 +40,10 @@ debug-init: guix $(CONFIG)
 	$(GUIXTM) -- home container --network \
 		$(CONFIG) -- emacs --debug-init
 
-
 .PHONY=apply
 apply: guix $(CONFIG)
 	$(GUIXTM) -- home reconfigure --allow-downgrades $(CONFIG)
 
 .PHONY=repl
-repl: export GUILE_AUTO_COMPILE=0
-repl: export GUILE_LOAD_COMPILED_PATH=0
 repl:
-	$(GUIXTM) -- shell \
-	guile-next guile-ares-rs guile-gnutls guile-avahi guile-gcrypt \
-	guile-json guile-lib guile-semver guile-sqlite3 guile-ssh guile-git \
-	guile-zlib guile-lzlib guile-zstd \
-	-- \
-	guix repl ares.scm
-
-.PHONY=repl
-guix-repl:
-	INSIDE_EMACS=true guix repl -L ./src --listen=tcp:37146
+	INSIDE_EMACS=true $(GUIXTM) -- repl -q --listen=tcp:37146

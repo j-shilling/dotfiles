@@ -41,4 +41,10 @@
                 (delete-file "src/tree_sitter/parser.h")))
             '#$grammar-directories))))))
 
-tree-sitter-astro
+(define-public tree-sitter-yaml
+  (tree-sitter-grammar
+   "yaml" "Yaml"
+   "1ay4snkd2s4pid7pcr4bgx0y9cj7b5vlgd7wfc1j0896l0p61cjb"
+   "0.5.0"
+   #:repository-url "https://github.com/emturner/tree-sitter-yaml"
+   #:commit "f53859209fef065b677995802842a2b65314defb"))

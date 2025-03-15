@@ -43,19 +43,6 @@
       (canonicalize-path
        (string-append root "/" path))))
 
-(define %shepherd-service
-  (service home-shepherd-service-type
-           (home-shepherd-configuration
-            (services
-             (list (shepherd-service
-                    (provision '(guix-repl))
-                    (start #~(make-forkexec-constructor
-                              (list
-                               "/home/jake/.config/guix/current/bin/guix" "repl" "--listen=tcp:37146")
-                              #:environment-variables (cons "INSIDE_EMACS=1")))
-                    (stop #~(make-kill-destructor))
-                    (documentation "REPL to me, like lovers do")))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dotfiles
 
