@@ -1,4 +1,4 @@
-(define-module (config packages tree-sitter)
+(define-module (my packages tree-sitter)
   #:use-module (guix build-system tree-sitter)
   #:use-module (gnu packages tree-sitter)
   #:use-module (guix gexp)

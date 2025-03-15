@@ -1,4 +1,4 @@
-(define-module (config packages node-xyz)
+(define-module (my packages node-xyz)
   #:use-module (gnu packages base)
   #:use-module (guix packages)
   #:use-module (guix build-system node)

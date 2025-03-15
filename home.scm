@@ -92,7 +92,7 @@
    ;;                          (provision '(guix-repl))
    ;;                          (start #~(make-forkexec-constructor
    ;;                                    (list
-   ;;                                     #$(file-append %guix "/bin/guix") "repl" "--listen=tcp:37146")
+   ;;                                     #$(file-append %guix "/bin/guix") "repl" "-q" "--listen=tcp:37146")
    ;;                                    #:environment-variables (cons "INSIDE_EMACS=1")))
    ;;                          (stop #~(make-kill-destructor))
    ;;                          (documentation "REPL to me, like lovers do"))))
@@ -191,7 +191,6 @@
    ;; GnuPG
    (service home-gpg-agent-service-type
             (home-gpg-agent-configuration
-
              (extra-content
               (string-join (list "allow-emacs-pinentry"
                                  "allow-loopback-pinentry")

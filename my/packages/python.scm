@@ -1,4 +1,4 @@
-(define-module (config packages python)
+(define-module (my packages python)
   #:use-module (guix packages)
   #:use-module (guix gexp)
   #:use-module (gnu packages python))

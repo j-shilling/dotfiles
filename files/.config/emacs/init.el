@@ -835,7 +835,8 @@
                             "flatpak"
                             "docker"
                             "docker-compose"
-                            "devcontainer"))
+                            "devcontainer"
+                            "guix"))
   (eshell-scroll-to-bottom-on-input 'all)
   (eshell-scroll-to-bottom-on-output'all)
   (eshell-kill-processes-on-exit t)
