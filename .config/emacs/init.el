@@ -9,6 +9,29 @@
 ;;; Code:
 
 ;;;
+;;; Straight Bootstrapping
+;;;
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(straight-use-package 'diminish)
+
+;;;
 ;;; System Information
 ;;;
 
@@ -30,14 +53,11 @@
 
 (eval-and-compile
   (require 'diminish)
-  ;; Currently experimenting with having Nix/Guix install emacs
-  ;; packages, so I want to disable the ensure function.
-  (setq use-package-ensure-function
-        (lambda (&rest _) t))
   ;; I get confused about the actual names of hook vars when they
   ;; aren't typed out.
   (setq use-package-hook-name-suffix nil)
-  (setq use-package-always-defer t))
+  (setq use-package-always-defer t)
+  (setq use-package-always-ensure t))
 
 (if init-file-debug
     (setq use-package-verbose t
@@ -48,22 +68,22 @@
 
 ;; Keep files out of `user-emacs-directory'
 ;; https://github.com/emacscollective/no-littering
-(use-package no-littering
-  :defines (no-littering-etc-directory no-littering-var-directory)
-  :init
-  (setq no-littering-var-directory
-        (expand-file-name "emacs"
-                          (or (when IS-WINDOWS
-                                (getenv "LOCALAPPDATA"))
-                              (getenv "XDG_CACHE_HOME")
-                              "~/.cache"))
-        no-littering-etc-directory
-        (expand-file-name "emacs"
-                          (or (when IS-WINDOWS
-                                (getenv "APPDATA"))
-                              (getenv "XDG_CONFIG_HOME")
-                              "~/.config/emacs/etc")))
-  (require 'no-littering))
+;; (use-package no-littering
+;;   :defines (no-littering-etc-directory no-littering-var-directory)
+;;   :init
+;;   (setq no-littering-var-directory
+;;         (expand-file-name "emacs"
+;;                           (or (when IS-WINDOWS
+;;                                 (getenv "LOCALAPPDATA"))
+;;                               (getenv "XDG_CACHE_HOME")
+;;                               "~/.cache"))
+;;         no-littering-etc-directory
+;;         (expand-file-name "emacs"
+;;                           (or (when IS-WINDOWS
+;;                                 (getenv "APPDATA"))
+;;                               (getenv "XDG_CONFIG_HOME")
+;;                               "~/.config/emacs/etc")))
+;;   (require 'no-littering))
 
 ;;;
 ;;; Performance Stuff
@@ -87,13 +107,15 @@
 (use-package vlf
   :init
   ;; This sets-up all the autoloads and hooks
-  (require 'vlf-setup))
+  ;; (require 'vlf-setup)
+  )
 
 ;;;
 ;;; General Setup
 ;;;
 
 (use-package emacs
+  :ensure nil
   :custom
   (user-full-name    "Jake Shilling")
   (user-mail-address "shilling.jake@gmail.com")
@@ -224,18 +246,22 @@
   (after-init-hook . window-divider-mode))
 
 (use-package menu-bar
+  :ensure nil
   :config
   (menu-bar-mode 0))
 
 (use-package tool-bar
+  :ensure nil
   :config
   (tool-bar-mode 0))
 
 (use-package scroll-bar
+  :ensure nil
   :config
   (scroll-bar-mode 0))
 
 (use-package fringe
+  :ensure nil
   :config
   (set-fringe-mode 8))
 

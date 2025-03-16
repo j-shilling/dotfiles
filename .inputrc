@@ -1,0 +1,21 @@
+\e[A: history-search-backward
+\e[B: history-search-forward
+set bell-style none
+set bind-tty-special-chars on
+set blink-matching-paren on
+set colored-completion-prefix on
+set colored-stats on
+set completion-display-width 0
+set completion-ignore-case on
+set completion-map-case on
+set enable-bracketed-paste on
+set expand-tilde on
+set match-hidden-files on
+set show-all-if-ambiguous on
+set show-mode-in-prompt off
+set mark-symlinked-directories on
+set editing-mode emacs
+set keymap emacs
+set meta-flag on
+set convert-meta off
+set output-meta on
