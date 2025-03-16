@@ -31,6 +31,63 @@
 (straight-use-package 'use-package)
 (straight-use-package 'diminish)
 
+(dolist (pkg '(geiser
+               geiser-guile
+               which-key
+               corfu
+               magit
+               apheleia
+               pinentry
+               guix
+               pyvenv
+               pass
+               smartparens
+               haskell-mode
+               haskell-snippets
+               diminish
+               marginalia
+               ligature
+               wgrep
+               multiple-cursors
+               vlf
+               so-long
+               gcmh
+               yaml-mode
+               no-littering
+               apheleia
+               diff-hl
+               diredfl
+               consult-notmuch
+               consult-dir
+               consult-org-roam
+               consult-yasnippet
+               devdocs
+               web-mode
+                                        ;eglot-booster
+               envrc
+               fontaine
+               eat
+               modus-themes
+               eshell-syntax-highlighting
+               vertico
+               orderless
+               helpful
+               org
+               org-contrib
+                                        ;ox-html-stable-ids
+               olivetti
+               org-appear
+               org-modern
+               notmuch
+               ol-notmuch
+               terraform-mode
+               org-wild-notifier
+               org-super-agenda
+               org-roam
+               citar-org-roam))
+  (straight-use-package pkg))
+
+
 ;;;
 ;;; System Information
 ;;;
@@ -57,7 +114,7 @@
   ;; aren't typed out.
   (setq use-package-hook-name-suffix nil)
   (setq use-package-always-defer t)
-  (setq use-package-always-ensure t))
+  (setq use-package-always-ensure nil))
 
 (if init-file-debug
     (setq use-package-verbose t
