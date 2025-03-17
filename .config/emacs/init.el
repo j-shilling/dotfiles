@@ -55,6 +55,8 @@
         use-package-expand-minimally t))
 
 (use-package straight
+  :straight nil
+  :ensure nil
   :custom
   (straight-use-package-by-default t))
 
@@ -93,15 +95,8 @@
   :custom
   (user-full-name    "Jake Shilling")
   (user-mail-address "shilling.jake@gmail.com")
-
   (use-short-answers  t)
   (ring-bell-function #'ignore)
-
-
-  (bookmark-default-file (init--cache-file "bookmarks"))
-  (calc-settngs-file (init-))
-
-  
 
   (delete-by-moving-to-trash nil)
 
@@ -125,10 +120,6 @@
 
   (sentence-end-double-space nil)
 
-  (abbrev-file-name                 (init--state-file "abbrev.el"))
-  (auto-insert-directory            (init--state-file "auto-insert/"))
-  (auto-save-list-file-prefix       (init--cache-file "auto-save/sessions/"))
-  (bookmark-default-file            (init--cache-file "bookmark-default.el"))
   (calc-settings-file               (init--state-file "calc-settings.el"))
   (desktop-dirname                  (init--cache-file "desktop/"))
   (desktop-path                     (list desktop-dirname))
@@ -138,10 +129,6 @@
   (erc-dcc-get-default-directory    (init--cache-file "erc/dcc/"))
   (erc-log-channels-directory       (init--cache-file "erc/log-channels/"))
   (erc-startup-file-list            (list (init--state-file "erc/startup.el") (init--state-file "erc/startup") ".ercrc.el" ".ercrc"))
-  (eshell-aliases-file              (init--state-file "eshell/aliases"))
-  (eshell-directory-name            (init--cache-file "eshell/"))
-  (eshell-login-script              (init--state-file "eshell/login"))
-  (eshell-rc-script                 (init--state-file "eshell/rc"))
   (eudc-options-file                (init--state-file "eudc-options.el"))
   (eww-bookmarks-directory          (init--cache-file "eww/"))
   (filesets-menu-cache-file         (init--cache-file "filesets-menu-cache.el"))
@@ -237,6 +224,78 @@
   (kept-old-versions    6)
   (kept-new-versions    9))
 
+(use-package abbrev
+  :straight nil
+  :ensure nil
+  :custom
+  (abbrev-file-name (init--state-file "abbrev.el")))
+
+(use-package autoinsert
+  :custom
+  (auto-insert-directory (init--state-file "auto-insert/")))
+
+(use-package bookmark
+  :custom
+  (bookmark-default-file (init--cache-file "bookmark-default.el")))
+
+(use-package eshell
+  :custom
+  (eshell-aliases-file (init--state-file "eshell" "aliases"))
+  (eshell-directory-name (init--cache-file "eshell"))
+  (eshell-login-script (init--state-file "eshell" "login"))
+  (eshell-rc-script (init--state-file "eshell" "rc"))
+  (eshell-history-file-name (init--cache-file "eshell" "history"))
+  (eshell-modules-list '(eshell-alias
+                         eshell-banner
+                         eshell-cmpl
+                         eshell-dirs
+                         eshell-elecslash
+                         eshell-extpipe
+                         eshell-glob
+                         eshell-hist
+                         eshell-ls
+                         eshell-prompt
+                         eshell-script
+                         eshell-smart
+                         eshell-tramp
+                         eshell-unix
+                         eshell-xtra))
+  (eshell-visual-commands '("pnpm"
+                            "yarn"
+                            "npx"
+                            "flatpak"
+                            "docker"
+                            "docker-compose"
+                            "devcontainer"
+                            "guix"
+                            "terraform"))
+  (eshell-scroll-to-bottom-on-input 'all)
+  (eshell-scroll-to-bottom-on-output'all)
+  (eshell-kill-processes-on-exit t)
+  (eshell-hist-ignoredups t)
+  (eshell-glob-case-insensitive t)
+  (eshell-error-if-no-glob t)
+  :hook
+  (eshell-mode-hook . (lambda ()
+                        (setenv "TERM" "xterm-256color"))))
+
+(use-package eat
+  :straight '(eat :type git
+                  :host codeberg
+                  :repo "akib/emacs-eat"
+                  :files ("*.el" ("term" "term/*.el") "*.texi"
+                          "*.ti" ("terminfo/e" "terminfo/e/*")
+                          ("terminfo/65" "terminfo/65/*")
+                          ("integration" "integration/*")
+                          (:exclude ".dir-locals.el" "*-tests.el")))
+  :hook
+  (eshell-load-hook . eat-eshell-mode)
+  (eshell-load-hook . eat-eshell-visual-command-mode))
+
+(use-package eshell-syntax-highlighting
+  :hook
+  (eshell-mode-hook . eshell-syntax-highlighting-mode))
+
 ;;;
 ;;; General Setup
 ;;;
@@ -302,26 +361,32 @@
   (after-init-hook . window-divider-mode))
 
 (use-package menu-bar
+  :straight nil
   :ensure nil
   :config
   (menu-bar-mode 0))
 
 (use-package tool-bar
+  :straight nil
   :ensure nil
   :config
   (tool-bar-mode 0))
 
 (use-package scroll-bar
+  :straight nil
   :ensure nil
   :config
   (scroll-bar-mode 0))
 
 (use-package fringe
+  :straight nil
   :ensure nil
   :config
   (set-fringe-mode 8))
 
 (use-package fontset
+  :straight nil
+  :ensure nil
   :init
   (setq use-default-font-for-symbols nil)
   :config
@@ -417,6 +482,8 @@
                             "{|"  "[|"  "]#"  "(*"  "}#"  "$>"  "^=")))
 
 (use-package pixel-scroll
+  :straight nil
+  :ensure nil
   :diminish pixel-scroll-precision-mode
   :hook
   (after-init-hook . pixel-scroll-precision-mode))
@@ -468,6 +535,8 @@
   (after-init-hook .vertico-mode))
 
 (use-package vertico-multiform
+  :straight nil
+  :ensure nil
   :diminish vertico-multiform-mode
   :hook (vertico-mode-hook . vertico-multiform-mode)
   :init
@@ -564,6 +633,8 @@
   (advice-add #'register-preview :override #'consult-register-window))
 
 (use-package consult-imenu
+  :straight nil
+  :ensure nil
   :bind
   ("M-g i" . consult-imenu)
   ("M-g I" . consult-imenu-multi))
@@ -575,6 +646,8 @@
          ("C-x C-j" . consult-dir-jump-file)))
 
 (use-package minibuffer
+  :straight nil
+  :ensure nil
   :bind
   ("C-M-i" . completion-at-point))
 
@@ -598,11 +671,15 @@
   (after-init-hook . global-corfu-mode))
 
 (use-package corfu-history
+  :straight nil
+  :ensure nil
   :diminish corfu-history-mode
   :hook
   (corfu-mode-hook . corfu-history-mode))
 
 (use-package corfu-info
+  :straight nil
+  :ensure nil
   :defines corfu-mode-map
   :bind
   (:map corfu-mode-map
@@ -610,6 +687,8 @@
         ("M-h" . corfu-info-documentation)))
 
 (use-package corfu-popupinfo
+      :straight nil
+  :ensure nil
   :diminish corfu-popupinfo-mode
   :hook
   (corfu-mode-hook . corfu-popupinfo-mode))
@@ -628,6 +707,8 @@
   (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 (use-package abbrev
+      :straight nil
+  :ensure nil
   :custom
   (abbrev-file-name (init--state-file "abbrev.el")))
 
@@ -696,10 +777,14 @@
   (org-default-notes-file (concat org-directory "/todo.org")))
 
 (use-package org-src
+      :straight nil
+  :ensure nil
   :custom
   (org-edit-src-content-indentation 0))
 
 (use-package org-refile
+      :straight nil
+  :ensure nil
   :custom
   (org-outline-path-complete-in-steps nil)
   (org-refile-use-outline-path 'full-file-path)
@@ -708,15 +793,21 @@
                         (org-agenda-files . (:maxlevel . 3)))))
 
 (use-package org-id
+      :straight nil
+  :ensure nil
   :custom
   (org-id-locations-file (concat (xdg-cache-home) "/emacs/org-id-locations")))
 
 (use-package org-capture
+      :straight nil
+  :ensure nil
   :bind
   (:map mode-specific-map
         ("c" . org-capture)))
 
 (use-package ox-html-stable-ids
+      :straight nil
+    :ensure nil
   :after ox-html
   :config
   (org-html-stable-ids-add))
@@ -736,7 +827,7 @@
   :hook
   (after-init-hook . global-org-modern-mode))
 
-(use-package olivetti-mode
+(use-package olivetti
   :hook
   (org-mode-hook . olivetti-mode))
 
@@ -804,6 +895,8 @@
             ,@init-org-super-agenda-config
             (org-agenda-overriding-header "\nBacklog\n"))))))))
   (use-package org-agenda
+        :straight nil
+    :ensure nil
     :custom
     (org-agenda-custom-commands init-org-agenda-custom-commands)
     (org-agenda-tags-column 0)
@@ -824,7 +917,7 @@
      '((?P (lambda nil
              (org-agenda-priority 'set)))))))
 
-(use-package org-super-agenda-mode
+(use-package org-super-agenda
   :after org-agenda
   :config
   (org-super-agenda-mode))
@@ -886,6 +979,8 @@
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
 (use-package dired
+      :straight nil
+    :ensure nil
   :custom
   (dired-dwim-target t)
   (dired-hide-details-hide-symlink-targets nil)
@@ -912,47 +1007,9 @@
   :bind
   (("C-x C-b" . ibuffer)))
 
-(use-package eshell
-  :custom
-  (eshell-history-file-name (init--cache-file "eshell" "history"))
-  (eshell-modules-list '(eshell-alias
-                         eshell-banner
-                         eshell-cmpl
-                         eshell-dirs
-                         eshell-elecslash
-                         eshell-extpipe
-                         eshell-glob
-                         eshell-hist
-                         eshell-ls
-                         eshell-prompt
-                         eshell-script
-                         eshell-smart
-                         eshell-tramp
-                         eshell-unix
-                         eshell-xtra))
-  (eshell-visual-commands '("pnpm"
-                            "yarn"
-                            "npx"
-                            "flatpak"
-                            "docker"
-                            "docker-compose"
-                            "devcontainer"
-                            "guix"))
-  (eshell-scroll-to-bottom-on-input 'all)
-  (eshell-scroll-to-bottom-on-output'all)
-  (eshell-kill-processes-on-exit t)
-  (eshell-hist-ignoredups t)
-  (eshell-glob-case-insensitive t)
-  (eshell-error-if-no-glob t)
-  :hook
-  (eshell-mode-hook . (lambda ()
-                        (setenv "TERM" "xterm-256color")))
-  (eshell-load-hook . eat-eshell-mode)
-  (eshell-load-hook . eat-eshell-visual-command-mode))
 
-(use-package eshell-syntax-highlighting
-  :hook
-  (eshell-mode-hook . eshell-syntax-highlighting-mode))
+
+
 
 (use-package diff-hl
   :diminish (diff-hl-mode diff-hl-dir-mode)
@@ -963,6 +1020,8 @@
   (vc-dir-mode . diff-hl-dir-mode))
 
 (use-package diff-hl-dired
+      :straight nil
+    :ensure nil
   :diminish diff-hl-dired-mode
   :hook (dired-mode-hook . diff-hl-dired-mode))
 
@@ -993,6 +1052,8 @@
   (eldoc--echo-area-prefer-doc-buffer-p t))
 
 (use-package prog-mode
+      :straight nil
+    :ensure nil
   :hook
   (prog-mode-hook . prettify-symbols-mode))
 
@@ -1084,10 +1145,14 @@
         ("C-c C-d" . eldoc-doc-buffer)))
 
 (use-package eglot-booster
+      :straight nil
+    :ensure nil
   :after eglot
   :config (eglot-booster-mode))
 
 (use-package consult-xref
+      :straight nil
+    :ensure nil
   :autoload consult-xref
   :custom
   (xref-show-xrefs-function #'consult-xref)
@@ -1121,6 +1186,8 @@
   (typescript-ts-base-mode-hook . eglot-ensure))
 
 (use-package python-ts-mode
+      :straight nil
+    :ensure nil
   :mode "\\.py[iw]?\\'"
   :interpreter "python"
   :hook
@@ -1148,6 +1215,8 @@
   (haskell-mode-hook . eglot-ensure))
 
 (use-package haskell-cabal
+      :straight nil
+    :ensure nil
   :mode ("\\.cabal\\'" . haskell-cabal-mode))
 
 (use-package graphql-ts-mode
@@ -1166,6 +1235,7 @@
 
 ;; TODO: Update this to use astro-ts-mode instead
 
+(straight-use-package 'web-mode)
 (require 'web-mode)
 (define-derived-mode astro-mode web-mode "astro")
 (add-to-list 'auto-mode-alist '(".*\\.astro\\'" . astro-mode))
