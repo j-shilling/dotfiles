@@ -1,3 +1,11 @@
+#+TITLE: Literate Emacs Config
+#+AUTHOR: Jake Shilling
+#+EMAIL: shilling.jake@gmail.com
+#+PROPERTY: header-args :tangle ./.config/emacs/init.el
+
+* Config
+
+#+begin_src emacs-lisp
 ;;; init.el --- Initialization -*- lexical-binding: t -*-
 ;;;
 ;;; Commentary:
@@ -1234,3 +1242,8 @@
 
 
 ;;; init.el ends here
+#+end_src
+
+;; Local Variables: 
+;; eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t) 
+;; End:

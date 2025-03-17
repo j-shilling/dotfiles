@@ -1,0 +1,2 @@
+sudo add-apt-repository ppa:ubuntu-elisp/ppa
+sudo apt update
