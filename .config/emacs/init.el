@@ -20,10 +20,6 @@
 (defun init--cache-file (&rest args)
   (apply #'init--parts-to-path (xdg-cache-home) "emacs" args))
 
-;;;
-;;; Straight Bootstrapping
-;;;
-
 (setq straight-base-dir (init--state-file))
 
 (defvar bootstrap-version)
@@ -44,67 +40,23 @@
 
 (straight-use-package 'use-package)
 (straight-use-package 'diminish)
+(eval-when-compile
+  (require 'use-package))
 
-(dolist (pkg '(geiser
-               geiser-guile
-               which-key
-               corfu
-               magit
-               apheleia
-               pinentry
-               guix
-               pyvenv
-               pass
-               smartparens
-               haskell-mode
-               haskell-snippets
-               diminish
-               marginalia
-               ligature
-               wgrep
-               multiple-cursors
-               vlf
-               so-long
-               gcmh
-               yaml-mode
-               no-littering
-               apheleia
-               diff-hl
-               diredfl
-               consult-notmuch
-               consult-dir
-               consult-org-roam
-               consult-yasnippet
-               devdocs
-               web-mode
-                                        ;eglot-booster
-               envrc
-               fontaine
-               eat
-               modus-themes
-               eshell-syntax-highlighting
-               vertico
-               orderless
-               helpful
-               org
-               org-contrib
-                                        ;ox-html-stable-ids
-               olivetti
-               org-appear
-               org-modern
-               notmuch
-               ol-notmuch
-               terraform-mode
-               org-wild-notifier
-               org-super-agenda
-               org-roam
-               citar-org-roam))
-  (straight-use-package pkg))
+(setq use-package-hook-name-suffix nil
+      use-package-always-defer t
+      use-package-always-ensure t)
 
+(if init-file-debug
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
 
-;;;
-;;; System Information
-;;;
+(use-package straight
+  :custom
+  (straight-use-package-by-default t))
 
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -114,37 +66,15 @@
                           (string-match-p "Microsoft"
                                           (shell-command-to-string "uname -a"))))
 
-;;;
-;;; Setup package loading
-;;;
-
-(eval-when-compile
-  (require 'use-package))
-
-(require 'diminish)
-
-(setq use-package-hook-name-suffix nil
-      use-package-always-defer t
-      use-package-always-ensure nil)
-
-(if init-file-debug
-    (setq use-package-verbose t
-          use-package-expand-minimally nil
-          use-package-compute-statistics t)
-  (setq use-package-verbose nil
-        use-package-expand-minimally t))
-
-;;;
-;;; Performance Stuff
-;;;
-
-(setq auto-mode-case-fold nil)
-
-(setq bidi-inhibit-bpa t)
-(setq-default bidi-display-reordering 'left-to-right
-              bidi-paragraph-direction 'left-to-right)
-
-(setq jit-lock-defer-time 0)
+(use-package emacs
+  :straight nil
+  :custom
+  (auto-mode-case-fold nil)
+  :init
+  (setq bidi-inhibit-bpa t)
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
+  (setq jit-lock-defer-time 0))
 
 (use-package gcmh
   :diminish gcmh-mode
@@ -159,10 +89,6 @@
   (after-init-hook . (lambda ()
                        (require 'vlf-setup))))
 
-;;;
-;;; General Setup
-;;;
-
 (use-package emacs
   :custom
   (user-full-name    "Jake Shilling")
@@ -171,20 +97,11 @@
   (use-short-answers  t)
   (ring-bell-function #'ignore)
 
-  (auto-save-default  t)
-  (auto-save-timeout  20)
-  (auto-save-interval 200)
-  (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-"))
 
   (bookmark-default-file (init--cache-file "bookmarks"))
   (calc-settngs-file (init-))
 
-  (make-backup-files    t)
-  (vc-make-backup-files nil)
-  (backup-by-copying    t)
-  (version-control      t)
-  (kept-old-versions    6)
-  (kept-new-versions    9)
+  
 
   (delete-by-moving-to-trash nil)
 
@@ -302,6 +219,27 @@
           select-enable-primary nil
           interprogram-cut-function #'gui-select-text)))
 
+(use-package emacs
+  :straight nil
+  :custom
+  (auto-save-default  t)
+  (auto-save-timeout  20)
+  (auto-savye-interval 200)
+  (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-")))
+
+(use-package emacs
+  :straight nil
+  :custom
+  (make-backup-files    t)
+  (vc-make-backup-files nil)
+  (backup-by-copying    t)
+  (version-control      t)
+  (kept-old-versions    6)
+  (kept-new-versions    9))
+
+;;;
+;;; General Setup
+;;;
 (use-package so-long
   :diminish global-so-long-mode
   :hook
