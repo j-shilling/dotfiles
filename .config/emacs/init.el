@@ -20,6 +20,14 @@
 (defun init--cache-file (&rest args)
   (apply #'init--parts-to-path (xdg-cache-home) "emacs" args))
 
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+(defconst IS-WSL     (and IS-LINUX
+                          (string-match-p "Microsoft"
+                                          (shell-command-to-string "uname -a"))))
+
 (setq straight-base-dir (init--state-file))
 
 (defvar bootstrap-version)
@@ -60,22 +68,12 @@
   :custom
   (straight-use-package-by-default t))
 
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
-(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
-(defconst IS-WSL     (and IS-LINUX
-                          (string-match-p "Microsoft"
-                                          (shell-command-to-string "uname -a"))))
-
 (use-package emacs
   :straight nil
   :custom
   (auto-mode-case-fold nil)
   :init
   (setq bidi-inhibit-bpa t)
-  (setq-default bidi-display-reordering 'left-to-right
-                bidi-paragraph-direction 'left-to-right)
   (setq jit-lock-defer-time 0))
 
 (use-package gcmh
@@ -120,11 +118,8 @@
 
   (sentence-end-double-space nil)
 
-  (calc-settings-file               (init--state-file "calc-settings.el"))
-  (desktop-dirname                  (init--cache-file "desktop/"))
-  (desktop-path                     (list desktop-dirname))
-  (diary-file                       (init--cache-file "diary"))
   (ecomplete-database-file          (init--cache-file "ecomplete-database.el"))
+
   (ede-project-placeholder-cache-file (init--cache-file "ede-projects.el"))
   (erc-dcc-get-default-directory    (init--cache-file "erc/dcc/"))
   (erc-log-channels-directory       (init--cache-file "erc/log-channels/"))
@@ -181,7 +176,8 @@
   ;; (startup-redirect-eln-cache (init--cache-file "eln-cache"))
   (setq native-comp-jit-compilation nil)
   (setq custom-file nil)
-  (setq ring-bell-function #'ignore)
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
 
   (let ((encoding (if IS-WINDOWS
                       'utf-8-dos
@@ -214,6 +210,18 @@
   (auto-savye-interval 200)
   (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-")))
 
+(use-package desktop
+  :straight nil
+  :ensure nil
+  :custom
+  (desktop-path (init--cache-file "desktop/")))
+
+(use-package diary-lib
+  :straight nil
+  :ensure nil
+  :custom
+  (diary-file (init--cache-file "diary")))
+
 (use-package emacs
   :straight nil
   :custom
@@ -223,6 +231,12 @@
   (version-control      t)
   (kept-old-versions    6)
   (kept-new-versions    9))
+
+(use-package calc
+  :stright nil
+  :ensure nil
+  :custom
+  (calc-settings-file (init--state-file "calc-settings.el")))
 
 (use-package abbrev
   :straight nil
@@ -296,17 +310,10 @@
   :hook
   (eshell-mode-hook . eshell-syntax-highlighting-mode))
 
-;;;
-;;; General Setup
-;;;
 (use-package so-long
   :diminish global-so-long-mode
   :hook
   (after-init-hook . global-so-long-mode))
-
-;;;
-;;; History
-;;;
 
 (use-package recentf
   :diminish recentf-mode
@@ -345,10 +352,6 @@
   (save-place-forget-unreadable-files t)
   :hook
   (after-init-hook . save-place-mode))
-
-;;;
-;;; Appearance
-;;;
 
 (use-package emacs
   :init
@@ -519,10 +522,6 @@
   (server-after-make-frame-hook . (lambda ()
                                     (enable-theme 'modus-vivendi))))
 
-;;;
-;;; Completion
-;;;
-
 (setq completion-cycle-threshold nil)
 (setq enable-recursive-minibuffers t)
 (setq tab-always-indent 'complete)
@@ -687,7 +686,7 @@
         ("M-h" . corfu-info-documentation)))
 
 (use-package corfu-popupinfo
-      :straight nil
+  :straight nil
   :ensure nil
   :diminish corfu-popupinfo-mode
   :hook
@@ -707,14 +706,10 @@
   (embark-collect-mode-hook . consult-preview-at-point-mode))
 
 (use-package abbrev
-      :straight nil
+  :straight nil
   :ensure nil
   :custom
   (abbrev-file-name (init--state-file "abbrev.el")))
-
-;;;
-;;; Editing
-;;;
 
 (use-package autoinsert
   :custom
@@ -761,10 +756,6 @@
   :hook
   (grep-setup-hook . 'wgrep-setup))
 
-;;;
-;;; Org
-;;;
-
 (use-package org
   :custom
   (org-M-RET-may-split-line '((default . nil)))
@@ -777,13 +768,13 @@
   (org-default-notes-file (concat org-directory "/todo.org")))
 
 (use-package org-src
-      :straight nil
+  :straight nil
   :ensure nil
   :custom
   (org-edit-src-content-indentation 0))
 
 (use-package org-refile
-      :straight nil
+  :straight nil
   :ensure nil
   :custom
   (org-outline-path-complete-in-steps nil)
@@ -793,24 +784,17 @@
                         (org-agenda-files . (:maxlevel . 3)))))
 
 (use-package org-id
-      :straight nil
+  :straight nil
   :ensure nil
   :custom
   (org-id-locations-file (concat (xdg-cache-home) "/emacs/org-id-locations")))
 
 (use-package org-capture
-      :straight nil
+  :straight nil
   :ensure nil
   :bind
   (:map mode-specific-map
         ("c" . org-capture)))
-
-(use-package ox-html-stable-ids
-      :straight nil
-    :ensure nil
-  :after ox-html
-  :config
-  (org-html-stable-ids-add))
 
 (use-package ol-notmuch
   :after notmuch)
@@ -895,7 +879,7 @@
             ,@init-org-super-agenda-config
             (org-agenda-overriding-header "\nBacklog\n"))))))))
   (use-package org-agenda
-        :straight nil
+    :straight nil
     :ensure nil
     :custom
     (org-agenda-custom-commands init-org-agenda-custom-commands)
@@ -921,15 +905,6 @@
   :after org-agenda
   :config
   (org-super-agenda-mode))
-
-;; TODO: org-roam
-;; TODO: org-roam-todo
-;; TODO; zotra
-;; TODO: citar-org-roam
-
-;;;
-;;; Tools
-;;;
 
 (use-package helpful
   :bind
@@ -959,9 +934,6 @@
   :hook
   (after-init-hook . which-key-mode))
 
-(use-package envrc
-  :hook (after-init-hook . envrc-global-mode))
-
 (use-package tramp)
 
 (use-package transient
@@ -979,8 +951,8 @@
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
 (use-package dired
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :custom
   (dired-dwim-target t)
   (dired-hide-details-hide-symlink-targets nil)
@@ -1007,10 +979,6 @@
   :bind
   (("C-x C-b" . ibuffer)))
 
-
-
-
-
 (use-package diff-hl
   :diminish (diff-hl-mode diff-hl-dir-mode)
   :hook
@@ -1020,8 +988,8 @@
   (vc-dir-mode . diff-hl-dir-mode))
 
 (use-package diff-hl-dired
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :diminish diff-hl-dired-mode
   :hook (dired-mode-hook . diff-hl-dired-mode))
 
@@ -1036,10 +1004,6 @@
   :commands magit-todos-list
   :config (magit-todos-mode +1))
 
-;;;
-;;; General Programming
-;;;
-
 (use-package project
   :custom
   (project-list-buffers #'project-list-buffers-ibuffer)
@@ -1052,8 +1016,8 @@
   (eldoc--echo-area-prefer-doc-buffer-p t))
 
 (use-package prog-mode
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :hook
   (prog-mode-hook . prettify-symbols-mode))
 
@@ -1145,14 +1109,14 @@
         ("C-c C-d" . eldoc-doc-buffer)))
 
 (use-package eglot-booster
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :after eglot
   :config (eglot-booster-mode))
 
 (use-package consult-xref
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :autoload consult-xref
   :custom
   (xref-show-xrefs-function #'consult-xref)
@@ -1168,10 +1132,6 @@
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
 
-;;;
-;;; Language Specific
-;;;
-
 (use-package nix-ts-mode
   :mode "\\.nix\\'"
   :hook (nix-ts-mode-hook . eglot-ensure))
@@ -1186,8 +1146,8 @@
   (typescript-ts-base-mode-hook . eglot-ensure))
 
 (use-package python-ts-mode
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :mode "\\.py[iw]?\\'"
   :interpreter "python"
   :hook
@@ -1215,8 +1175,8 @@
   (haskell-mode-hook . eglot-ensure))
 
 (use-package haskell-cabal
-      :straight nil
-    :ensure nil
+  :straight nil
+  :ensure nil
   :mode ("\\.cabal\\'" . haskell-cabal-mode))
 
 (use-package graphql-ts-mode
@@ -1239,6 +1199,5 @@
 (require 'web-mode)
 (define-derived-mode astro-mode web-mode "astro")
 (add-to-list 'auto-mode-alist '(".*\\.astro\\'" . astro-mode))
-
 
 ;;; init.el ends here
