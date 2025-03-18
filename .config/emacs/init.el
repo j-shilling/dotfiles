@@ -70,6 +70,12 @@
 
 (use-package emacs
   :straight nil
+  :ensure nil
+  :custom
+  (auto-mode-case-fold nil))
+
+(use-package emacs
+  :straight nil
   :custom
   (auto-mode-case-fold nil)
   :init
@@ -233,7 +239,7 @@
   (kept-new-versions    9))
 
 (use-package calc
-  :stright nil
+  :straight nil
   :ensure nil
   :custom
   (calc-settings-file (init--state-file "calc-settings.el")))

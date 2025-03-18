@@ -15,6 +15,9 @@
 
 * General Utilities
 ** Path Functions
+
+I use these functions to place files outside of =user-emacs-directory=. Generally, I think of state files as ones that =no-littering= would put into =etc= and cache files as the ones that would be =var=. That leaves the main =user-emacs-directory= free to only hold files that would be checked into the =dotfiles= repo.
+
 #+begin_src emacs-lisp
 (require 'xdg)
 (require 'seq)
@@ -32,6 +35,9 @@
   (apply #'init--parts-to-path (xdg-cache-home) "emacs" args))
 #+end_src
 ** Basic System Info
+
+These were copied straight out of Doom a while back.
+
 #+begin_src emacs-lisp
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -97,7 +103,18 @@ Bootstrap straight:
 
 * Performance Optimizations
 
-- auto-mode-case-fold :: set to =nil= so prevent Emacs from searching through =auto-mode-alist= a second time. By default, A case-sensitive search is done first, then a case-insensitive one.
+** Auto Mode Case Fold
+
+By default, Emacs will search =auto-mode-alist= twice; first, looking for an exact match, then again trying doing a case-insensitive search. We are disabling that second pass:
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :straight nil
+  :ensure nil
+  :custom
+  (auto-mode-case-fold nil))
+#+end_src
+
 - bidi-inhibit-bpa ::  Disables a bidirectional paren algorithm that can slow down redisplay.
 
 ** TODO Learn about remaining settings
@@ -135,7 +152,6 @@ Bootstrap straight:
   (after-init-hook . (lambda ()
                        (require 'vlf-setup))))
 #+end_src
-
 
 * General Settings
 
@@ -266,7 +282,6 @@ Bootstrap straight:
   (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-")))
 #+end_src
 
-
 * Desktop Save Mode
 
 #+begin_src emacs-lisp
@@ -305,7 +320,7 @@ Bootstrap straight:
 
 #+begin_src emacs-lisp
 (use-package calc
-  :stright nil
+  :straight nil
   :ensure nil
   :custom
   (calc-settings-file (init--state-file "calc-settings.el")))
@@ -1202,7 +1217,6 @@ Yasnippet
   :config
   (org-super-agenda-mode))
 #+end_src
-
 
 * TODO: org-roam
 * TODO: org-roam-todo
