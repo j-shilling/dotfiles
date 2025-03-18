@@ -76,10 +76,15 @@
 
 (use-package emacs
   :straight nil
-  :custom
-  (auto-mode-case-fold nil)
+  :ensure nil
   :init
   (setq bidi-inhibit-bpa t)
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right))
+
+(use-package emacs
+  :straight nil
+  :ensure nil
   (setq jit-lock-defer-time 0))
 
 (use-package gcmh
@@ -182,8 +187,7 @@
   ;; (startup-redirect-eln-cache (init--cache-file "eln-cache"))
   (setq native-comp-jit-compilation nil)
   (setq custom-file nil)
-  (setq-default bidi-display-reordering 'left-to-right
-                bidi-paragraph-direction 'left-to-right)
+  
 
   (let ((encoding (if IS-WINDOWS
                       'utf-8-dos

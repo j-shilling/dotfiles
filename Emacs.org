@@ -115,24 +115,30 @@ By default, Emacs will search =auto-mode-alist= twice; first, looking for an exa
   (auto-mode-case-fold nil))
 #+end_src
 
-- bidi-inhibit-bpa ::  Disables a bidirectional paren algorithm that can slow down redisplay.
+** Bidirectional Editing
 
-** TODO Learn about remaining settings
-- bidi-display-reordering
-- bidi-paragraph-direction
-- jit-lock-defer-time
+I don't write in any languages that need right-to-left support, so I can go ahead and disable to parts of Emacs that support it:
 
 #+begin_src emacs-lisp
 (use-package emacs
   :straight nil
-  :custom
-  (auto-mode-case-fold nil)
+  :ensure nil
   :init
   (setq bidi-inhibit-bpa t)
-  (setq jit-lock-defer-time 0))
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right))
 #+end_src
  
-** gcmh
+** JIT
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :straight nil
+  :ensure nil
+  (setq jit-lock-defer-time 0))
+#+end_src
+
+** GCMH
 
 #+begin_src emacs-lisp
 (use-package gcmh
@@ -243,8 +249,7 @@ By default, Emacs will search =auto-mode-alist= twice; first, looking for an exa
   ;; (startup-redirect-eln-cache (init--cache-file "eln-cache"))
   (setq native-comp-jit-compilation nil)
   (setq custom-file nil)
-  (setq-default bidi-display-reordering 'left-to-right
-                bidi-paragraph-direction 'left-to-right)
+  
 
   (let ((encoding (if IS-WINDOWS
                       'utf-8-dos
