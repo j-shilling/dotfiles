@@ -85,6 +85,7 @@
 (use-package emacs
   :straight nil
   :ensure nil
+  :init
   (setq jit-lock-defer-time 0))
 
 (use-package gcmh
@@ -1143,10 +1144,12 @@
         ("M-p" . flymake-goto-prev-error)))
 
 (use-package nix-ts-mode
+  :if (treesit-available-p)
   :mode "\\.nix\\'"
   :hook (nix-ts-mode-hook . eglot-ensure))
 
 (use-package typescript-ts-mode
+  :if (treesit-available-p)
   :mode (("\\.[m]?ts\\'" . typescript-ts-mode)
          ("\\.[m]?js\\'" . typescript-ts-mode)
          ("\\.[m]?tsx?\\'" . tsx-ts-mode)
@@ -1156,6 +1159,7 @@
   (typescript-ts-base-mode-hook . eglot-ensure))
 
 (use-package python-ts-mode
+  :if (treesit-available-p)
   :straight nil
   :ensure nil
   :mode "\\.py[iw]?\\'"
@@ -1173,6 +1177,7 @@
   (python-ts-mode-hook . poetry-tracking-mode))
 
 (use-package dockerfile-ts-mode
+  :if (treesit-available-p)
   :mode "\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
   :hook
   (dockerfile-ts-mode-hook . eglot-ensure))
@@ -1201,6 +1206,7 @@
   (terraform-mode-hook . eglot-ensure))
 
 (use-package yaml-ts-mode
+  :if (treesit-available-p)
   :mode ("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; TODO: Update this to use astro-ts-mode instead

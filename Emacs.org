@@ -135,6 +135,7 @@ I don't write in any languages that need right-to-left support, so I can go ahea
 (use-package emacs
   :straight nil
   :ensure nil
+  :init
   (setq jit-lock-defer-time 0))
 #+end_src
 
@@ -1559,6 +1560,7 @@ Yasnippet
 * Nix
 #+begin_src emacs-lisp
 (use-package nix-ts-mode
+  :if (treesit-available-p)
   :mode "\\.nix\\'"
   :hook (nix-ts-mode-hook . eglot-ensure))
 #+end_src
@@ -1566,6 +1568,7 @@ Yasnippet
 * Typescript
 #+begin_src emacs-lisp
 (use-package typescript-ts-mode
+  :if (treesit-available-p)
   :mode (("\\.[m]?ts\\'" . typescript-ts-mode)
          ("\\.[m]?js\\'" . typescript-ts-mode)
          ("\\.[m]?tsx?\\'" . tsx-ts-mode)
@@ -1577,6 +1580,7 @@ Yasnippet
 * Python
 #+begin_src emacs-lisp
 (use-package python-ts-mode
+  :if (treesit-available-p)
   :straight nil
   :ensure nil
   :mode "\\.py[iw]?\\'"
@@ -1596,6 +1600,7 @@ Yasnippet
 * Docker
 #+begin_src emacs-lisp
 (use-package dockerfile-ts-mode
+  :if (treesit-available-p)
   :mode "\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
   :hook
   (dockerfile-ts-mode-hook . eglot-ensure))
@@ -1632,6 +1637,7 @@ Yasnippet
 * YAML
 #+begin_src emacs-lisp
 (use-package yaml-ts-mode
+  :if (treesit-available-p)
   :mode ("\\.ya?ml\\'" . yaml-ts-mode))
 #+end_src
 * Astro
