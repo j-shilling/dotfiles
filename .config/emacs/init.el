@@ -1158,6 +1158,10 @@
   :hook
   (typescript-ts-base-mode-hook . eglot-ensure))
 
+(use-package python
+  :hook
+  (python-mode-hook . eglot-ensure))
+
 (use-package python-ts-mode
   :if (treesit-available-p)
   :straight nil
@@ -1169,12 +1173,8 @@
 
 (use-package pyvenv
   :hook
-  ((python-ts-mode-hook . pyvenv-mode)
-   (python-ts-mode-hook . pyvenv-tracking-mode)))
-
-(use-package poetry
-  :hook
-  (python-ts-mode-hook . poetry-tracking-mode))
+  ((python-mode-hook . pyvenv-mode)
+   (python-mode-hook . pyvenv-tracking-mode)))
 
 (use-package dockerfile-ts-mode
   :if (treesit-available-p)
