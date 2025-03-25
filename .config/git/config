@@ -30,3 +30,5 @@
     path = "~/.config/git/config_personal"
 [includeIf "gitdir/i:**/functorfactory/**/"]
     path = "~/.config/git/config_functorfactory"
+[github]
+	user = j-shilling
