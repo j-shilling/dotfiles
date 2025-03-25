@@ -213,6 +213,11 @@
           select-enable-primary nil
           interprogram-cut-function #'gui-select-text)))
 
+(use-package exec-path-from-shell
+  :unless IS-WINDOWS
+  :hook
+  (after-init-hook . exec-path-from-shell-initialize))
+
 (use-package emacs
   :straight nil
   :custom
@@ -642,6 +647,9 @@
 
   (advice-add #'register-preview :override #'consult-register-window))
 
+(use-package consult-yasnippet
+  :autoload consult-yasnippet)
+
 (use-package consult-imenu
   :straight nil
   :ensure nil
@@ -670,7 +678,9 @@
   :hook
   (yas-minor-mode-hook . (lambda ()
                            (setq-local hippie-expand-try-functions-list
-                                       (cons #'yas-hippie-try-expand hippie-expand-try-functions-list)))))
+                                       (cons #'yas-hippie-try-expand hippie-expand-try-functions-list))))
+  (prog-mode-hook . yas-minor-mode))
+(use-package yasnippet-snippets)
 
 (use-package corfu
   :diminish global-corfu-mode
@@ -764,6 +774,7 @@
   (prog-mode-hook . subword-mode))
 
 (use-package wgrep
+  :disabled
   :hook
   (grep-setup-hook . 'wgrep-setup))
 

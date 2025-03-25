@@ -276,6 +276,13 @@ I don't write in any languages that need right-to-left support, so I can go ahea
           interprogram-cut-function #'gui-select-text)))
 #+end_src
 
+* Exec Path
+#+begin_src emacs-lisp
+(use-package exec-path-from-shell
+  :unless IS-WINDOWS
+  :hook
+  (after-init-hook . exec-path-from-shell-initialize))
+#+end_src
 * Auto Save
 
 #+begin_src emacs-lisp
@@ -829,6 +836,13 @@ I don't write in any languages that need right-to-left support, so I can go ahea
   (advice-add #'register-preview :override #'consult-register-window))
 #+end_src
 
+* Consult Yasnippets
+
+#+begin_src emacs-lisp
+(use-package consult-yasnippet
+  :autoload consult-yasnippet)
+#+end_src
+
 * Consult iMenu
 
 #+begin_src emacs-lisp
@@ -876,7 +890,9 @@ Yasnippet
   :hook
   (yas-minor-mode-hook . (lambda ()
                            (setq-local hippie-expand-try-functions-list
-                                       (cons #'yas-hippie-try-expand hippie-expand-try-functions-list)))))
+                                       (cons #'yas-hippie-try-expand hippie-expand-try-functions-list))))
+  (prog-mode-hook . yas-minor-mode))
+(use-package yasnippet-snippets)
 #+end_src
 
 * Corfu
@@ -1030,6 +1046,7 @@ Yasnippet
 
 #+begin_src emacs-lisp
 (use-package wgrep
+  :disabled
   :hook
   (grep-setup-hook . 'wgrep-setup))
 #+end_src
