@@ -1,2 +1,19 @@
+
+* Emacs
+
+#+begin_src sh
 sudo add-apt-repository ppa:ubuntu-elisp/ppa
 sudo apt update
+#+end_src
+
+* NVM
+
+#+begin_src
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+#+end_src
+
+* PHP
+
+#+begin_src sh
+/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4)"
+#+end_src

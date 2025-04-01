@@ -1219,6 +1219,9 @@
 (use-package yaml-ts-mode
   :if (treesit-available-p)
   :mode ("\\.ya?ml\\'" . yaml-ts-mode))
+(use-package yaml-mode
+  :unless (treesit-available-p)
+  :mode ("\\.ya?ml\\'" . yaml-ts-mode))
 
 ;; TODO: Update this to use astro-ts-mode instead
 
