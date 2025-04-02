@@ -1,9 +1,7 @@
+* PyEnv
 
-* Emacs
-
-#+begin_src sh
-sudo add-apt-repository ppa:ubuntu-elisp/ppa
-sudo apt update
+#+begin_src
+curl -fsSL https://pyenv.run | bash
 #+end_src
 
 * NVM
