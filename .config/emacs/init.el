@@ -1161,8 +1161,8 @@
         (haskell "https://github.com/tree-sitter/tree-sitter-haskell" "v0.23.1")
         (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
         (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
-        (json "https://github.com/tree-sitter/tree-sitter-javascript" "v0.24.8")
-        (python "https://github.com/tree-sitter/tree-sitter-javascript" "v0.22.6")
+        (json "https://github.com/tree-sitter/tree-sitter-javascript" "master")
+        (python "https://github.com/tree-sitter/tree-sitter-python" "master")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
 
