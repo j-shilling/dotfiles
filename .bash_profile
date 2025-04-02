@@ -8,4 +8,5 @@ if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
 export HISTFILE="$XDG_CACHE_HOME/.bash_history"
 export HISTFILESIZE="100000"
 export HISTIGNORE="ls:exit:history:clear"
+export XDG_STATE_HOME="$HOME/.local/var/lib"
 export PASSWORD_STORE_DIR="$XDG_STATE_HOME/password-store"

@@ -14,4 +14,8 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 
 #+begin_src sh
 /bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.4)"
+
+curl -Lo phpactor.phar https://github.com/phpactor/phpactor/releases/latest/download/phpactor.phar
+chmod a+x phpactor.phar
+mv phpactor.phar ~/.local/bin/phpactor
 #+end_src

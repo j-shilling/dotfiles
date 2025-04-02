@@ -42,6 +42,9 @@ shopt -s lithist
 # Sourcing
 [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && source "$EAT_SHELL_INTEGRATION_DIR/bash"
 
+# Path
+export PATH="${HOME}/.local/bin:${PATH}"
+
 # PyEnv
 export PYENV_ROOT="${HOME}/.pyenv"
 [[ -d "${PYENV_ROOT}/bin" ]] && export PATH="${PYENV_ROOT}/bin:${PATH}"
@@ -53,9 +56,12 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # FZF Shell Integration
-#eval $(fzf --bash)
+[ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
+[ -f /usr/share/bash-completion/completions/fzf ] && source /usr/share/bash-completion/completions/fzf
 
 # PHP
 export PATH="/home/jake/.config/herd-lite/bin:$PATH"
 export PHP_INI_SCAN_DIR="/home/jake/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
-# This loads nvm bash_completion
+
+# direnv
+eval "$(direnv hook bash)"

@@ -1154,6 +1154,18 @@
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
 
+(setq treesit-language-source-alist
+      '((php "https://github.com/tree-sitter/tree-sitter-php" "v0.23.12" "php/src")
+        (css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2")
+        (bash "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
+        (haskell "https://github.com/tree-sitter/tree-sitter-haskell" "v0.23.1")
+        (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
+        (json "https://github.com/tree-sitter/tree-sitter-javascript" "v0.24.8")
+        (python "https://github.com/tree-sitter/tree-sitter-javascript" "v0.22.6")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+
 (use-package nix-ts-mode
   :if (treesit-available-p)
   :mode "\\.nix\\'"
@@ -1204,6 +1216,18 @@
   :straight nil
   :ensure nil
   :mode ("\\.cabal\\'" . haskell-cabal-mode))
+
+(use-package php-ts-mode
+  :straight '(:type git
+                    :host github
+                    :repo "emacs-php/php-ts-mode")
+  :mode ("\\.php$" . php-ts-mode)
+  :hook (php-ts-mode . eglot-ensure)
+  :config
+  (with-eval-after-load 'apheleia
+    (setf (alist-get 'phpcs apheleia-formatters)
+          '("composer" "--no-interaction" (concat "--working-dir=" (project-root (project-current)))
+            "exec" "php-cs-fixer" "fix" "--quiet" (buffer-file-name)))))
 
 (use-package graphql-ts-mode
   :mode ("\\.graphql\\'" "\\.gql\\'")
