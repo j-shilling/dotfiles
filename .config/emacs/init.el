@@ -1102,6 +1102,13 @@
 (use-package eglot
   :config
   (add-to-list 'eglot-server-programs
+               '(((js-mode :language-id "javascript")
+                  (js-ts-mode :language-id "javascript")
+                  (tsx-ts-mode :language-id "typescriptreact")
+                  (typescript-ts-mode :language-id "typescript")
+                  (typescript-mode :language-id "typescript"))
+                 "npx" "typescript-language-server" "--stdio"))
+  (add-to-list 'eglot-server-programs
                '((js-json-mode json-mode json-ts-mode jsonc-mode)
                  .
                  ("npx" "vscode-json-languageserver" "--stdio")))
@@ -1156,6 +1163,7 @@
 
 (setq treesit-language-source-alist
       '((php "https://github.com/tree-sitter/tree-sitter-php" "v0.23.12" "php/src")
+        (blade "https://github.com/EmranMR/tree-sitter-blade" "v0.11.0")
         (css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2")
         (bash "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
         (haskell "https://github.com/tree-sitter/tree-sitter-haskell" "v0.23.1")
@@ -1163,7 +1171,8 @@
         (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
         (json "https://github.com/tree-sitter/tree-sitter-javascript" "master")
         (python "https://github.com/tree-sitter/tree-sitter-python" "master")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
 
 (use-package nix-ts-mode
@@ -1222,12 +1231,12 @@
                     :host github
                     :repo "emacs-php/php-ts-mode")
   :mode ("\\.php$" . php-ts-mode)
-  :hook (php-ts-mode . eglot-ensure)
-  :config
-  (with-eval-after-load 'apheleia
-    (setf (alist-get 'phpcs apheleia-formatters)
-          '("composer" "--no-interaction" (concat "--working-dir=" (project-root (project-current)))
-            "exec" "php-cs-fixer" "fix" "--quiet" (buffer-file-name)))))
+  :hook (php-ts-mode . eglot-ensure))
+
+(use-package blade-ts-mode
+  :straight '(:type git
+                    :host github
+                    :repo "FunctorFactory/blade-ts-mode"))
 
 (use-package graphql-ts-mode
   :mode ("\\.graphql\\'" "\\.gql\\'")
@@ -1245,7 +1254,11 @@
   :mode ("\\.ya?ml\\'" . yaml-ts-mode))
 (use-package yaml-mode
   :unless (treesit-available-p)
-  :mode ("\\.ya?ml\\'" . yaml-ts-mode))
+  :mode ("\\.ya?ml\\'" . yaml-mode))
+
+(use-package markdown-ts-mode
+  :custom
+  (markdown-fontify-code-blocks-natively t))
 
 ;; TODO: Update this to use astro-ts-mode instead
 
