@@ -1,7 +1,30 @@
+* Emacs
+
+#+begin_src sh
+./configure \
+    --with-libsystemd \
+    --with-pop=yes \
+    --with-sound=alsa \
+    --with-imagemagick \
+    --without-gconf \
+    --with-mailutils \
+    --with-native-compilation \
+    --with-json \
+    --with-pgtk
+#+end_src
+
 * PyEnv
 
 #+begin_src
 curl -fsSL https://pyenv.run | bash
+#+end_src
+
+#+begin_src sh
+apt install \
+    build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev curl git \
+    libncurses-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev \
+    libffi-dev liblzma-dev
 #+end_src
 
 * NVM
