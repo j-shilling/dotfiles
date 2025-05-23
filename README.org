@@ -10,6 +10,8 @@
     --with-mailutils \
     --with-native-compilation \
     --with-json \
+    --with-xml2 \
+    --with-modules \
     --with-pgtk
 #+end_src
 
@@ -42,3 +44,15 @@ curl -Lo phpactor.phar https://github.com/phpactor/phpactor/releases/latest/down
 chmod a+x phpactor.phar
 mv phpactor.phar ~/.local/bin/phpactor
 #+end_src
+
+* Haskell
+
+GHCup
+
+#+begin_src sh
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+#+end_src
+
+* Common Lisp
+
+Roswell: https://github.com/roswell/roswell/wiki/Installation#linux

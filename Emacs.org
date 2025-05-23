@@ -1280,8 +1280,6 @@ Yasnippet
   :commands pass)
 #+end_src
 
-* Auth Source Pass
-
 #+begin_src emacs-lisp
 (use-package auth-source-pass
   :hook
@@ -1300,7 +1298,8 @@ Yasnippet
 * Tramp
 
 #+begin_src emacs-lisp
-(use-package tramp)
+(use-package tramp
+  :straight nil)
 #+end_src
 
 * Transient
@@ -1597,7 +1596,8 @@ Yasnippet
         (python "https://github.com/tree-sitter/tree-sitter-python" "master")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")
+        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "v0.2.0")))
 #+end_src
 
 * Nix
@@ -1641,6 +1641,12 @@ Yasnippet
    (python-mode-hook . pyvenv-tracking-mode)))
 #+end_src
 * Docker
+
+#+begin_src emacs-lisp
+(use-package docker
+  :bind ("C-c d" . docker))
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package dockerfile-ts-mode
   :if (treesit-available-p)
@@ -1674,7 +1680,8 @@ Yasnippet
 (use-package blade-ts-mode
   :straight '(:type git
                     :host github
-                    :repo "FunctorFactory/blade-ts-mode"))
+                    :repo "FunctorFactory/blade-ts-mode")
+  :mode ("\\.blade.php$" . blade-ts-mode))
 #+end_src
 * GraphQL
 #+begin_src emacs-lisp

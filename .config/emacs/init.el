@@ -223,7 +223,7 @@
   :custom
   (auto-save-default  t)
   (auto-save-timeout  20)
-  (auto-savye-interval 200)
+  (auto-save-interval 200)
   (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-")))
 
 (use-package desktop
@@ -935,7 +935,7 @@
    ("C-h k" . helpful-key)))
 
 (use-package devdocs
-  :bind
+ :bind
   (("C-h D" . devdocs-lookup)))
 
 (use-package pinentry
@@ -956,7 +956,8 @@
   :hook
   (after-init-hook . which-key-mode))
 
-(use-package tramp)
+(use-package tramp
+  :straight nil)
 
 (use-package transient
   :custom
@@ -1173,7 +1174,8 @@
         (python "https://github.com/tree-sitter/tree-sitter-python" "master")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")))
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")
+        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "v0.2.0")))
 
 (use-package nix-ts-mode
   :if (treesit-available-p)
@@ -1208,6 +1210,9 @@
   ((python-mode-hook . pyvenv-mode)
    (python-mode-hook . pyvenv-tracking-mode)))
 
+(use-package docker
+  :bind ("C-c d" . docker))
+
 (use-package dockerfile-ts-mode
   :if (treesit-available-p)
   :mode "\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
@@ -1236,7 +1241,8 @@
 (use-package blade-ts-mode
   :straight '(:type git
                     :host github
-                    :repo "FunctorFactory/blade-ts-mode"))
+                    :repo "FunctorFactory/blade-ts-mode")
+  :mode ("\\.blade.php$" . blade-ts-mode))
 
 (use-package graphql-ts-mode
   :mode ("\\.graphql\\'" "\\.gql\\'")
