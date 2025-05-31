@@ -18,6 +18,10 @@
 
 (setq org-directory "~/org/")
 
+(use-package! auth-source-pass
+  :hook
+  (doom-first-input-hook . auth-source-pass-enable))
+
 (use-package! pixel-scroll
   :diminish pixel-scroll-precision-mode
   :hook
