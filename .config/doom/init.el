@@ -1,7 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
 (doom! :checkers
-       syntax
+       (syntax +flymake +icons)
        (spell +everywhere +aspell)
        grammar
 
@@ -50,7 +50,7 @@
        (docker +lsp +tree-sitter)
        (eval +overlay)
        (lookup +dictionary +docsets)
-       lsp
+       (lsp +eglot)
        (magit +forge)
        make
        (pass +auth)
