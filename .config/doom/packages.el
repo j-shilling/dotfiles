@@ -7,3 +7,4 @@
   :recipe (:type git
            :host github
            :repo "jdtsmith/eglot-booster"))
+(package! devdocs)

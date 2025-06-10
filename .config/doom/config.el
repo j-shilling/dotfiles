@@ -89,3 +89,7 @@
   :config (eglot-booster-mode))
 
 (use-package! php-mode)
+
+(use-package! devdocs
+  :bind
+  ("C-h D" . devdocs-lookup))
