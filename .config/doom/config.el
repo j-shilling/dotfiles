@@ -79,10 +79,15 @@
   (exec-path-from-shell-variables '("PATH"
                                     "MANPATH"
                                     "SSH_AGENT_PID"
-                                    "SSH_AUTH_SOCK"
-                                    "LSP_USE_PLIST"))
+                                    "SSH_AUTH_SOCK")
   :hook
   (after-init-hook . exec-path-from-shell-initialize))
+
+(use-package! flymake
+  :bind
+  (:map flymake-mode-map
+        ("M-n" . flymake-goto-next-error)
+        ("M-p" . flymake-goto-prev-error)))
 
 (when (modulep! :tools lsp -eglot)
   (use-package! lsp-mode

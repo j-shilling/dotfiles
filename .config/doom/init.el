@@ -1,5 +1,7 @@
 ;;; init.el -*- lexical-binding: t; -*-
 
+(setenv "LSP_USE_PLISTS" "true")
+
 (doom! :checkers
        (syntax +flymake +icons)
        (spell +everywhere +aspell)
