@@ -84,7 +84,58 @@
   :hook
   (after-init-hook . exec-path-from-shell-initialize))
 
+(when (modulep! :tools lsp -eglot)
+  (use-package! lsp-mode
+    ;; ... previous configuration
+    :preface
+    (defun lsp-booster--advice-json-parse (old-fn &rest args)
+      "Try to parse bytecode instead of json."
+      (or
+       (when (equal (following-char) ?#)
+
+         (let ((bytecode (read (current-buffer))))
+           (when (byte-code-function-p bytecode)
+             (funcall bytecode))))
+       (apply old-fn args)))
+    (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+      "Prepend emacs-lsp-booster command to lsp CMD."
+      (let ((orig-result (funcall old-fn cmd test?)))
+        (if (and (not test?)                             ;; for check lsp-server-present?
+                 (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+                 lsp-use-plists
+                 (not (functionp 'json-rpc-connection))  ;; native json-rpc
+                 (executable-find "emacs-lsp-booster"))
+            (progn
+              (message "Using emacs-lsp-booster for %s!" orig-result)
+              (cons "emacs-lsp-booster" orig-result))
+          orig-result)))
+    :init
+    (setq lsp-use-plists t)
+    ;; Initiate https://github.com/blahgeek/emacs-lsp-booster for performance
+    (advice-add (if (progn (require 'json)
+                           (fboundp 'json-parse-buffer))
+                    'json-parse-buffer
+                  'json-read)
+                :around
+                #'lsp-booster--advice-json-parse)
+    (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command))
+
+  (use-package!
+      lsp-tailwindcss :after lsp-mode))
+
+(when (modulep! :tools lsp +eglot)
+  (after! eglot
+    (add-to-list 'eglot-server-programs
+                 `(((js-mode :language-id "javascript")
+                    (js-ts-mode :language-id "javascript")
+                    (tsx-ts-mode :language-id "typescriptreact")
+                    (typescript-ts-mode :language-id "typescript")
+                    (typescript-tsx-mode :language-id "typescript")
+                    (typescript-mode :language-id "typescript"))
+                   . ("typescript-language-server" "--stdio")))))
+
 (use-package! eglot-booster
+  :if (modulep! :tools lsp +eglot)
   :after eglot
   :config (eglot-booster-mode))
 

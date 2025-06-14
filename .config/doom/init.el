@@ -50,7 +50,7 @@
        (docker +lsp +tree-sitter)
        (eval +overlay)
        (lookup +dictionary +docsets)
-       (lsp +eglot)
+       (lsp)
        (magit +forge)
        make
        (pass +auth)
