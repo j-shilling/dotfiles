@@ -15,3 +15,5 @@
 (when (modulep! :tools lsp -eglot)
   (package! lsp-tailwindcss
     :recipe (:host github :repo "merrickluo/lsp-tailwindcss")))
+
+(package! gptel :recipe (:nonrecursive t))

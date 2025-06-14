@@ -153,3 +153,7 @@
 (use-package! devdocs
   :bind
   ("C-h D" . devdocs-lookup))
+
+(use-package! gptel
+ :config
+ (setq gptel-backend (gptel-make-gh-copilot "Copilot")))
