@@ -40,6 +40,7 @@ shopt -s checkhash
 shopt -s lithist
 
 export GPG_TTY="$(tty)"
+eval $(ssh-agent -s)
 
 # Sourcing
 [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && source "${EAT_SHELL_INTEGRATION_DIR}/bash"
