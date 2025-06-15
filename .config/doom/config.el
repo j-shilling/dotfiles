@@ -155,5 +155,9 @@
   ("C-h D" . devdocs-lookup))
 
 (use-package! gptel
- :config
- (setq gptel-backend (gptel-make-gh-copilot "Copilot")))
+ :init
+ (setq gptel-model 'codellama:latest
+      gptel-backend (gptel-make-ollama "Ollama"
+                      :host "localhost:11434"
+                      :stream t
+                      :models '(codellama:latest))))

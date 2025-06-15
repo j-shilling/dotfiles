@@ -12,7 +12,8 @@
        (corfu +icons +orderless +dabbrev)
 
        :config
-       (default +bindings +smartparens)
+       (default +bindings +smartparens +gnupg)
+       use-package
 
        :editor
        file-templates
@@ -47,6 +48,7 @@
        vterm
 
        :tools
+       llm
        tree-sitter
        direnv
        (docker +lsp +tree-sitter)
