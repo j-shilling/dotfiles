@@ -83,9 +83,9 @@
   (exec-path-from-shell-variables '("PATH"
                                     "MANPATH"
                                     "SSH_AGENT_PID"
-                                    "SSH_AUTH_SOCK")
+                                    "SSH_AUTH_SOCK"))
   :hook
-  (after-init-hook . exec-path-from-shell-initialize))
+  (doom-first-input-hook . exec-path-from-shell-initialize))
 
 (use-package! flymake
   :bind

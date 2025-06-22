@@ -13,7 +13,6 @@
 
        :config
        (default +bindings +smartparens +gnupg)
-       use-package
 
        :editor
        file-templates
