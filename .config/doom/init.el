@@ -31,6 +31,8 @@
        (cc +lsp)
        common-lisp
        emacs-lisp
+       (scheme +guile +chez)
+       (clojure +lsp +tree-sitter)
        (haskell +lsp)
        (javascript +lsp +tree-sitter)
        (latex +fold +lsp)

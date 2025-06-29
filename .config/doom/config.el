@@ -141,12 +141,12 @@
                     (typescript-ts-mode :language-id "typescript")
                     (typescript-tsx-mode :language-id "typescript")
                     (typescript-mode :language-id "typescript"))
-                   . ("typescript-language-server" "--stdio")))))
+                   . ("typescript-language-server" "--stdio"))))
 
-(use-package! eglot-booster
-  :if (modulep! :tools lsp +eglot)
-  :after eglot
-  :config (eglot-booster-mode))
+  (use-package! eglot-booster
+    :if (modulep! :tools lsp +eglot)
+    :after eglot
+    :config (eglot-booster-mode)))
 
 (use-package! php-mode)
 
