@@ -22,3 +22,5 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+
+[ -f "/home/jake/.ghcup/env" ] && . "/home/jake/.ghcup/env" # ghcup-env

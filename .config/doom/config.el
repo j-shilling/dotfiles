@@ -83,7 +83,8 @@
   (exec-path-from-shell-variables '("PATH"
                                     "MANPATH"
                                     "SSH_AGENT_PID"
-                                    "SSH_AUTH_SOCK"))
+                                    "SSH_AUTH_SOCK"
+                                    "ANTHROPIC_API_KEY"))
   :hook
   (doom-first-input-hook . exec-path-from-shell-initialize))
 
@@ -161,3 +162,9 @@
                       :host "localhost:11434"
                       :stream t
                       :models '(codellama:latest))))
+
+(use-package! aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :custom
+  (aidermacs-default-chat-mode 'architect)
+  (aidermacs-default-model "sonnet"))
