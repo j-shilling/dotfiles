@@ -89,5 +89,3 @@ esac
 # pnpm end
 
 [ -f "/home/jake/.ghcup/env" ] && . "/home/jake/.ghcup/env" # ghcup-env
-
-export ANTHROPIC_API_KEY="$(pass show FunctorFactory/anthropic-api-key)"
