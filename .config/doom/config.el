@@ -157,14 +157,14 @@
 
 (use-package! gptel
  :init
- (setq gptel-model 'codellama:latest
-      gptel-backend (gptel-make-ollama "Ollama"
-                      :host "localhost:11434"
-                      :stream t
-                      :models '(codellama:latest))))
+ (setq
+  gptel-model 'claude-sonnet-4-20250514
+  gptel-backend (gptel-make-anthropic "Claude"
+                  :stream t :key (+pass-get-secret "FunctorFactory/anthropic-api-key"))))
 
-(use-package! aidermacs
-  :bind (("C-c a" . aidermacs-transient-menu))
-  :custom
-  (aidermacs-default-chat-mode 'architect)
-  (aidermacs-default-model "sonnet"))
+(use-package! aider
+  :config
+  (setq aider-args '("--model" "claude-sonnet-4-20250514"))
+  (setenv "ANTHROPIC_API_KEY"
+          (+pass-get-secret "FunctorFactory/anthropic-api-key"))
+  (aider-magit-setup-transients))
