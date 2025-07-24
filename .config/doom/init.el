@@ -49,6 +49,7 @@
        vterm
 
        :tools
+       biblio
        llm
        tree-sitter
        direnv

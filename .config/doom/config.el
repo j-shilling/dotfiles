@@ -16,7 +16,24 @@
 
 (setq display-line-numbers-type t)
 
-(setq org-directory "~/org/")
+(setq org-directory
+      (expand-file-name "org"
+                        (or
+                         (xdg-user-dir "Documents")
+                         (expand-file-name "Documents"
+                                           (getenv "HOME")))))
+
+(use-package! org-roam
+  :custom
+  (org-roam-directory (expand-file-name "roam" org-directory)))
+
+(use-package! citar
+  :custom
+  (citar-bibliography `(,(expand-file-name "references.bib" (expand-file-name "bib"
+                                                                   (or
+                                                                    (xdg-user-dir "Documents")
+                                                                    (expand-file-name "Documents"
+                                                                                      (getenv "HOME"))))))))
 
 (use-package! auth-source-pass
   :hook
@@ -163,6 +180,8 @@
                   :stream t :key (+pass-get-secret "FunctorFactory/anthropic-api-key"))))
 
 (use-package! aider
+  :bind
+  ("C-c o a" . aider-transient-menu)
   :config
   (setq aider-args '("--model" "claude-sonnet-4-20250514"))
   (setenv "ANTHROPIC_API_KEY"
