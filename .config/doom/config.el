@@ -15,7 +15,7 @@
 (setq doom-theme 'doom-one)
 
 (setq display-line-numbers-type t)
-
+(require 'xdg)
 (setq org-directory
       (expand-file-name "org"
                         (or
@@ -35,9 +35,8 @@
                                                                     (expand-file-name "Documents"
                                                                                       (getenv "HOME"))))))))
 
-(use-package! auth-source-pass
-  :hook
-  (doom-first-input-hook . auth-source-pass-enable))
+(after! auth-source-pass
+  (add-hook! 'doom-first-input-hook #'auth-source-pass-enable))
 
 (use-package! pixel-scroll
   :diminish pixel-scroll-precision-mode
