@@ -67,6 +67,12 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 export PATH="/home/jake/.config/herd-lite/bin:$PATH"
 export PHP_INI_SCAN_DIR="/home/jake/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
 
+# Rust
+export CARGO_ROOT="${HOME}/.cargo"
+if [[ -d "${CARGO_ROOT}/bin" ]] ; then
+    export PATH="${CARGO_ROOT}/bin:${PATH}"
+fi
+
 # direnv
 eval "$(direnv hook bash)"
 
@@ -89,3 +95,5 @@ esac
 # pnpm end
 
 [ -f "/home/jake/.ghcup/env" ] && . "/home/jake/.ghcup/env" # ghcup-env
+
+[ -f "${HOME}/.cargo/bin" ] && export PATH="${PATH}:${HOME}/.cargo/bin"

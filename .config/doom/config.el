@@ -1,5 +1,8 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+(setq user-full-name "Jake Shilling"
+      user-mail-address "shilling.jake@gmail.com")
+
 (defconst IS-WSL     (and (featurep :system 'linux)
                           (string-match-p "Microsoft"
                                           (shell-command-to-string "uname -a"))))
@@ -14,7 +17,7 @@
 
 (setq doom-theme 'doom-one)
 
-(setq display-line-numbers-type t)
+
 (require 'xdg)
 (setq org-directory
       (expand-file-name "org"
@@ -35,16 +38,16 @@
                                                                     (expand-file-name "Documents"
                                                                                       (getenv "HOME"))))))))
 
-(after! auth-source-pass
-  (add-hook! 'doom-first-input-hook #'auth-source-pass-enable))
+(use-package! auth-source-pass
+  :hook '(doom-first-input-hook . auth-source-pass-enable))
 
 (use-package! pixel-scroll
   :diminish pixel-scroll-precision-mode
-  :hook
-  (doom-first-input-hook . pixel-scroll-precision-mode))
+  :hook '(doom-first-input-hook . pixel-scroll-precision-mode))
 
 (use-package! display-line-numbers
   :diminish display-line-numbers-mode
+  :custom (display-line-numbers-type t)
   :hook
   (prog-mode-hook . (lambda () (display-line-numbers-mode +1)))
   (text-mode-hook . (lambda () (display-line-numbers-mode -1))))
