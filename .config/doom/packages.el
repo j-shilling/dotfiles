@@ -16,4 +16,14 @@
   (package! lsp-tailwindcss
     :recipe (:host github :repo "merrickluo/lsp-tailwindcss")))
 
-(package! aider)
+(package! claude-code
+  :recipe (:type git
+           :host github
+           :repo "stevemolitor/claude-code.el"
+           :branch "main"
+           :depth 1
+           :files ("*.el" (:exclude "images/*"))))
+(package! monet
+  :recipe (:type git
+           :host github
+           :repo "stevemolitor/monet"))

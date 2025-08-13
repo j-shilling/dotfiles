@@ -190,3 +190,19 @@
   (setenv "ANTHROPIC_API_KEY"
           (+pass-get-secret "FunctorFactory/anthropic-api-key"))
   (aider-magit-setup-transients))
+
+(use-package! claude-code
+  :bind-keymap
+  ("C-c o c" . claude-code-command-map)
+  :custom
+  (claude-code-terminal-backend 'vterm)
+  :hook
+  ((claude-code-process-environment-functions . monet-start-server-function)
+   (doom-first-input-hook . claude-code-mode)))
+
+(use-package! monet
+  :after claude-code
+  :hook
+  ((claude-code-process-environment-functions . monet-start-server-function))
+  :custom
+  (monet-ediff-split-window-direction 'vertical))

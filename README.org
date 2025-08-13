@@ -1,3 +1,9 @@
+to update run:
+
+#+begin_src sh
+stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v .
+#+end_src
+
 * Emacs
 
 #+begin_src sh
