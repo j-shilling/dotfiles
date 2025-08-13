@@ -30,6 +30,7 @@
   :custom
   (org-roam-directory (expand-file-name "roam" org-directory)))
 
+(require 'xdg)
 (use-package! citar
   :custom
   (citar-bibliography `(,(expand-file-name "references.bib" (expand-file-name "bib"
