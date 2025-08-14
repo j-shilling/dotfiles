@@ -28,17 +28,11 @@
        undo
 
        :lang
-       (cc +lsp)
-       common-lisp
        emacs-lisp
-       (scheme +guile +chez)
-       (clojure +lsp +tree-sitter)
        (haskell +lsp)
        (javascript +lsp +tree-sitter)
-       (latex +fold +lsp)
        (markdown)
        (org +pandoc +present +pretty +roam2)
-       (php +lsp +tree-sitter)
        (python +lsp +pyenv +poetry +tree-sitter +pyright)
        (sh +lsp)
        (web +lsp)
@@ -71,7 +65,7 @@
        modeline
        nav-flash
        ophints
-       (popup +all +defaults)
        vc-gutter
        window-select
-       zen)
+       zen
+       smooth-scroll)

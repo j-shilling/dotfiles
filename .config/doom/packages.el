@@ -2,7 +2,6 @@
 ;;; $DOOMDIR/packages.el
 
 (package! exec-path-from-shell)
-(package! pinentry)
 
 (when (modulep! :tools lsp +eglot)
   (package! eglot-booster

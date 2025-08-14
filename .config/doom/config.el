@@ -1,3 +1,4 @@
+
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 (setq user-full-name "Jake Shilling"
@@ -65,18 +66,13 @@
   :diminish global-auto-revert-mode
   :custom
   (global-auto-revert-non-file-buffers t)
-  :hook (doom-first-input-hook . global-auto-revert-mode))
+  :hook
+  (doom-first-input-hook . global-auto-revert-mode))
 
 (use-package! subword
   :diminish subword-mode
   :hook
   (prog-mode-hook . subword-mode))
-
-(use-package! pinentry
-  :custom
-  (epa-pinentry-mode 'loopback)
-  :hook
-  (after-init-hook . pinentry-start))
 
 (use-package! dired
   :custom
@@ -88,8 +84,8 @@
   (dired-create-destination-dirs 'ask)
   (dired-listing-switches "-lah -v --group-directories-first")
   :hook
-  ((dired-mode-hook . dired-omit-mode)
-   (dired-mode-hook . dired-hide-details-mode)))
+  (dired-mode-hook . dired-omit-mode)
+  (dired-mode-hook . dired-hide-details-mode))
 
 (use-package! proced
   :custom
@@ -107,12 +103,6 @@
                                     "ANTHROPIC_API_KEY"))
   :hook
   (doom-first-input-hook . exec-path-from-shell-initialize))
-
-(use-package! flymake
-  :bind
-  (:map flymake-mode-map
-        ("M-n" . flymake-goto-next-error)
-        ("M-p" . flymake-goto-prev-error)))
 
 (when (modulep! :tools lsp -eglot)
   (use-package! lsp-mode
@@ -169,27 +159,16 @@
     :after eglot
     :config (eglot-booster-mode)))
 
-(use-package! php-mode)
-
-(use-package! devdocs
-  :bind
-  ("C-h D" . devdocs-lookup))
+(after! devdocs
+  (bind-key "C-h D" #'devdocs-lookup))
 
 (use-package! gptel
  :init
  (setq
   gptel-model 'claude-sonnet-4-20250514
   gptel-backend (gptel-make-anthropic "Claude"
-                  :stream t :key (+pass-get-secret "FunctorFactory/anthropic-api-key"))))
-
-(use-package! aider
-  :bind
-  ("C-c o a" . aider-transient-menu)
-  :config
-  (setq aider-args '("--model" "claude-sonnet-4-20250514"))
-  (setenv "ANTHROPIC_API_KEY"
-          (+pass-get-secret "FunctorFactory/anthropic-api-key"))
-  (aider-magit-setup-transients))
+                  :stream t :key (lambda ()
+                                  (+pass-get-secret "FunctorFactory/anthropic-api-key")))))
 
 (use-package! claude-code
   :bind-keymap
@@ -197,12 +176,13 @@
   :custom
   (claude-code-terminal-backend 'vterm)
   :hook
-  ((claude-code-process-environment-functions . monet-start-server-function)
-   (doom-first-input-hook . claude-code-mode)))
+  (claude-code-process-environment-functions . monet-start-server-function)
+  (doom-first-input-hook . claude-code-mode))
 
 (use-package! monet
   :after claude-code
   :hook
-  ((claude-code-process-environment-functions . monet-start-server-function))
+  (claude-code-process-environment-functions . monet-start-server-function)
+  (doom-first-input-hook . monet-mode)
   :custom
   (monet-ediff-split-window-direction 'vertical))
