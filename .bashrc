@@ -97,3 +97,5 @@ esac
 [ -f "/home/jake/.ghcup/env" ] && . "/home/jake/.ghcup/env" # ghcup-env
 
 [ -f "${HOME}/.cargo/bin" ] && export PATH="${PATH}:${HOME}/.cargo/bin"
+
+[ -d "${HOME}/go/bin" ] && export PATH="${PATH}:${HOME}/go/bin"
