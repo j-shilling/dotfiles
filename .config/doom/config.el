@@ -104,11 +104,9 @@
   :hook
   (doom-first-input-hook . exec-path-from-shell-initialize))
 
-(use-package! flymake
-  :bind
-  (:map flymake-mode-map
-        ("M-n" . flymake-goto-next-error)
-        ("M-p" . flymake-goto-prev-error)))
+(after! flymake
+  (bind-key "M-n" #'flymake-goto-next-error 'flymake-mode-map)
+  (bind-key "M-p" #'flymake-goto-prev-error 'flymake-mode-map))
 
 (when (modulep! :tools lsp -eglot)
   (use-package! lsp-mode
@@ -181,8 +179,8 @@
   ("C-c o c" . claude-code-command-map)
   :custom
   (claude-code-terminal-backend 'vterm)
+  (claude-code-toggle t)
   :hook
-  (claude-code-process-environment-functions . monet-start-server-function)
   (doom-first-input-hook . claude-code-mode))
 
 (use-package! monet
