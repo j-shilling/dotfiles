@@ -1,0 +1,393 @@
+Title: Effect Rx CRUD | #7 Building an App with Effect - YouTube
+
+Welcome back. So before implementing the
+missing RXs with the optimistic updates
+and whatnot, I want to actually take a
+quick moment and showcase a new API that
+was released today. And we're talking
+about effects and that is the result.
+Builder. So this one takes in self which
+is a result obviously and here you can
+say on defect. So this will give you the
+unknown defect. So raw as it is. You
+also get access to on error which would
+be the expected error. So we get HTTP
+API decode error, parse error and client
+error. We also have on error reef. So
+you can pass in a refinement function or
+a predicate to narrow down the errors
+you want to catch. Then you have honor
+tag where you pass in the tag first
+which is basically the same as
+effect.catch tag and this will properly
+narrow down the error for you as we can
+see here. And we have on failure which
+gives you access to the cause. So maybe
+you just want to show a catch all
+message like we have here with the on
+defect saying something went wrong. Then
+you can use this method. We have
+uninitial, we have unsuccess and this
+one will give you the unwrapped value as
+we can see here. So we get the array of
+styles while match with waiting will
+give you the result. So just a small API
+misalignment, but I'm sure down the road
+this will be way more uniform. And then
+we have onwaiting which gives you access
+to the result. So you can check if it's
+initial and what not. And finally you
+have the or else and or null pretty
+selfexplanatory.
+So let's refactor this to use this new
+builder. So result builder styles result
+and then we can say instead of on defect
+and on error we can say onfailure and
+then pass in a constant function saying
+something went wrong and then we can
+have the unsuccess which again gives us
+the unwrapped value. So we can say
+styles and then null comma 2 and finally
+we can say on waiting and again this
+gives us the result which allows us to
+check for the tag see if it's initial or
+we can use is initial I guess this is
+more readable and it is waiting and if
+so we can render a paragraph saying
+loading otherwise it will not render
+anything And notice how we're getting a
+type error because we're not handling
+all cases. So we can say or null and
+that's it. Look how clean this is. This
+is really really awesome. So imagine if
+you have different errors maybe again a
+collision error. Well for those cases
+you can now directly say on error tag
+and you pass in the tag and then you can
+render whatever you want. So cool. We
+can now proceed to the RXS. So let me
+open up the RPC so we are aware of what
+we need to support. So we have upsert
+and we have delete and we have the
+different payloads. So again upsert
+style payload takes in an optional ID.
+So let's add the delete one first. So we
+can come here to styles RX and we can
+say let me get rid of this old one. We
+can say export const delete style RX and
+then RX runtime dot and this will be a
+function not an RX because it needs to
+take in the ID. So we can say effect.f
+function and here we get access to the
+id which would be a style id and for the
+second argument I believe we get access
+to the registry. So as we can see we get
+access to the registry here. However,
+something we can do is say punch
+registry yield rx and then or registry
+and then rx registry and this as we can
+see is a context. tag. So if you have
+effectful code that needs access to the
+registry then you can do this and the
+function or the rx will provide the
+service. So if I come here we can see
+that it excludes the scope. So it
+handles the scope for you and likewise
+the RX registry. So with this we can now
+say on API yield API client and then
+yield API
+http styles delete and then we pass in
+the payload which would be the ID. And
+here we're going to get back nothing. So
+schema.void void and we get back a style
+not found error. So as we can see delete
+style RX will now include this error. So
+this is really really cool. Though
+notice how we also have parse error and
+HTTP client error and HTTP AP ID code
+error which aren't really actionable
+errors. They are not errors you would
+really show to the user. Maybe an HTTP
+client error. They do not have a network
+connection or whatever. But in those
+cases, I would argue you'd have a
+dedicated Rex monitor for the network
+where you can show a badge or whatever
+telling the user they are not connected.
+So in that case, I would model this as
+defects. And so the DRX would only have
+style not found error. So, I'm going to
+see if we can do something about this
+because this comes from this client,
+which means we would need to fork the
+native module, which is this one, and
+get rid of the errors like a transform
+error basically. But that's for later.
+Anyway, for now, once we deleted this,
+we can either refresh styles of Rex,
+which is the dirty way in my opinion,
+because you'll get a new network
+request. So, you can say registry
+refresh and then styles are rex or we
+can mutate this, but we're going to do
+that in a moment. Let's focus first on
+these basees. So once we have a delete
+style arx, let's do something. Let's
+render everything. So we're going to
+have a style item. And this will take in
+the style. And here we get access to the
+style. And then we can return. And let's
+do it the raw way with no styles where
+we can say style.
+name and then let's add a break line and
+then style dot rule. I'll ask an LLM to
+make this look nicer but for now this
+will suffice. So we can now come here
+and for each style render the style item
+where key is style do ID and style is
+this style and we need a way to create a
+style. So let's come here and let's
+export absert style rx same thing this
+will be a function and then function
+untraced and we get in this case I guess
+just the absurd style payload so let's
+say payload and let's use the same type
+and here we get access to the API client
+and then return yield and then API htt
+tp styles and then absert with this
+payload. But let's actually not return
+anything and instead do a registry and
+let's duplicate this line a registry
+refresh styles for simplicity. Now we're
+getting a type here property payload is
+missing. So this is actually an object
+like this and we're good to go. So now
+let's come back here say absert style
+and this will just be a normal component
+which we're going to refactor into a
+dialogue and integrate tstack form and
+whatnot. But for now for simplicity
+let's have the input for the name. So
+react use state and this will be an
+empty string and we'll have the rule. So
+set rule and then use state same thing
+and now let's return a form where we
+need to or actually for the validations
+and whatn not let's use tan stack form
+without any styles. So use form and then
+we can say make form options and here we
+can pass in the schema which would be
+the absurd style payload and then we
+have default values which will be the
+encoded type. So this is a utility I
+created where it takes in the decoded
+type and the encoded type and it will
+ensure that for your default values and
+well whatever we're receiving will match
+the encoded type and thus it will
+validate the input by transforming it
+into the decoded type. So here we can
+say name an empty string rule empty
+string and this is pretty much it and
+we're missing the type of validator
+which would be unsubmit and with this we
+can now say form handle submit where
+this will invoke this handler here and
+let's see we get access to the value
+where we need to decode it. So decode
+sync and then the obsert style payload
+and we pass in the value and then we can
+get access to the arx. So we can say
+absert state,
+absert and this will be use rx promise
+which doesn't exist by the way. So we
+need to create it. So we're going to
+come here under lib or actually under rx
+and we'll create um utils.ts file or rx
+utils and we're going to say use rx
+promise is equal to and here we're going
+to have the set promise. So return use
+RX set promise and we're going to have
+the use RX value. And now we can take in
+the RX. So RX RX this will be generic.
+And if we recall this will have actually
+only one generic but for the use rx set
+promise it will take in a writable arx
+where a function is writable. So we can
+pretty much copy this and then have the
+different generics and we can say use rx
+value and use a rex set promise for
+self. Great. So now we can come back
+here and import our new utility. And as
+we can see we get back the result and we
+need to mark this as const. We get back
+the result and we get back the function.
+So we can say absert style RX and now
+everything is nicely typed. Awesome. So
+we can come here and say this will be an
+async one where we can say upsert and
+then decoded and we can await this and
+actually on second thought we do not
+need the obser state because we can
+handle that via the form unless there's
+a specific error this can fail with
+style not found error but that would be
+more of a defect that means the client
+or some reason as an outdated cache. So
+I don't think we should act on that
+error particularly. So we can replace
+this with use a Rexet promise and great.
+Okay. So I had actually recorded the
+whole walkthrough of building out this
+component. But I noticed that it was
+taking too long and it would make this
+lectures incredibly long. And after all,
+this series is for learning effect, not
+for learning how to type out components
+and how to build forms per set. We're
+interested in how effect comes into
+play. So, let me show you what I built.
+So, we have again this use form. We have
+the make form options which will ensure
+we deal with the encoded type in our
+form which is really really nice for
+dates. For example, you take in a string
+or whatever, then that will be modeled
+within the schema itself. And then we
+have this unsubmit which is an async
+function and we await upsert. And what
+this is going to do is tie the
+asynchronous state to the actual form.
+So here once we do the whole submit
+stuff and whatnot, we can subscribe to
+the form by saying form.subscribe
+subscribe selector and then state
+isubmitting and here we get access to
+the boolean as a child callback and then
+we can show a button with a loading
+property. So this is really nice. There
+is no need to reach for user rex value.
+We can simply tie that automatically to
+the actual form and that's it and we
+have the form fields. Now if you want to
+understand how this whole form works
+then you can check out Tanstax form
+documentation. Okay. Now I went ahead
+and asked Claude to make this nicer and
+we now have the success view where we
+take in the styles and then we render
+the form the separator and then the
+section that has all of the style items.
+And again just some basic styles or the
+form each style item and the root. And
+now once we have this you'll see that we
+can now add styles. So new style and
+then rule some rule and then click save
+changes. And as we can see we get the
+new rule here all without refreshing the
+page. So that means it's working as it
+should. However, I noticed that we
+should perhaps reset the whole form on
+submission. So, save changes. And now
+it's reset. So, great. We're pretty
+close now. Obviously, this will be a
+dialogue in the near future, but you can
+start seeing how it all ties up
+together. Now, let's do the delete. So
+for each style item we can render a
+button type button and let's actually
+use my inbuilt component. So type or not
+type but variant and this will be icon
+and then we can say trash icon and then
+size four and this is not a variant icon
+but a variant ghost and then size icon
+and save this and then come back. As we
+can see we have the delete button. I'll
+ask CL to make it look nice. But for
+now, we can say delete is use RX set
+promise and then delete RX style RX. And
+then here we can use our new hook which
+is use RX promise actually. And then we
+can say delete state and then delete.
+And then we can come here and say
+uncclick. And then let's actually have
+the handle delete. And this will simply
+call delete by passing in the style
+id. And then handle delete. And then
+loading will be delete statewing.
+And if I save this, come back here,
+click delete. As we can see, it works
+successfully. However, I just noticed
+one bug and that is here in this form.
+and we're using user reset promise and
+we're awaiting this call and then we're
+resetting the form. However, this will
+give you back the exit. This will not
+throw the error. So, as we can see, we
+got back an exit. Thus, we should check
+that the tag is a success before
+actually resetting the form. But then
+there's another issue. The form itself
+also has a is submit successful. So
+let's say you want to show a different
+state on this though in that case I
+would reach for use rx value but
+nonetheless it's good to follow the best
+practices. So for that here under RX
+utils let's create a use RX promise and
+then I'm debating on the name we can
+either name it use RX promise unwrapped
+which is pretty universal or we can say
+or throw but this maybe reads weird so
+I'll go with unwrapped but if you have a
+more idiomatic name I'm all ears. So
+here we can say const and then set and
+then use a rex set promise and then same
+thing I'll actually copy this right here
+and then paste it here and then we can
+say rx and then we can return a react
+use callback where we are going to
+return or actually say set and this
+actually requires arguments. So we can
+say this will be the right value and
+then the options which is going to be
+this right here. But we can also have
+TypeScript automatically extract the
+argument type. But I guess this is fine
+for now. And then we can say dot then
+and then exceed and then much. And then
+we can say on success this will be an
+identity and on failure we can say pass
+dot squash pause and then throw this. So
+this will be a promise of a. So now we
+can say export const and then use rx
+promise unwrapped which again is pretty
+much the same as this one but instead
+we're going to say use a rex value and
+use a rex promise use a rex set promise
+unwrapped and then we can come back and
+use this variant. So use a reset promise
+unwrapped and in this case there is no
+need to check for this anymore. It will
+short circuit anyway and we just await
+it. And as we can see we got back a
+promise of void and again notice how we
+can pass in an abort signal. So you can
+define a use rev have an abboard signal
+and perhaps on on mount you can cancel
+the request or you can in fact create
+your own hook that is going to call the
+abort on on mount. So that's up to you
+and that's it. Now this should still
+work pretty much the same. So save
+changes and as we can see it works.
+Okay, great. Now, this lecture is
+getting quite long. So, in the next
+video, we're going to see how we can
+turn this ARX into a writable ARX and
+what that actually means behind the
+scenes. And we will also take a look at
+optimistic updates. Effects offers an
+optimistic API. Though I'm a bit on the
+fence on showcasing the super new APIs.
+I have a hunch they will change

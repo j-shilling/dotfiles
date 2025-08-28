@@ -1,0 +1,151 @@
+Title: Toastify Atoms! | #9 Building an App with Effect - YouTube
+
+Okay, so before moving on with the API
+and the generations and the streaming
+etc. there's one last thing I want to do
+and that is set up toasts. So I want to
+have the ability to be able to toastify
+these atoms such that we get the loading
+toast, we get the success toast and then
+we have the error toast all type safe.
+So preserving the error type
+annotations, the success type
+everything. So for that what I'm going
+to do is create a file here under the
+atom directory called with toast.ts.
+And here we're going to have a type
+which is toast options. And we're going
+to take in a which is the success
+channel. then E which is the error
+channel and finally the arcs which are
+the arguments of the effect. So these
+ones right here. So with this we can
+then have an unweing which would be just
+a string. No need for a lazy argument.
+Then we have the onsuccess which again
+gives us the result and then we
+optionally can have the rest of the
+arguments. and then on failure and this
+will be modeled via an option of E. Now
+why an option? Well, that's because in
+effect you have defects and expected
+errors. But I would argue that if you're
+going to toastify anything, you really
+do not care about the defect per se. you
+only care about pattern matching against
+the expected errors and well simply and
+well simply having the option to know if
+you got a defect. So in that case an
+option is perfect for this and again we
+have the rest of the arguments. Now with
+this we can say export const with toast
+and again same generics but here we're
+going to take in the options and we're
+going to pass in the generics and
+finally we're going to return a function
+that is going to give us the effect and
+it is going to give us the arguments and
+we're going to see how this works in a
+moment. And now here we could either use
+an effect gen or we can just use pipe
+for everything. But in this case let's
+go with a generator so it's easier to
+work with. And here we're going to have
+the toast ID which is given by
+toast.loading.
+And here I'm using soner but I'm pretty
+sure all toast libraries work in a very
+similar way. And here we can now say
+const result is equal to yield and then
+self.pipe
+though if we're in a generator let's
+make everything imperative. So let's say
+exit of self and then we can say never
+mind if we do this we would have to
+propagate the error channel once again.
+So let's keep it simple by saying top
+error cause and then we get the cause
+here and then I believe we need to
+return an effect here and then we can
+say toast error and then options do
+unfailure we pass in the option using
+cause. So this is going to give us the
+first recoverable error and a none if
+it's a defect. We pass in the rest of
+the arguments and then we pass in the ID
+of the toast. So Soner knows which toast
+to update. That way we do not get
+dangling toasts. And with this we can
+now say toast.uess
+because we know this is going to short
+circuit. So at this point we have a and
+then we can say return result or if this
+reads somewhat confusing for you you can
+just return here and then do attop and
+here you can say unsuccess instead. So
+now it's a bit more declarative. Now we
+can come here to style satum and then
+say with toast and then we can say
+unwaiting saving style though actually
+on second thought you might want to have
+a creating style or updating style. So
+in that case we can change this to be a
+function as well that takes in the
+arguments and now we can come here and
+take in the payload and then say payload
+id is present. If so then we can have
+updating else creating style and then on
+success we can have a constant that is
+style saved and then on failure well we
+can match against this. So we can say
+for example match error option and then
+we can say unsum and we get the types
+that are here otherwise unknown unknown
+error and as we can see here well this
+is narrowed down for us now in this case
+there's not really an error I would say
+it's worthwhile extracting the message
+so I'm going to refactor this to just
+have a constant and fail to save style.
+Perfect. So now let's add the with toast
+here. So same thing deleted. However, we
+can use constant here. But using
+constant in these cases seem a little
+bit annoying. So how about we introduce
+a union here. So either a function or a
+string. And same for these ones. And so
+we can check type of options.onweing
+string then pass it as it is otherwise
+invoke the function and we can repeat
+the same logic for the other ones. And
+let's actually change this to be a
+function untraced and we can get rid of
+this generator. And okay, now it's
+looking much cleaner. So now we can come
+back here and get rid of the constant
+wrappers and that's it. So now let's try
+it out. So for this I added under the VS
+code directory a tasks.json
+file. So now you can say run task and
+then you have this start workspace task.
+And so if I run it, it is going to
+automatically run the server and the
+client all in a nick shell. So now if we
+come here and delete this style, we do
+not get a toast because I'm pretty sure
+we're missing the toaster component. So
+let's come here to the root and then
+let's say toaster. Save this and then
+come back
+and the save changes. And as we can see,
+we get the toast here. So if I delete,
+same thing. We got the loading state and
+then the success state. Okay. So this
+now wraps up the video. If you have any
+questions, feedback, do let me know. In
+the next video, I'll talk about the life
+cycle of atsums and how it really works
+because there is one small futon that if
+you're not aware of it, it can lead to a
+really unexpected behavior. Anyway, I'll
+see you in the next one. See you.

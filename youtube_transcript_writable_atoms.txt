@@ -1,0 +1,402 @@
+Title: Writable Atoms | #8 Building an App with Effect - YouTube
+
+Okay, so I've got some good news and bad
+news regarding artifact Rex. The bad
+news is it has been renamed to artifact
+atom, which means we have to migrate
+everything. So there is no longer a
+concept of an Rex, but instead an atom.
+And the good news is it comes with a ton
+of improvements, particularly around
+working with promises. So what we're
+going to do first is migrate to add
+effect or rex. So what I'm going to do
+is come here to scripts and then
+dependency utils and then here update
+effect dependencies and then we are
+going to rename this to atom. So add
+effect atom/to-react.
+And by doing this saving this file I can
+now come here to my terminal and say
+pmppm and then effect colon update dash
+depths. And actually I forgot to update
+the reference here in my package.json.
+So same thing for both the overrides and
+the dev dependencies. And once we have
+this again we can run this and we
+get.1.6.
+six. Awesome. So now this is going to
+break everything if I'm not mistaken.
+And whoops, I forgot to update the
+dependencies for the client. So now we
+reference artifact item and then run
+pmppm install. And as we can see, we get
+a type error cannot find module. So
+actually we're going to change our
+strategy and that is we're not going to
+have a global runtime but instead have a
+runtime per atoms. That way they are all
+isolated and they are easier to test as
+you are collocating the actual service
+implementations with each runtime. This
+means we're going to get rid of this
+managed runtime. There is no need for us
+to have a managed runtime. And we're
+going to change this to be atom instead
+of RX and then context. And instead of
+creating our own memo map, we can
+actually say atom dotdefault memo map.
+And this as we can see is a global
+constant value which is effect.r run
+sync layer make memo map. So pretty much
+the same thing as we had before. And we
+are not going to have these global
+layers here. So we're going to do
+something different. We're going to call
+this make atom runtime. And then we can
+say make atom runtime dot and then add
+global layer. And then here we can say
+layer.
+And then logger.prett pretty and then
+logger minimum log level. And this is
+pretty much it. So we can now get rid of
+this main layer and get rid of this
+runtime. So this is all we need. So I'm
+going to actually rename this parent
+directory from RX to atom and then RX
+utils will in fact be deleted because
+none of this is necessary. And I'm going
+to show you what we can do instead. And
+let's rename this to make atom runtime.
+Awesome. So now let's update styles of
+Rex. But for this we're going to do
+something different. We're going to move
+this under root and we're going to
+rename this file to styles atoms and
+we're going to get rid of this data
+access directory. Now here what do we
+need to do? Well, we need to create our
+runtime. So we can say runtime make
+custom runtime and then we provide the
+API client which means that the runtime
+will give us access to the API client
+logically. So this takes a layer and
+with this we can now say runtime
+instead of runtime. RX and same for
+these ones and as for the registry we
+can say atom registry
+and we can update our imports where
+registry comes from artifact atom and as
+we can see the errors went away but
+let's actually do one more thing and
+that is rename this to styles atom then
+upsert style atom and finally delete
+style atom. Great. So what does this
+mean? What are the implications of
+creating a runtime here? Well, twofold.
+One, we can now only provide the
+necessary services. So if we're going to
+test things, then it's going to be more
+straightforward rather than having a
+monolithic runtime. And two, the life
+cycle of the runtime. So in other words,
+the life cycle of the services will be
+tied to that of the consumers. Which
+means that if no one uses any of these
+atoms, maybe you navigate to another
+page and whatnot, then on destruction,
+it is going to call all of the
+finalizers that you specified in your
+layers. So you can clean up resources
+and whatnot, which is really, really
+nice. But if you recall, we're using
+make atom runtime which uses a memo map
+internally which means that if a lot of
+different Rexes need access to the API
+client then it is only going to
+construct API client once. It is not
+going to create one instance per atom
+runtime which is a huge huge plus.
+Great. So now let's come here to the
+root page and we're going to get rid of
+these imports and our old utils. And
+what we can do here is say use atom set.
+There's no use atom promise use atom
+promise exit just use atom set. But this
+is going to give us back a function that
+is going to succeed with void. So
+nothing which is not what we want. We
+want a promise and an unwrapped promise
+at that. So we can come here to the
+second argument of the hook and say mode
+and then we can specify value promise or
+promise exit. In our case we want
+promise and as we can see we get a
+promise of void. Awesome. If we were to
+do promise exit logically we get a
+promise that succeeds with an exit. So
+let's revert this back and now we can
+come here and instead of our all utility
+use RX promise we can say use RX or use
+atom and here we can specify the mode
+and in this case we want a promise exit.
+Why? Because if I'm not mistaken, if the
+lede were to throw, then we're going to
+get a runtime error and potentially
+crash the application. Unless we have an
+error boundary and the like, but don't
+quote me on that. I honestly forgot how
+React handles errors. And here for us
+value, well, use atom value and result
+now comes from artifact atom. And that's
+it. That's our whole refactor.
+Fortunately, we didn't have much. So, it
+is super straightforward. Now, before
+moving on, let's see if everything still
+works. So, I'm going to refresh my page.
+Seems like it loaded everything though
+pretty much instantly. So, let's do
+something different. Let's come here to
+our API client and then we're going to
+say HTTP client transform response and
+then we are going to get our response
+and then say effects
+for for now 150 millies and then we can
+say effect as response or rather sip
+right And by doing this, if I come back
+here, refresh, as we can see, we get
+this loading. If I increase this to 700,
+and then refresh. Now, that's much
+better. At least for testing the
+behavior locally. So now, what about
+deleting? It worked. As we can see,
+we're not doing any cache writes. We are
+refreshing everything. So, we get that
+delay. And what about creating test test
+save changes refreshes and we get the
+value here. So awesome it's working.
+However, let's do something different
+here. Let's say effect
+onraced then get the response here and
+yield a response. And then we can say
+yield effect. And then sleep for random
+dot next range. And then we can say
+between 100 or 200 millies to worst case
+500. And then we can say sleep four. And
+this is an effect. So we need to yield
+this. Awesome. So now we can save this.
+Come back here. And we should get
+randomized sleep force. Now you want to
+make sure to only apply this delay if
+mvirus
+effective m is dev. If not well pass
+through. Now let's take a look at cache
+updates. So if I come here to the
+registry and say set notice how we can
+pass in an atom and then the new value.
+However, if you recall an atom by itself
+isn't writable. So in effect atom all
+atoms by default are read only and I
+guess that's for purity/safety.
+You need to explicitly define the input
+parameters to making a writable RX. So
+what can we do here? Well, we can
+actually not export styles atom but
+instead rename this to remote atom. And
+then we can say export constyles atom is
+runtime dot or not runtime but
+atom.ritable
+and here we get access to the
+atom.context.
+So just for reference this is an
+atom.context
+and then we can say get and then remote
+atom and then or the second argument we
+pass in the call back for actually
+writing stuff. So we can say context
+which is an atom.rite
+context of a result. So it infers
+automatically the return type of this
+atom and then you get the new value. So
+in this case we're going to call this
+action and for now let's say this will
+be any and that's it. Now you can say
+set or set self and then the new value.
+What this means is this atom remains
+here immutable. You can't actually
+modify the cache of this atom.
+Everything needs to be derived. So this
+is what we're achieving here. We're
+creating a new atom that subscribes to
+the state of remote atom. So basically a
+pass through but it has its own cache.
+So when we're writing to this atom,
+we're actually writing to styles atom,
+not to the remote atom. Now you can type
+the action whatever you want. And that's
+because you get a free encapsulation. So
+in this case, what we can do is say
+const style or just action and then data
+from effect tagged enum. And then here
+let me recall the syntax. So it's tagged
+denom with the t lowerase and we invoke
+this by passing in a generic like this.
+So we can say upsert and then we can say
+this will take in the absert style
+payload and then the delete action which
+is just the style ID and we're getting a
+typer here because we need a tag but the
+key should be the tag. So I think I got
+this the other way around. Yeah. So the
+type is the one that injects the tag. So
+we can say data tagdenum and then absort
+and delete and this will map the tags
+for us. So the key will be the tag and
+then we can replace this with action and
+now we can say we take in an action and
+as we can see here we can pattern match
+against this action. So we can for
+example say action domatch and then we
+pass in the action and we get free
+callbacks here with the narrow down
+types. So now here we can say const and
+then result is context dot get and then
+this would be styles atom and then we
+check if not result dot is success
+result then return do not do anything.
+And now here we can say update is equal
+to action domatch and then we can say
+result do value dot filter this style
+for style id is different from this one
+but we get a lint error and that's
+because this needs to be an object. So
+we can dstructure this directly and now
+we can do the same for observed. So we
+get the payload here and then we check
+id if so result do value do map and
+replace the whole entity with the
+payload otherwise we can actually repend
+the payload like this and now we can say
+context set self and then results
+success and then the update or in fact
+we can say array from effect prepend and
+then payload to result that value and I
+believe we need to say read only payload
+to be this object that way we can say
+payload like this and this is actually
+self first and then the value so we can
+say to result value the payload now
+we're getting an array of styles or a
+style or search style payload payload
+which makes sense because this is an
+observer style payload. So we actually
+taking in a style not the payload and
+that's it. Now we can come here and use
+the registry like this and then get the
+result and then say registry set to
+styles atom and then we can say action.
+ert and then instead of payload we can
+rename this to style and same here and
+we can say style will be the new obser
+style and for the lead we can apply the
+same logic but instead say registry set
+to styles item action delete and we pass
+in the ID and this in theory should work
+though if we take a look at the console
+we're getting this warning execute
+hitting an effect version 3.17.6
+with a runtime of a newer version. So I
+did update the dependencies but maybe
+the vit server didn't catch that. So
+we're going to rerun the client and then
+refresh and we're still getting the
+error. So let's see at our client
+package.json. We're using all of the
+effect dependencies from the workspace
+which are overridden at the top level.
+Okay. So, as I was recording this video,
+they published a new effect version and
+team Smart, the author of Atom React,
+released the.1.7
+version shortly after. So, we were using
+an outdated version. Anyway, we need to
+update our root where we now need to
+access the registry provider from
+artifact atom. Now, I just had the
+biggest brain fart. I'm not sure why
+we're doing this. This doesn't make any
+sense because again, we're passing in
+the whole style entity. So, this needs
+to be refactor
+existing. And then instead of array.find
+first, we can say result.find.
+and then we check if it exists then we
+map over the array otherwise we prepend
+the style. So now this should work. So
+if I come back here and then refresh
+just in case. If I click delete as we
+can see it is now removed from the
+cache. If I add something again it works
+and well we do not support updating yet
+so can't test that right now. Now you
+might be wondering about this pattern.
+How does this work exactly? What's the
+relationship? Well, this is a derived
+atom from the remote atom. So if you
+think about it, remote atom is the
+source of truth. It is the one that
+really dictates what the current state
+is on the server. Meanwhile, this
+obviously dictates our modifiable cache,
+which means that if an error were to
+occur, for example, here under the root
+page, if on failure, you were to render
+a retry component. So retry and then FC
+and then you can say something went
+wrong and then use atom refresh and then
+you say styles atom and then refresh and
+then you were to render a button saying
+retry by doing this and let's actually
+modify this like such. This is not going
+to work because you would be refreshing
+the local cached atom. This is not going
+to magically trigger a refresh for the
+parent one which is remote atom. So you
+need to actually target this remote atom
+instead. So what I like to do here is
+say object dot assign and then for the
+writable arx and then provide a remote
+property which points to the remote
+atom. That way we can come here and
+under use atom refresh we target the
+remote instead and that way once we
+refresh the remote and it changes for
+whatever reason then the remote atom
+will cause this child so styles atom to
+react to those changes and this is
+pretty much it. So now moving on from
+this since this is now pretty much done.
+You might be wondering about this
+runtime pattern. What about services
+that should not be destroyed? Well, what
+you can do is add your root. So here
+that this is not a component. So we can
+create a keep alive services.ts
+or tsx actually. And then you can say
+export con keep alive services is a
+react function component that returns
+null. And here you can say use atom
+mount and then you can create the keep
+alive runtime. So make atom runtime and
+then workerclient.default
+and then you just mount the runtime like
+this. And now you can ensure that here
+the services that you consume here will
+never be effectively destroyed unless
+well the root itself on mounts. So by
+doing this if I refresh as we can see we
+get worker started and no matter what no
+matter where the user goes to where the
+user navigates to this runtime will be
+there forever. Now remember this uses a
+memo map internally. So if I were to

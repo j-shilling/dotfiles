@@ -181,12 +181,12 @@
   (claude-code-terminal-backend 'vterm)
   (claude-code-toggle t)
   :hook
-  (doom-first-input-hook . claude-code-mode))
+  (prog-mode-hook . claude-code-mode))
 
 (use-package! monet
   :after claude-code
   :hook
   (claude-code-process-environment-functions . monet-start-server-function)
-  (doom-first-input-hook . monet-mode)
+  (claude-code-mode-hook . monet-mode)
   :custom
   (monet-ediff-split-window-direction 'vertical))
