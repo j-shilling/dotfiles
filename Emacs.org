@@ -1726,7 +1726,3 @@ Yasnippet
 #+begin_src emacs-lisp
 ;;; init.el ends here
 #+end_src
-
-;; Local Variables: 
-;; eval: (add-hook 'after-save-hook #'org-babel-tangle nil t) 
-;; End:

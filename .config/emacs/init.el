@@ -1,24 +1,67 @@
-;;; init.el --- Initialization -*- lexical-binding: t -*-
+;;; Init.el --- Initialization -*- lexical-binding: t -*-
 ;;;
 ;;; Commentary:
 ;;;
 ;;;
 ;;; Code:
 
-(require 'xdg)
-(require 'seq)
+;;;
+;;; Packages
+;;;
 
-(defun init--parts-to-path (&rest args)
-  (seq-reduce (lambda (acc part)
-                (expand-file-name part acc))
-              args
-              default-directory))
+(require 'package)
+(setopt package-archives '(("melpa" . "http://melpa.org/packages/")
+                            ("org" . "http://orgmode.org/elpa/")
+                            ("gnu" . "https://elpa.gnu.org/packages/")
+                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
 
-(defun init--state-file (&rest args)
-  (apply #'init--parts-to-path (xdg-state-home) "emacs" args))
+(defconst init--packages
+  '(
+    which-key
+    vertico
+    orderless
+    marginalia
+    consult
+    corfu
+    embark
+    embark-consult
+    multiple-cursors
+    wgrep
+    diff-hl
+    ibuffer
+    magit
+    magit-todos
+    forge
+    helpful
+    devdocs
+    apheleia
+    smartparens
+    eglot-booster
+    )
+  "External packages to install")
 
-(defun init--cache-file (&rest args)
-  (apply #'init--parts-to-path (xdg-cache-home) "emacs" args))
+(defun init-install-packages ()
+  (interactive)
+  (package-refresh-contents)
+  (dolist (pkg init--packages)
+    (unless (package-installed-p pkg)
+      (package-install pkg))))
+
+(eval-when-compile
+  (require 'use-package))
+
+(if init-file-debug
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
+
+(setq package-install-upgrade-built-in t)
+
+;;;
+;;; General
+;;;
 
 (defconst IS-MAC     (eq system-type 'darwin))
 (defconst IS-LINUX   (eq system-type 'gnu/linux))
@@ -28,78 +71,22 @@
                           (string-match-p "Microsoft"
                                           (shell-command-to-string "uname -a"))))
 
-(setq straight-base-dir (init--state-file))
+(defun init--parts-to-path (&rest args)
+  (require 'seq)
+  (seq-reduce (lambda (acc part)
+                (expand-file-name part acc))
+              args
+              default-directory))
 
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(defun init--state-file (&rest args)
+  (require 'xdg)
+  (declare-function xdg-state-home 'xdg)
+  (apply #'init--parts-to-path (xdg-state-home) "emacs" args))
 
-(straight-use-package 'use-package)
-(straight-use-package 'diminish)
-(eval-when-compile
-  (require 'use-package))
-
-(setq use-package-hook-name-suffix nil
-      use-package-always-defer t
-      use-package-always-ensure t)
-
-(if init-file-debug
-    (setq use-package-verbose t
-          use-package-expand-minimally nil
-          use-package-compute-statistics t)
-  (setq use-package-verbose nil
-        use-package-expand-minimally t))
-
-(use-package straight
-  :straight nil
-  :ensure nil
-  :custom
-  (straight-use-package-by-default t))
-
-(use-package emacs
-  :straight nil
-  :ensure nil
-  :custom
-  (auto-mode-case-fold nil))
-
-(use-package emacs
-  :straight nil
-  :ensure nil
-  :init
-  (setq bidi-inhibit-bpa t)
-  (setq-default bidi-display-reordering 'left-to-right
-                bidi-paragraph-direction 'left-to-right))
-
-(use-package emacs
-  :straight nil
-  :ensure nil
-  :init
-  (setq jit-lock-defer-time 0))
-
-(use-package gcmh
-  :diminish gcmh-mode
-  :hook
-  (after-init-hook . gcmh-mode)
-  :custom
-  (gcmh-verbose init-file-debug))
-
-(use-package vlf
-  :hook
-  ;; This sets-up all the autoloads and hooks
-  (after-init-hook . (lambda ()
-                       (require 'vlf-setup))))
+(defun init--cache-file (&rest args)
+  (require 'xdg)
+  (declare-function xdg-cache-home 'xdg)
+  (apply #'init--parts-to-path (xdg-cache-home) "emacs" args))
 
 (use-package emacs
   :custom
@@ -185,10 +172,9 @@
   (url-history-file                 (init--cache-file "url/history.el"))
 
   :init
-  ;; (startup-redirect-eln-cache (init--cache-file "eln-cache"))
   (setq native-comp-jit-compilation nil)
   (setq custom-file nil)
-  
+
 
   (let ((encoding (if IS-WINDOWS
                       'utf-8-dos
@@ -213,13 +199,94 @@
           select-enable-primary nil
           interprogram-cut-function #'gui-select-text)))
 
-(use-package exec-path-from-shell
-  :unless IS-WINDOWS
-  :hook
-  (after-init-hook . exec-path-from-shell-initialize))
+;;;
+;;; Appearance
+;;;
 
 (use-package emacs
-  :straight nil
+  :init
+  (set-default 'cursor-type '(bar . 1))
+  (setq-default cursor-in-non-selected-windows nil)
+  (set-frame-parameter (selected-frame) 'internal-border-width 8)
+  (setq window-divider-default-right-width 8)
+  :hook
+  (after-init-hook . window-divider-mode))
+
+(use-package menu-bar
+  :config
+  (menu-bar-mode 0))
+
+(use-package tool-bar
+  :config
+  (tool-bar-mode 0))
+
+(use-package scroll-bar
+  :config
+  (scroll-bar-mode 0))
+
+(use-package fringe
+  :config
+  (set-fringe-mode 8))
+
+(use-package fontset
+  :init
+  (setq use-default-font-for-symbols nil)
+  :config
+  (set-fontset-font t 'symbol "Noto Emoji" nil 'append)
+  (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
+  (set-fontset-font "fontset-default" nil
+                    (font-spec :name "Noto Emoji")))
+
+(use-package pixel-scroll
+  :diminish pixel-scroll-precision-mode
+  :hook
+  (after-init-hook . pixel-scroll-precision-mode))
+
+(use-package display-line-numbers
+  :diminish display-line-numbers-mode
+  :hook
+  (prog-mode-hook . (lambda () (display-line-numbers-mode +1)))
+  (text-mode-hook . (lambda () (display-line-numbers-mode -1))))
+
+(use-package whitespace
+  :diminish whitespace-mode
+  :custom
+  (whitespace-action '(cleanup auto-cleanup))
+  :hook
+  (prog-mode-hook . (lambda () (whitespace-mode +1)))
+  (text-mode-hook . (lambda () (whitespace-mode -1))))
+
+(use-package modus-themes
+  :preface
+  (defun init-load-theme ()
+    )
+  :defines
+  modus-themes-mode-line
+  modus-themes-diffs
+  modus-themes-deuteranopia
+  modus-themes-fringes
+  :init
+  (load-theme 'modus-vivendi t)
+  :config
+  (setq modus-themes-mode-line '(borderless)
+        modus-themes-diffs 'desaturated
+        modus-themes-deuteranopia t))
+
+(use-package which-key
+  :if (package-installed-p 'which-key)
+  :diminish which-key-mode
+  :hook
+  (after-init-hook . which-key-mode))
+
+(use-package prog-mode
+  :hook
+  (prog-mode-hook . prettify-symbols-mode))
+
+;;;
+;;; Auto Save / History
+;;;
+
+(use-package emacs
   :custom
   (auto-save-default  t)
   (auto-save-timeout  20)
@@ -227,19 +294,14 @@
   (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-")))
 
 (use-package desktop
-  :straight nil
-  :ensure nil
   :custom
   (desktop-path (init--cache-file "desktop/")))
 
 (use-package diary-lib
-  :straight nil
-  :ensure nil
   :custom
   (diary-file (init--cache-file "diary")))
 
 (use-package emacs
-  :straight nil
   :custom
   (make-backup-files    t)
   (vc-make-backup-files nil)
@@ -249,14 +311,10 @@
   (kept-new-versions    9))
 
 (use-package calc
-  :straight nil
-  :ensure nil
   :custom
   (calc-settings-file (init--state-file "calc-settings.el")))
 
 (use-package abbrev
-  :straight nil
-  :ensure nil
   :custom
   (abbrev-file-name (init--state-file "abbrev.el")))
 
@@ -309,28 +367,6 @@
   (eshell-mode-hook . (lambda ()
                         (setenv "TERM" "xterm-256color"))))
 
-(use-package eat
-  :straight '(eat :type git
-                  :host codeberg
-                  :repo "akib/emacs-eat"
-                  :files ("*.el" ("term" "term/*.el") "*.texi"
-                          "*.ti" ("terminfo/e" "terminfo/e/*")
-                          ("terminfo/65" "terminfo/65/*")
-                          ("integration" "integration/*")
-                          (:exclude ".dir-locals.el" "*-tests.el")))
-  :hook
-  (eshell-load-hook . eat-eshell-mode)
-  (eshell-load-hook . eat-eshell-visual-command-mode))
-
-(use-package eshell-syntax-highlighting
-  :hook
-  (eshell-mode-hook . eshell-syntax-highlighting-mode))
-
-(use-package so-long
-  :diminish global-so-long-mode
-  :hook
-  (after-init-hook . global-so-long-mode))
-
 (use-package recentf
   :diminish recentf-mode
   :custom
@@ -340,7 +376,6 @@
   :hook
   (after-init-hook recentf-mode))
 
-;; https://emacs.stackexchange.com/questions/4187/strip-text-properties-in-savehist
 (defun unpropertize-kill-ring ()
   "Remove properties from `kill-ring'."
   (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
@@ -369,190 +404,35 @@
   :hook
   (after-init-hook . save-place-mode))
 
-(use-package emacs
-  :init
-  (set-default 'cursor-type '(bar . 1))
-  (setq-default cursor-in-non-selected-windows nil)
-  (setq bookmark-set-fringe-mark nil)
-  (set-frame-parameter (selected-frame) 'internal-border-width 8)
-  (setq window-divider-default-right-width 8)
-  :hook
-  (after-init-hook . window-divider-mode))
+;;;
+;;; Completion
+;;;
 
-(use-package menu-bar
-  :straight nil
-  :ensure nil
-  :config
-  (menu-bar-mode 0))
-
-(use-package tool-bar
-  :straight nil
-  :ensure nil
-  :config
-  (tool-bar-mode 0))
-
-(use-package scroll-bar
-  :straight nil
-  :ensure nil
-  :config
-  (scroll-bar-mode 0))
-
-(use-package fringe
-  :straight nil
-  :ensure nil
-  :config
-  (set-fringe-mode 8))
-
-(use-package fontset
-  :straight nil
-  :ensure nil
-  :init
-  (setq use-default-font-for-symbols nil)
-  :config
-  (set-fontset-font t 'symbol "Noto Emoji" nil 'append)
-  (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
-  (set-fontset-font "fontset-default" nil
-                    (font-spec :name "Noto Emoji")))
-
-(use-package fontaine
-  :after fontset
-  :config
-  (setq fontaine-current-preset t
-        fontaine-presets
-        '((t
-           :default-family "Iosevka"
-           :default-height 16
-           :fixed-pitch-family "Iosevka"
-           :fixed-pitch-height 1.0
-           :variable-pitch-family "Iosevka Etoile"
-           :variable-pitch-height 1.0
-           :variable-pitch-weight regular)
-          (regular)
-          (large :default-weight semilight
-                 :default-height ,(+ 11 40)
-                 :bold-weight extrabold)))
-  :hook
-  (after-init-hook . 'fontaine-mode))
-
-(use-package ligature
-  :functions ligature-set-ligatures
-  :hook
-  (after-init-hook . global-ligature-mode)
-  :config
-  (ligature-set-ligatures 't '("www"))
-  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
-  (ligature-set-ligatures 'prog-mode
-                          '(;; == === ==== => =| =>>=>=|=>==>> ==< =/=//=// =~
-                            ;; =:= =!=
-                            ("=" (rx (+ (or ">" "<" "|" "/" "~" ":" "!" "="))))
-                            ;; ;; ;;;
-                            (";" (rx (+ ";")))
-                            ;; && &&&
-                            ("&" (rx (+ "&")))
-                            ;; !! !!! !. !: !!. != !== !~
-                            ("!" (rx (+ (or "=" "!" "\." ":" "~"))))
-                            ;; ?? ??? ?:  ?=  ?.
-                            ("?" (rx (or ":" "=" "\." (+ "?"))))
-                            ;; %% %%%
-                            ("%" (rx (+ "%")))
-                            ;; |> ||> |||> ||||> |] |} || ||| |-> ||-||
-                            ;; |->>-||-<<-| |- |== ||=||
-                            ;; |==>>==<<==<=>==//==/=!==:===>
-                            ("|" (rx (+ (or ">" "<" "|" "/" ":" "!" "}" "\]"
-                                            "-" "=" ))))
-                            ;; \\ \\\ \/
-                            ("\\" (rx (or "/" (+ "\\"))))
-                            ;; ++ +++ ++++ +>
-                            ("+" (rx (or ">" (+ "+"))))
-                            ;; :: ::: :::: :> :< := :// ::=
-                            (":" (rx (or ">" "<" "=" "//" ":=" (+ ":"))))
-                            ;; // /// //// /\ /* /> /===:===!=//===>>==>==/
-                            ("/" (rx (+ (or ">"  "<" "|" "/" "\\" "\*" ":" "!"
-                                            "="))))
-                            ;; .. ... .... .= .- .? ..= ..<
-                            ("\." (rx (or "=" "-" "\?" "\.=" "\.<" (+ "\."))))
-                            ;; -- --- ---- -~ -> ->> -| -|->-->>->--<<-|
-                            ("-" (rx (+ (or ">" "<" "|" "~" "-"))))
-                            ;; *> */ *)  ** *** ****
-                            ("*" (rx (or ">" "/" ")" (+ "*"))))
-                            ;; www wwww
-                            ("w" (rx (+ "w")))
-                            ;; <> <!-- <|> <: <~ <~> <~~ <+ <* <$ </  <+> <*>
-                            ;; <$> </> <|  <||  <||| <|||| <- <-| <-<<-|-> <->>
-                            ;; <<-> <= <=> <<==<<==>=|=>==/==//=!==:=>
-                            ;; << <<< <<<<
-                            ("<" (rx (+ (or "\+" "\*" "\$" "<" ">" ":" "~"  "!"
-                                            "-"  "/" "|" "="))))
-                            ;; >: >- >>- >--|-> >>-|-> >= >== >>== >=|=:=>>
-                            ;; >> >>> >>>>
-                            (">" (rx (+ (or ">" "<" "|" "/" ":" "=" "-"))))
-                            ;; #: #= #! #( #? #[ #{ #_ #_( ## ### #####
-                            ("#" (rx (or ":" "=" "!" "(" "\?" "\[" "{" "_(" "_"
-                                         (+ "#"))))
-                            ;; ~~ ~~~ ~=  ~-  ~@ ~> ~~>
-                            ("~" (rx (or ">" "=" "-" "@" "~>" (+ "~"))))
-                            ;; __ ___ ____ _|_ __|____|_
-                            ("_" (rx (+ (or "_" "|"))))
-                            ;; Fira code: 0xFF 0x12
-                            ("0" (rx (and "x" (+ (in "A-F" "a-f" "0-9")))))
-                            ;; Fira code:
-                            "Fl"  "Tl"  "fi"  "fj"  "fl"  "ft"
-                            ;; The few not covered by the regexps.
-                            "{|"  "[|"  "]#"  "(*"  "}#"  "$>"  "^=")))
-
-(use-package pixel-scroll
-  :straight nil
-  :ensure nil
-  :diminish pixel-scroll-precision-mode
-  :hook
-  (after-init-hook . pixel-scroll-precision-mode))
-
-(use-package display-line-numbers
-  :diminish display-line-numbers-mode
-  :hook
-  (prog-mode-hook . (lambda () (display-line-numbers-mode +1)))
-  (text-mode-hook . (lambda () (display-line-numbers-mode -1))))
-
-(use-package whitespace
-  :diminish whitespace-mode
+(use-package minibuffer
   :custom
-  (whitespace-action '(cleanup auto-cleanup))
+  (completion-cycle-threshold nil)
+  (enable-recursive-minibuffers t)
+  (tab-always-indent 'complete)
+  (minibuffer-prompt-properties
+   '(readonly t cursor-intagible t face minibuffer-prompt))
   :hook
-  (prog-mode-hook . (lambda () (whitespace-mode +1)))
-  (text-mode-hook . (lambda () (whitespace-mode -1))))
+  (minibuffer-setup-hook . cursor-intangible-mode))
 
-(use-package modus-themes
-  :defines
-  modus-themes-mode-line
-  modus-themes-diffs
-  modus-themes-deuteranopia
-  modus-themes-fringes
-  :config
-  (setq modus-themes-mode-line '(borderless)
-        modus-themes-diffs 'desaturated
-        modus-themes-deuteranopia t
-        modus-themes-fringes nil)
-  :init
-  (load-theme 'modus-vivendi t (not (display-graphic-p)))
+(use-package icomplete
+  :unless (package-installed-p 'vertico)
   :hook
-  (server-after-make-frame-hook . (lambda ()
-                                    (enable-theme 'modus-vivendi))))
-
-(setq completion-cycle-threshold nil)
-(setq enable-recursive-minibuffers t)
-(setq tab-always-indent 'complete)
-(setq minibuffer-prompt-properties
-      '(readonly t cursor-intagible t face minibuffer-prompt))
-(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (after-init-hook . fido-mode))
 
 (use-package vertico
+  :if (package-installed-p 'vertico)
+  :diminish vertico-mode
   :hook
-  (after-init-hook .vertico-mode))
+  (after-init-hook . vertico-mode))
 
 (use-package vertico-multiform
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'vertico)
   :diminish vertico-multiform-mode
+  :defines (vertico-multiform-categories vertico-multiform-commands)
   :hook (vertico-mode-hook . vertico-multiform-mode)
   :init
   (setq vertico-multiform-categories
@@ -575,6 +455,7 @@
           (consult-yank-pop buffer))))
 
 (use-package orderless
+  :if (package-installed-p 'orderless)
   :hook
   (after-init-hook .
                    (lambda (&rest _)
@@ -585,6 +466,7 @@
                              (file (styles . (partial-completion basic orderless))))))))
 
 (use-package marginalia
+  :if (package-installed-p 'marginalia)
   :bind
   (:map minibuffer-local-map
         ("M-A" . marginalia-cycle))
@@ -592,6 +474,8 @@
   (after-init-hook . marginalia-mode))
 
 (use-package consult
+  :if (package-installed-p 'consult)
+  :functions (consult-register-window consult-register-format)
   :bind ;; C-c bindings (mode-specific-map)
   (("C-c h" . consult-history)
    ("C-c m" . consult-mode-command)
@@ -647,42 +531,18 @@
 
   (advice-add #'register-preview :override #'consult-register-window))
 
-(use-package consult-yasnippet
-  :autoload consult-yasnippet)
-
 (use-package consult-imenu
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'consult)
   :bind
   ("M-g i" . consult-imenu)
   ("M-g I" . consult-imenu-multi))
-
-(use-package consult-dir
-  :bind (("C-x C-d" . consult-dir)
-         :map minibuffer-local-completion-map
-         ("C-x C-d" . consult-dir)
-         ("C-x C-j" . consult-dir-jump-file)))
-
-(use-package minibuffer
-  :straight nil
-  :ensure nil
-  :bind
-  ("C-M-i" . completion-at-point))
 
 (use-package hippie-exp
   :bind
   ("M-/" . hippie-expand))
 
-(use-package yasnippet
-  :diminish yas-minor-mode
-  :hook
-  (yas-minor-mode-hook . (lambda ()
-                           (setq-local hippie-expand-try-functions-list
-                                       (cons #'yas-hippie-try-expand hippie-expand-try-functions-list))))
-  (prog-mode-hook . yas-minor-mode))
-(use-package yasnippet-snippets)
-
 (use-package corfu
+  :if (package-installed-p 'corfu)
   :diminish global-corfu-mode
   :custom
   (corfu-auto t)
@@ -691,15 +551,13 @@
   (after-init-hook . global-corfu-mode))
 
 (use-package corfu-history
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'corfu)
   :diminish corfu-history-mode
   :hook
   (corfu-mode-hook . corfu-history-mode))
 
 (use-package corfu-info
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'corfu)
   :defines corfu-mode-map
   :bind
   (:map corfu-mode-map
@@ -707,13 +565,13 @@
         ("M-h" . corfu-info-documentation)))
 
 (use-package corfu-popupinfo
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'corfu)
   :diminish corfu-popupinfo-mode
   :hook
   (corfu-mode-hook . corfu-popupinfo-mode))
 
 (use-package embark
+  :if (package-installed-p 'embark)
   :autoload embark-prefix-help-command
   :bind
   (("C-." . embark-act)
@@ -723,42 +581,16 @@
   (setq prefix-help-command #'embark-prefix-help-command))
 
 (use-package embark-consult
+  :if (package-installed-p 'embark-consult)
   :hook
   (embark-collect-mode-hook . consult-preview-at-point-mode))
 
-(use-package abbrev
-  :straight nil
-  :ensure nil
-  :custom
-  (abbrev-file-name (init--state-file "abbrev.el")))
-
-(use-package autoinsert
-  :custom
-  (auto-insert-directory (expand-file-name "inserts" user-emacs-directory))
-  :hook
-  (after-init-hook . auto-insert-mode))
-
-(use-package envrc
-  :diminish (envrc-global-mode envrc-mode)
-  :hook (after-init-hook . envrc-global-mode))
-
-(use-package delsel
-  :diminish delete-selection-mode
-  :hook (after-init-hook . delete-selection-mode))
-
-(use-package autorevert
-  :diminish global-auto-revert-mode
-  :custom
-  (global-auto-revert-non-file-buffers t)
-  :hook (after-init-hook . global-auto-revert-mode))
-
-(use-package flyspell
-  :diminish (flyspell-prog-mode flyspell-mode)
-  :hook
-  (prog-mode-hook . flyspell-prog-mode)
-  (text-mode-hook . flyspell-mode))
+;;;
+;;; Editing
+;;;
 
 (use-package multiple-cursors
+  :if (package-installed-p 'multiple-cursors)
   :commands mc/sort-regions
   :custom
   (mc/list-file (init--cache-file ".mc-lists.el"))
@@ -774,9 +606,13 @@
   (prog-mode-hook . subword-mode))
 
 (use-package wgrep
-  :disabled
+  :if (package-installed-p 'wgrep)
   :hook
   (grep-setup-hook . 'wgrep-setup))
+
+;;;
+;;; Org
+;;;
 
 (use-package org
   :custom
@@ -790,14 +626,10 @@
   (org-default-notes-file (concat org-directory "/todo.org")))
 
 (use-package org-src
-  :straight nil
-  :ensure nil
   :custom
   (org-edit-src-content-indentation 0))
 
 (use-package org-refile
-  :straight nil
-  :ensure nil
   :custom
   (org-outline-path-complete-in-steps nil)
   (org-refile-use-outline-path 'full-file-path)
@@ -806,162 +638,17 @@
                         (org-agenda-files . (:maxlevel . 3)))))
 
 (use-package org-id
-  :straight nil
-  :ensure nil
   :custom
   (org-id-locations-file (concat (xdg-cache-home) "/emacs/org-id-locations")))
 
 (use-package org-capture
-  :straight nil
-  :ensure nil
   :bind
   (:map mode-specific-map
         ("c" . org-capture)))
 
-(use-package ol-notmuch
-  :after notmuch)
-
-(use-package org-modern
-  :custom
-  (org-modern-todo nil)
-  (org-modern-timestamp nil)
-  (org-modern-statistics nil)
-  (org-modern-tag nil)
-  (org-modern-priority nil)
-  (org-modern-hide-stars nil)
-  (org-hide-leading-stars t)
-  :hook
-  (after-init-hook . global-org-modern-mode))
-
-(use-package olivetti
-  :hook
-  (org-mode-hook . olivetti-mode))
-
-(let*
-    ((init-org-super-agenda-config
-      `((org-super-agenda-unmatched-name 'none)
-        (org-super-agenda-unmatched-order 5)
-        (org-super-agenda-header-separator "\n")
-        (org-super-agenda-groups
-         `((:name "Clocked today"
-                  :log t
-                  :order 100)
-           (:name none
-                  :todo ("IDEA")
-                  :order 1)
-           (:name none
-                  :todo ("PROJ")
-                  :order 2)
-           (:name none
-                  :todo ,org-done-keywords-for-agenda
-                  :order 10)))))
-     (init-org-agenda-custom-commands
-      `(((kbd "C-d") "Agenda for the day"
-         ((agenda
-           ""
-           ((org-agenda-span 1)
-            (org-agenda-scheduled-leaders '("" "Sched.%2dx: "))
-            (org-agenda-block-separator nil)
-            (org-scheduled-past-days 0)
-            ,@init-org-super-agenda-config
-            (org-agenda-day-face-function (lambda (date) 'org-agenda-date))
-            (org-agenda-format-date "%A %-e %B %Y")
-            (org-agenda-overriding-header "\nAgenda for the day\n")))
-          (todo
-           "NEXT"
-           ((org-agenda-block-separator nil)
-            (org-agenda-overriding-header "\nCurrent Tasks\n")))))
-        (list
-         (kbd "C-o") "Overview"
-         ((agenda
-           "*"
-           ((org-agenda-scheduled-leaders '("" "Sched. %2dx:"))
-            ,@init-org-super-agenda-config
-            (org-agenda-block-separator nil)
-            (org-agenda-span 14)
-            (org-agenda-show-future-repeats nil)
-            (org-agenda-skip-deadline-prewarning-if-scheduled t)
-            (org-agenda-overriding-header "\nAgenda\n")))
-          (agenda
-           ""
-           ((org-agenda-start-on-weekday nil)
-            (org-agenda-start-day "+1d")
-            (org-agenda-span 14)
-            (org-agenda-show-all-dates nil)
-            (org-agenda-time-grid nil)
-            (org-agenda-show-future-repeats nil)
-            (org-agenda-block-separator nil)
-            (org-agenda-entry-types '(:deadline))
-            (org-agenda-skip-function '(org-agenda-skip-entry-if 'done))
-            (org-agenda-overriding-header "\nUpcoming deadlines (+14d)\n")))
-          (alltodo
-           ""
-           ((org-agenda-block-separator nil)
-            (org-agenda-skip-function '(or (org-agenda-skip-if nil '(scheduled))))
-            ,@init-org-super-agenda-config
-            (org-agenda-overriding-header "\nBacklog\n"))))))))
-  (use-package org-agenda
-    :straight nil
-    :ensure nil
-    :custom
-    (org-agenda-custom-commands init-org-agenda-custom-commands)
-    (org-agenda-tags-column 0)
-    (org-agenda-sticky t)
-    (org-agenda-block-separator ?-)
-    (org-agenda-time-grid '((daily today require-timed)
-                            (800 1000 1200 1400 1600 1800 2000)
-                            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
-    (org-agenda-current-time-string
-     "⭠ now ─────────────────────────────────────────────────")
-    (org-agenda-start-with-log-mode t)
-    (org-agenda-dim-blocked-tasks t)
-    (org-agenda-skip-scheduled-if-done nil)
-    (org-agenda-skip-deadline-if-done nil)
-    (org-agenda-compact-blocks nil)
-    (org-agenda-log-mode-add-notes nil)
-    (org-agenda-bulk-custom-functions
-     '((?P (lambda nil
-             (org-agenda-priority 'set)))))))
-
-(use-package org-super-agenda
-  :after org-agenda
-  :config
-  (org-super-agenda-mode))
-
-(use-package helpful
-  :bind
-  (("C-h f" . helpful-callable)
-   ("C-h v" . helpful-variable)
-   ("C-h k" . helpful-key)))
-
-(use-package devdocs
- :bind
-  (("C-h D" . devdocs-lookup)))
-
-(use-package pinentry
-  :custom
-  (epa-pinentry-mode 'loopback)
-  :hook
-  (after-init-hook . pinentry-start))
-
-(use-package pass
-  :commands pass)
-
-(use-package auth-source-pass
-  :hook
-  (after-init-hook . auth-source-pass-enable))
-
-(use-package which-key
-  :diminish which-key-mode
-  :hook
-  (after-init-hook . which-key-mode))
-
-(use-package tramp
-  :straight nil)
-
-(use-package transient
-  :custom
-  (transient-history-file (init--cache-file "transient" "history.el")))
+;;;
+;;; Tools
+;;;
 
 (use-package grep
   :autoload grep-apply-setting
@@ -974,8 +661,6 @@
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
 (use-package dired
-  :straight nil
-  :ensure nil
   :custom
   (dired-dwim-target t)
   (dired-hide-details-hide-symlink-targets nil)
@@ -988,21 +673,8 @@
   ((dired-mode-hook . dired-omit-mode)
    (dired-mode-hook . dired-hide-details-mode)))
 
-(use-package diredfl
-  :hook
-  (after-init-hook . diredfl-global-mode))
-
-(use-package proced
-  :custom
-  (proced-auto-update-flag t)
-  (proced-auto-update-interval 1)
-  (proced-enable-color-flag t))
-
-(use-package ibuffer
-  :bind
-  (("C-x C-b" . ibuffer)))
-
 (use-package diff-hl
+  :if (package-installed-p 'diff-hl)
   :diminish (diff-hl-mode diff-hl-dir-mode)
   :hook
   (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
@@ -1011,26 +683,20 @@
   (vc-dir-mode . diff-hl-dir-mode))
 
 (use-package diff-hl-dired
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'diff-hl)
   :diminish diff-hl-dired-mode
   :hook (dired-mode-hook . diff-hl-dired-mode))
 
-(use-package magit
-  :bind ("C-x g" . magit-status))
+(use-package ibuffer
+  :if (package-installed-p 'ibuffer)
+  :bind
+  (("C-x C-b" . ibuffer)))
 
-(use-package forge
-  :after magit)
-
-(use-package magit-todos
-  :after magit
-  :commands magit-todos-list
-  :config (magit-todos-mode +1))
-
-(use-package project
+(use-package proced
   :custom
-  (project-list-buffers #'project-list-buffers-ibuffer)
-  (project-list-file (init--state-file "project")))
+  (proced-auto-update-flag t)
+  (proced-auto-update-interval 1)
+  (proced-enable-color-flag t))
 
 (use-package eldoc
   :diminish eldoc-mode
@@ -1038,24 +704,58 @@
   (eldoc-echo-area-use-multiline-p nil)
   (eldoc--echo-area-prefer-doc-buffer-p t))
 
-(use-package prog-mode
-  :straight nil
-  :ensure nil
-  :hook
-  (prog-mode-hook . prettify-symbols-mode))
+(use-package magit
+  :if (package-installed-p 'magit)
+  :bind ("C-x g" . magit-status))
+
+(use-package magit-todos
+  :if (package-installed-p 'magit-todos)
+  :functions magit-todos-mode
+  :after magit
+  :commands magit-todos-list
+  :config (magit-todos-mode +1))
+
+(use-package forge
+  :if (package-installed-p 'forge)
+  :after magit)
+
+(use-package helpful
+  :if (package-installed-p 'helpful)
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)))
+
+(use-package devdocs
+  :if (package-installed-p 'devdocs)
+  :bind
+  (("C-h D" . devdocs-lookup)))
+
+(use-package emacs
+  :custom
+  (epa-pinentry-mode 'loopback))
+
+(use-package transient
+  :custom
+  (transient-history-file (init--cache-file "transient" "history.el")))
+
+(use-package project
+  :custom
+  (project-list-buffers #'project-list-buffers-ibuffer)
+  (project-list-file (init--state-file "project")))
+
+;;;
+;;; Programming
+;;;
 
 (use-package apheleia
+  :if (package-installed-p 'apheleia)
   :diminish apheleia-mode
-  :config
-  (add-to-list 'apheleia-formatters
-               '(prettier-astro . ("apheleia-npx" "prettier" "--stdin-filepath" filepath "--plugin=prettier-plugin-astro")))
-  (add-to-list 'apheleia-mode-alist
-               '(astro-mode . prettier-astro))
-
   :hook
   (after-init-hook . apheleia-global-mode))
 
 (use-package smartparens
+  :if (package-installed-p 'smartparens)
   :diminish smart-parens-mode
   :defines smartparens-mode-map
   :bind
@@ -1082,8 +782,6 @@
   :config
   ;; load default configuration to setup other pairs
   (require 'smartparens-config)
-  (diminish smartparens-strict-mode)
-  (diminish smartparens-mode)
   :hook
   ((emacs-lisp-mode-hook . smartparens-strict-mode)
    (eval-expression-minibuffer-setup-hook . smartparens-mode)
@@ -1139,14 +837,13 @@
         ("C-c C-d" . eldoc-doc-buffer)))
 
 (use-package eglot-booster
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'eglot-booster)
+  :functions eglot-booster-mode
   :after eglot
   :config (eglot-booster-mode))
 
 (use-package consult-xref
-  :straight nil
-  :ensure nil
+  :if (package-installed-p 'consult)
   :autoload consult-xref
   :custom
   (xref-show-xrefs-function #'consult-xref)
@@ -1162,115 +859,21 @@
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
 
-(setq treesit-language-source-alist
-      '((php "https://github.com/tree-sitter/tree-sitter-php" "v0.23.12" "php/src")
-        (blade "https://github.com/EmranMR/tree-sitter-blade" "v0.11.0")
-        (css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2")
-        (bash "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
-        (haskell "https://github.com/tree-sitter/tree-sitter-haskell" "v0.23.1")
-        (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
-        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
-        (json "https://github.com/tree-sitter/tree-sitter-javascript" "master")
-        (python "https://github.com/tree-sitter/tree-sitter-python" "master")
-        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "typescript/src")
-        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2" "tsx/src")
-        (yaml "https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0")
-        (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "v0.2.0")))
-
-(use-package nix-ts-mode
-  :if (treesit-available-p)
-  :mode "\\.nix\\'"
-  :hook (nix-ts-mode-hook . eglot-ensure))
-
-(use-package typescript-ts-mode
-  :if (treesit-available-p)
-  :mode (("\\.[m]?ts\\'" . typescript-ts-mode)
-         ("\\.[m]?js\\'" . typescript-ts-mode)
-         ("\\.[m]?tsx?\\'" . tsx-ts-mode)
-         ("\\.[m]?jsx?\\'" . tsx-ts-mode))
-  :interpreter "ts-node"
-  :hook
-  (typescript-ts-base-mode-hook . eglot-ensure))
-
-(use-package python
-  :hook
-  (python-mode-hook . eglot-ensure))
-
-(use-package python-ts-mode
-  :if (treesit-available-p)
-  :straight nil
-  :ensure nil
-  :mode "\\.py[iw]?\\'"
-  :interpreter "python"
-  :hook
-  (python-ts-mode-hook . eglot-ensure))
-
-(use-package pyvenv
-  :hook
-  ((python-mode-hook . pyvenv-mode)
-   (python-mode-hook . pyvenv-tracking-mode)))
-
-(use-package docker
-  :bind ("C-c d" . docker))
-
-(use-package dockerfile-ts-mode
-  :if (treesit-available-p)
-  :mode "\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
-  :hook
-  (dockerfile-ts-mode-hook . eglot-ensure))
-
-(use-package haskell-mode
-  :mode "\\.[l]?hs\\'"
-  :interpreter "ghci"
-  :init (require 'haskell-mode-autoloads)
-  :hook
-  (haskell-mode-hook . eglot-ensure))
-
-(use-package haskell-cabal
-  :straight nil
-  :ensure nil
-  :mode ("\\.cabal\\'" . haskell-cabal-mode))
-
-(use-package php-ts-mode
-  :straight '(:type git
-                    :host github
-                    :repo "emacs-php/php-ts-mode")
-  :mode ("\\.php$" . php-ts-mode)
-  :hook (php-ts-mode . eglot-ensure))
-
-(use-package blade-ts-mode
-  :straight '(:type git
-                    :host github
-                    :repo "FunctorFactory/blade-ts-mode")
-  :mode ("\\.blade.php$" . blade-ts-mode))
-
-(use-package graphql-ts-mode
-  :mode ("\\.graphql\\'" "\\.gql\\'")
-  :config
-  (add-to-list 'apheleia-mode-alist
-               '(graphql-ts-mode . prettier-graphql)))
-
-(use-package terraform-mode
-  :mode ("\\.tf\\'")
-  :hook
-  (terraform-mode-hook . eglot-ensure))
-
-(use-package yaml-ts-mode
-  :if (treesit-available-p)
-  :mode ("\\.ya?ml\\'" . yaml-ts-mode))
-(use-package yaml-mode
-  :unless (treesit-available-p)
-  :mode ("\\.ya?ml\\'" . yaml-mode))
-
-(use-package markdown-ts-mode
-  :custom
-  (markdown-fontify-code-blocks-natively t))
-
-;; TODO: Update this to use astro-ts-mode instead
-
-(straight-use-package 'web-mode)
-(require 'web-mode)
-(define-derived-mode astro-mode web-mode "astro")
-(add-to-list 'auto-mode-alist '(".*\\.astro\\'" . astro-mode))
-
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(epg-pinentry-mode 'loopback nil nil "Customized with use-package emacs")
+ '(package-selected-packages
+   '(apheleia consult corfu devdocs diff-hl diff-hl-dired eglot-booster
+              embark embark-consult forge helpful magit magit-todos
+              marginalia multiple-cursors orderless smartparens
+              vertico wgrep)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
