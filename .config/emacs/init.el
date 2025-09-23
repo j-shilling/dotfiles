@@ -36,7 +36,7 @@
     devdocs
     apheleia
     smartparens
-    eglot-booster
+    treesit-auto
     )
   "External packages to install.")
 
@@ -94,7 +94,7 @@
 
 (use-package emacs
   :custom
-  (custom (init--state-file "custom.el"))
+  (custom-file (init--state-file "custom.el"))
   (user-full-name    "Jake Shilling")
   (user-mail-address "shilling.jake@gmail.com")
   (use-short-answers  t)
@@ -178,8 +178,6 @@
 
   :init
   (setq native-comp-jit-compilation nil)
-  (setq custom-file nil)
-
 
   (let ((encoding (if IS-WINDOWS
                       'utf-8-dos
@@ -268,7 +266,7 @@
     (whitespace-mode +1))
   (defun init-whitespace-mode-off ()
     "Turn off whitespace-mode."
-    (whitespace-mode -1))  
+    (whitespace-mode -1))
   :custom
   (whitespace-action '(cleanup auto-cleanup))
   :hook
@@ -292,11 +290,11 @@
   :if (package-installed-p 'which-key)
   :diminish which-key-mode
   :hook
-  (after-init-hook which-key-mode))
+  (after-init-hook . which-key-mode))
 
 (use-package prog-mode
   :hook
-  (prog-mode-hook prettify-symbols-mode))
+  (prog-mode-hook . prettify-symbols-mode))
 
 ;;;
 ;;; Auto Save / History
@@ -391,7 +389,7 @@
   (recentf-max-saved-items 50)
   (recentf-auto-cleanup 300)
   :hook
-  (after-init-hook recentf-mode))
+  (after-init-hook . recentf-mode))
 
 (defun unpropertize-kill-ring ()
   "Remove properties from `kill-ring'."
@@ -814,6 +812,14 @@
    (prog-mode-hook . smartparens-mode)
    (org-mode-hook . smartparens-mode)
    (markdown-mode-hook . smartparens-mode)))
+
+(use-package treesit-auto
+  :if (package-installed-p 'treesit-auto)
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
 
 (use-package eglot
   :config
