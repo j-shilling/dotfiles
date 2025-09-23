@@ -38,14 +38,18 @@
     smartparens
     eglot-booster
     )
-  "External packages to install")
+  "External packages to install.")
 
 (defun init-install-packages ()
+  "Install all packages in `init--packages'."
   (interactive)
   (package-refresh-contents)
   (dolist (pkg init--packages)
     (unless (package-installed-p pkg)
       (package-install pkg))))
+
+(setopt use-package-enable-imenu-support t
+        use-package-hook-name-suffix nil)
 
 (eval-when-compile
   (require 'use-package))
@@ -90,6 +94,7 @@
 
 (use-package emacs
   :custom
+  (custom (init--state-file "custom.el"))
   (user-full-name    "Jake Shilling")
   (user-mail-address "shilling.jake@gmail.com")
   (use-short-answers  t)
@@ -210,7 +215,7 @@
   (set-frame-parameter (selected-frame) 'internal-border-width 8)
   (setq window-divider-default-right-width 8)
   :hook
-  (after-init-hook . window-divider-mode))
+  (after-init-hook window-divider-mode))
 
 (use-package menu-bar
   :config
@@ -240,26 +245,37 @@
 (use-package pixel-scroll
   :diminish pixel-scroll-precision-mode
   :hook
-  (after-init-hook . pixel-scroll-precision-mode))
+  (after-init-hook pixel-scroll-precision-mode))
 
 (use-package display-line-numbers
   :diminish display-line-numbers-mode
+  :preface
+  (defun init-display-line-numbers-mode-on ()
+    "Turn on display-line-numbers-mode."
+    (display-line-numbers-mode +1))
+  (defun init-display-line-numbers-mode-off ()
+    "Turn off display-line-numbers-mode."
+    (display-line-numbers-mode -1))
   :hook
-  (prog-mode-hook . (lambda () (display-line-numbers-mode +1)))
-  (text-mode-hook . (lambda () (display-line-numbers-mode -1))))
+  (prog-mode-hook init-display-line-numbers-mode-on)
+  (text-mode-hook init-display-line-numbers-mode-off))
 
 (use-package whitespace
   :diminish whitespace-mode
+  :preface
+  (defun init-whitespace-mode-on ()
+    "Turn on whitespace-mode."
+    (whitespace-mode +1))
+  (defun init-whitespace-mode-off ()
+    "Turn off whitespace-mode."
+    (whitespace-mode -1))  
   :custom
   (whitespace-action '(cleanup auto-cleanup))
   :hook
-  (prog-mode-hook . (lambda () (whitespace-mode +1)))
-  (text-mode-hook . (lambda () (whitespace-mode -1))))
+  (prog-mode-hook whitespace-mode-on)
+  (text-mode-hook whitespace-mode-off))
 
 (use-package modus-themes
-  :preface
-  (defun init-load-theme ()
-    )
   :defines
   modus-themes-mode-line
   modus-themes-diffs
@@ -276,11 +292,11 @@
   :if (package-installed-p 'which-key)
   :diminish which-key-mode
   :hook
-  (after-init-hook . which-key-mode))
+  (after-init-hook which-key-mode))
 
 (use-package prog-mode
   :hook
-  (prog-mode-hook . prettify-symbols-mode))
+  (prog-mode-hook prettify-symbols-mode))
 
 ;;;
 ;;; Auto Save / History
@@ -363,9 +379,10 @@
   (eshell-hist-ignoredups t)
   (eshell-glob-case-insensitive t)
   (eshell-error-if-no-glob t)
-  :hook
-  (eshell-mode-hook . (lambda ()
-                        (setenv "TERM" "xterm-256color"))))
+  ;:hook
+  ;((eshell-mode-hook . (lambda ()
+  ;                        (setenv "TERM" "xterm-256color"))))
+                          )
 
 (use-package recentf
   :diminish recentf-mode
@@ -395,14 +412,14 @@
                                    bookmark-history
                                    file-name-history))
   :hook
-  (after-init-mode . savehist-mode))
+  (after-init-hook savehist-mode))
 
 (use-package saveplace
   :diminish save-place-mode
   :custom
   (save-place-forget-unreadable-files t)
   :hook
-  (after-init-hook . save-place-mode))
+  (after-init-hook save-place-mode))
 
 ;;;
 ;;; Completion
@@ -421,19 +438,19 @@
 (use-package icomplete
   :unless (package-installed-p 'vertico)
   :hook
-  (after-init-hook . fido-mode))
+  (after-init-hook fido-mode))
 
 (use-package vertico
   :if (package-installed-p 'vertico)
   :diminish vertico-mode
   :hook
-  (after-init-hook . vertico-mode))
+  (after-init-hook vertico-mode))
 
 (use-package vertico-multiform
   :if (package-installed-p 'vertico)
   :diminish vertico-multiform-mode
   :defines (vertico-multiform-categories vertico-multiform-commands)
-  :hook (vertico-mode-hook . vertico-multiform-mode)
+  :hook (vertico-mode-hook vertico-multiform-mode)
   :init
   (setq vertico-multiform-categories
         '((consult-grep buffer)
@@ -458,12 +475,12 @@
   :if (package-installed-p 'orderless)
   :hook
   (after-init-hook .
-                   (lambda (&rest _)
-                     (require 'orderless)
-                     (setq completion-styles '(orderless basic))
-                     (setq completion-category-overrides
-                           '((project-file (styles . (partial-completion basic orderless)))
-                             (file (styles . (partial-completion basic orderless))))))))
+   (lambda (&rest _)
+     (require 'orderless)
+     (setq completion-styles '(orderless basic))
+     (setq completion-category-overrides
+           '((project-file (styles . (partial-completion basic orderless)))
+             (file (styles . (partial-completion basic orderless))))))))
 
 (use-package marginalia
   :if (package-installed-p 'marginalia)
@@ -471,7 +488,7 @@
   (:map minibuffer-local-map
         ("M-A" . marginalia-cycle))
   :hook
-  (after-init-hook . marginalia-mode))
+  (after-init-hook marginalia-mode))
 
 (use-package consult
   :if (package-installed-p 'consult)
@@ -523,7 +540,7 @@
    ("M-s" . consult-history)
    ("M-r" . consult-history))
 
-  :hook (completion-list-mode-hook . consult-preview-at-point-mode)
+  :hook (completion-list-mode-hook consult-preview-at-point-mode)
 
   :config
   (setq register-preview-delay 0.5
@@ -534,8 +551,8 @@
 (use-package consult-imenu
   :if (package-installed-p 'consult)
   :bind
-  ("M-g i" . consult-imenu)
-  ("M-g I" . consult-imenu-multi))
+  (("M-g i" . consult-imenu)
+   ("M-g I" . consult-imenu-multi)))
 
 (use-package hippie-exp
   :bind
@@ -548,13 +565,13 @@
   (corfu-auto t)
   (corfu-quite-no-match 'separator)
   :hook
-  (after-init-hook . global-corfu-mode))
+  (after-init-hook global-corfu-mode))
 
 (use-package corfu-history
   :if (package-installed-p 'corfu)
   :diminish corfu-history-mode
   :hook
-  (corfu-mode-hook . corfu-history-mode))
+  (corfu-mode-hook corfu-history-mode))
 
 (use-package corfu-info
   :if (package-installed-p 'corfu)
@@ -568,7 +585,7 @@
   :if (package-installed-p 'corfu)
   :diminish corfu-popupinfo-mode
   :hook
-  (corfu-mode-hook . corfu-popupinfo-mode))
+  (corfu-mode-hook corfu-popupinfo-mode))
 
 (use-package embark
   :if (package-installed-p 'embark)
@@ -583,7 +600,7 @@
 (use-package embark-consult
   :if (package-installed-p 'embark-consult)
   :hook
-  (embark-collect-mode-hook . consult-preview-at-point-mode))
+  (embark-collect-mode-hook consult-preview-at-point-mode))
 
 ;;;
 ;;; Editing
@@ -603,12 +620,12 @@
 (use-package subword
   :diminish subword-mode
   :hook
-  (prog-mode-hook . subword-mode))
+  (prog-mode-hook subword-mode))
 
 (use-package wgrep
   :if (package-installed-p 'wgrep)
   :hook
-  (grep-setup-hook . 'wgrep-setup))
+  (grep-setup-hook 'wgrep-setup))
 
 ;;;
 ;;; Org
@@ -677,15 +694,15 @@
   :if (package-installed-p 'diff-hl)
   :diminish (diff-hl-mode diff-hl-dir-mode)
   :hook
-  (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
-  (magit-post-refresh-hook . diff-hl-magit-post-refresh)
-  (prog-mode-hook . diff-hl-mode)
-  (vc-dir-mode . diff-hl-dir-mode))
+  ((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+   (prog-mode-hook . diff-hl-mode)
+   (vc-dir-mode . diff-hl-dir-mode)))
 
 (use-package diff-hl-dired
   :if (package-installed-p 'diff-hl)
   :diminish diff-hl-dired-mode
-  :hook (dired-mode-hook . diff-hl-dired-mode))
+  :hook (dired-mode-hook diff-hl-dired-mode))
 
 (use-package ibuffer
   :if (package-installed-p 'ibuffer)
@@ -752,7 +769,7 @@
   :if (package-installed-p 'apheleia)
   :diminish apheleia-mode
   :hook
-  (after-init-hook . apheleia-global-mode))
+  (after-init-hook apheleia-global-mode))
 
 (use-package smartparens
   :if (package-installed-p 'smartparens)
@@ -860,20 +877,3 @@
         ("M-p" . flymake-goto-prev-error)))
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(epg-pinentry-mode 'loopback nil nil "Customized with use-package emacs")
- '(package-selected-packages
-   '(apheleia consult corfu devdocs diff-hl diff-hl-dired eglot-booster
-              embark embark-consult forge helpful magit magit-todos
-              marginalia multiple-cursors orderless smartparens
-              vertico wgrep)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
