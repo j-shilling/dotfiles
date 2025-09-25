@@ -37,6 +37,13 @@
     apheleia
     smartparens
     treesit-auto
+    all-the-icons
+    all-the-icons-dired
+    all-the-icons-ibuffer
+    all-the-icons-completion
+    ace-window
+    avy
+    rbenv
     )
   "External packages to install.")
 
@@ -202,6 +209,12 @@
           select-enable-primary nil
           interprogram-cut-function #'gui-select-text)))
 
+(use-package emacs
+  :if IS-MAC
+  :custom
+  (ns-option-modifier 'super)
+  (ns-command-modifier 'meta))
+
 ;;;
 ;;; Appearance
 ;;;
@@ -212,6 +225,11 @@
   (setq-default cursor-in-non-selected-windows nil)
   (set-frame-parameter (selected-frame) 'internal-border-width 8)
   (setq window-divider-default-right-width 8)
+
+  (when IS-MAC
+    (set-frame-font "JetBrains Mono 16")
+    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+    (add-to-list 'default-frame-alist '(ns-appearance . dark)))
   :hook
   (after-init-hook window-divider-mode))
 
@@ -239,6 +257,34 @@
   (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
   (set-fontset-font "fontset-default" nil
                     (font-spec :name "Noto Emoji")))
+
+(use-package all-the-icons
+  :if (package-installed-p 'all-the-icons)
+  :commands (all-the-icons-insert all-the-icons-install-fonts))
+
+(use-package all-the-icons-dired
+  :if (package-installed-p 'all-the-icons-dired)
+  :custom
+  (all-the-icons-dired-monochrome nil)
+  :hook
+  ((dired-mode-hook . all-the-icons-dired-mode)))
+
+(use-package all-the-icons-ibuffer
+  :if (package-installed-p 'all-the-icons-ibuffer)
+  :hook
+  ((ibuffer-mode-hook . all-the-icons-ibuffer-mode)))
+
+(use-package all-the-icons-completion
+  :if (and (package-installed-p 'all-the-icons-completion)
+           (package-installed-p 'marginalia))
+  :hook
+  ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)))
+
+(use-package all-the-icons-completion
+  :if (and (package-installed-p 'all-the-icons-completion)
+           (not (package-installed-p 'marginalia)))
+  :hook
+  ((after-init-hook . all-the-icons-completion-mode)))
 
 (use-package pixel-scroll
   :diminish pixel-scroll-precision-mode
@@ -322,7 +368,8 @@
   (backup-by-copying    t)
   (version-control      t)
   (kept-old-versions    6)
-  (kept-new-versions    9))
+  (kept-new-versions    9)
+  (delete-old-versions  t))
 
 (use-package calc
   :custom
@@ -376,11 +423,7 @@
   (eshell-kill-processes-on-exit t)
   (eshell-hist-ignoredups t)
   (eshell-glob-case-insensitive t)
-  (eshell-error-if-no-glob t)
-  ;:hook
-  ;((eshell-mode-hook . (lambda ()
-  ;                        (setenv "TERM" "xterm-256color"))))
-                          )
+  (eshell-error-if-no-glob t))
 
 (use-package recentf
   :diminish recentf-mode
@@ -398,6 +441,7 @@
 
 (use-package savehist
   :diminish savehist-mode
+  :defines savehist-minibuffer-history-variables
   :custom
   (savehist-additional-variables '(kill-ring
                                    command-history
@@ -486,7 +530,7 @@
   (:map minibuffer-local-map
         ("M-A" . marginalia-cycle))
   :hook
-  (after-init-hook marginalia-mode))
+  ((after-init-hook . marginalia-mode)))
 
 (use-package consult
   :if (package-installed-p 'consult)
@@ -604,6 +648,10 @@
 ;;; Editing
 ;;;
 
+(use-package autorevert
+  :hook
+  ((after-init-hook . auto-revert-mode)))
+
 (use-package multiple-cursors
   :if (package-installed-p 'multiple-cursors)
   :commands mc/sort-regions
@@ -615,6 +663,23 @@
   ("C-<" . mc/mark-previous-like-this)
   ("C-c C-<" . mc/mark-all-like-this))
 
+(use-package avy
+  :if (package-installed-p 'avy)
+  :bind
+  (("C-;" . 'avy-goto-char)
+   ("C-'" . 'avy-goto-char-2)
+   ("M-g f" . 'avy-goto-line)
+   ("M-g w" . 'avy-goto-word-1)
+   ("M-g e" . 'avy-goto-word-0)
+   ("C-c C-j" . 'avy-resume)))
+
+(use-package ace-window
+  :if (package-installed-p 'ace-window)
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :bind
+  (("M-o" . 'ace-window)))
+
 (use-package subword
   :diminish subword-mode
   :hook
@@ -622,8 +687,7 @@
 
 (use-package wgrep
   :if (package-installed-p 'wgrep)
-  :hook
-  (grep-setup-hook 'wgrep-setup))
+  :demand t)
 
 ;;;
 ;;; Org
@@ -738,8 +802,11 @@
   :if (package-installed-p 'helpful)
   :bind
   (("C-h f" . helpful-callable)
+   ("C-h F" . helpful-function)
    ("C-h v" . helpful-variable)
-   ("C-h k" . helpful-key)))
+   ("C-h k" . helpful-key)
+   ("C-h x" . helpful-command)
+   ("C-c C-d" . helpful-at-point)))
 
 (use-package devdocs
   :if (package-installed-p 'devdocs)
@@ -881,5 +948,24 @@
   (:map flymake-mode-map
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
+
+;;;
+;;; Ruby
+;;;
+
+(use-package rbenv
+  :if (package-installed-p 'rbenv)
+  :hook (after-init-hook . global-rbenv-mode))
+
+(use-package terraform-mode
+  :if (package-installed-p 'terraform-mode)
+  :mode ("\\.tf" "\\.tfvars" "\\.tfbackend")
+  :hook
+  ((terraform-mode-hook . eglot-ensure)))
+
+(use-package js
+  :if (executable-find "nodenv")
+  :init
+  (add-to-list 'exec-path (expand-file-name ".nodenv/shims" (getenv "HOME"))))
 
 ;;; init.el ends here
