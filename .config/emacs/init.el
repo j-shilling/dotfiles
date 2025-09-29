@@ -824,7 +824,16 @@
 (use-package project
   :custom
   (project-list-buffers #'project-list-buffers-ibuffer)
-  (project-list-file (init--state-file "project")))
+  (project-list-file (init--state-file "project"))
+  (project-switch-commands `((project-find-file "Find file" "f")
+                             (project-find-regexp "Find regexp" "g")
+                             (project-find-dir "Find directory" "d")
+                             (project-dired "Dired" "D")
+                             (project-eshell "Eshell" "e")
+                             ,(if (package-installed-p 'magit)
+                                  '(magit-project-status "Magit" "v")
+                                '(project-vc-dir "VC-Dir" "v"))
+                             (project-any-command "Other"))))
 
 ;;;
 ;;; Programming
