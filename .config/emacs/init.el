@@ -30,6 +30,7 @@
     consult-eglot
     consult-eglot-embark
     multiple-cursors
+    pass
     wgrep
     diff-hl
     ibuffer
@@ -48,6 +49,9 @@
     ace-window
     avy
     rbenv
+    gptel
+    gptel-prompts
+    magit-gtpelcommit
     )
   "External packages to install.")
 
@@ -744,6 +748,10 @@
   :hook
   ((after-init-hook . exec-path-from-shell-initialize)))
 
+(use-package auth-source-pass
+  :hook
+  ((after-init-hook . auth-source-pass-enable)))
+
 (use-package grep
   :autoload grep-apply-setting
   :config
@@ -848,7 +856,7 @@
                              ,(if (package-installed-p 'magit)
                                   '(magit-project-status "Magit" "v")
                                 '(project-vc-dir "VC-Dir" "v"))
-                             (project-any-command "Other"))))
+                             (project-any-command "Other" "o"))))
 
 ;;;
 ;;; Programming
@@ -984,6 +992,24 @@
   (:map flymake-mode-map
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
+
+(use-package gptel
+  :if (package-installed-p 'gptel)
+  :preface
+  (defun init-get-anthropic-key ()
+    (password-store-get "anthropic-api-key"))
+  :config
+  (require 'gptel-integrations)
+  (setq gptel-model 'claude-sonnet-4-5-20250929
+        gptel-backend (gptel-make-anthropic "Claude"
+                        :stream t
+                        :key #'init-get-anthropic-key))
+  (gptel-make-preset 'coder
+    :description "A preset for general programming tasks"
+    :backend "Claude"
+    :model 'claude-sonnet-4-5-20250929
+    :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."
+    :tools '("read_buffer" "modify_buffer")))
 
 ;;;
 ;;; Ruby
