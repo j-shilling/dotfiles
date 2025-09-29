@@ -27,6 +27,8 @@
     embark-consult
     envrc
     exec-path-from-shell
+    consult-eglot
+    consult-eglot-embark
     multiple-cursors
     wgrep
     diff-hl
@@ -910,6 +912,16 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+(use-package consult-eglot-embark
+  :if (and (package-installed-p 'consult-eglot-embark)
+           (package-installed-p 'consult-eglot)
+           (package-installed-p 'embark))
+  :init
+  (with-eval-after-load 'embark
+    (with-eval-after-load 'consult-eglot
+      (require 'consult-eglot-embark)
+      (consult-eglot-embark-mode))))
+
 (use-package eglot
   :config
   (add-to-list 'eglot-server-programs
@@ -944,6 +956,8 @@
                  ("npx" "-p" "@astrojs/language-server" "astro-ls" "--stdio"
                   :initializationOptions
                   (:typescript (:tsdk "./node_modules/typescript/lib")))))
+  (add-to-list 'eglot-server-programs
+               '((ruby-mode ruby-ts-mode) "ruby-lsp"))
   :bind
   (:map eglot-mode-map
         ("C-c C-d" . eldoc-doc-buffer)))
