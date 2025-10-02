@@ -21,6 +21,7 @@
     vertico
     orderless
     marginalia
+    diminish
     consult
     corfu
     embark
@@ -219,9 +220,17 @@
 
 (use-package emacs
   :if IS-MAC
-  :custom
-  (ns-option-modifier 'super)
-  (ns-command-modifier 'meta))
+  :preface
+  (defun init-macify ()
+    (interactive)
+    (setopt ns-option-modifier 'super
+            ns-command-modifier 'meta))
+  (defun init-unmacify ()
+    (interactive)
+    (setopt ns-option-modifier 'meta
+            ns-command-modifier 'super))
+  :hook
+  ((after-init-hook . init-macify)))
 
 ;;;
 ;;; Appearance
@@ -696,6 +705,10 @@
 (use-package wgrep
   :if (package-installed-p 'wgrep)
   :demand t)
+
+(use-package editorconfig
+  :hook
+  (prog-mode-hook editorconfig-mode))
 
 ;;;
 ;;; Org
