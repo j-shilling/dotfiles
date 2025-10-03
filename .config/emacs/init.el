@@ -70,7 +70,6 @@
                                     devdocs
                                     apheleia
                                     smartparens
-                                    treesit-auto
                                     all-the-icons
                                     all-the-icons-dired
                                     all-the-icons-ibuffer
@@ -919,14 +918,6 @@
    (org-mode-hook . smartparens-mode)
    (markdown-mode-hook . smartparens-mode)))
 
-(use-package treesit-auto
-  :if (package-installed-p 'treesit-auto)
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
-
 (use-package consult-eglot-embark
   :if (and (package-installed-p 'consult-eglot-embark)
            (package-installed-p 'consult-eglot)
@@ -1000,7 +991,7 @@
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
 
-(load (expand-file-name "./init-ai.el" user-emacs-directory))
+
 
 ;;;
 ;;; Ruby
@@ -1020,5 +1011,8 @@
   :if (executable-find "nodenv")
   :init
   (add-to-list 'exec-path (expand-file-name ".nodenv/shims" (getenv "HOME"))))
+
+(load (expand-file-name "./init-tree-sitter.el" user-emacs-directory))
+(load (expand-file-name "./init-ai.el" user-emacs-directory))
 
 ;;; init.el ends here
