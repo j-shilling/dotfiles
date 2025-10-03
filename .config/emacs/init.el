@@ -252,7 +252,7 @@
     (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
     (add-to-list 'default-frame-alist '(ns-appearance . dark)))
   :hook
-  (after-init-hook window-divider-mode))
+  ((after-init-hook . window-divider-mode)))
 
 (use-package menu-bar
   :config
@@ -310,7 +310,7 @@
 (use-package pixel-scroll
   :diminish pixel-scroll-precision-mode
   :hook
-  (after-init-hook pixel-scroll-precision-mode))
+  ((after-init-hook . pixel-scroll-precision-mode)))
 
 (use-package display-line-numbers
   :diminish display-line-numbers-mode
@@ -482,7 +482,7 @@
   :custom
   (save-place-forget-unreadable-files t)
   :hook
-  (after-init-hook save-place-mode))
+  ((after-init-hook . save-place-mode)))
 
 ;;;
 ;;; Completion
@@ -501,13 +501,13 @@
 (use-package icomplete
   :unless (package-installed-p 'vertico)
   :hook
-  (after-init-hook fido-mode))
+  ((after-init-hook . fido-mode)))
 
 (use-package vertico
   :if (package-installed-p 'vertico)
   :diminish vertico-mode
   :hook
-  (after-init-hook vertico-mode))
+  ((after-init-hook . vertico-mode)))
 
 (use-package vertico-multiform
   :if (package-installed-p 'vertico)
@@ -628,13 +628,13 @@
   (corfu-auto t)
   (corfu-quite-no-match 'separator)
   :hook
-  (after-init-hook global-corfu-mode))
+  ((after-init-hook . global-corfu-mode)))
 
 (use-package corfu-history
   :if (package-installed-p 'corfu)
   :diminish corfu-history-mode
   :hook
-  (corfu-mode-hook corfu-history-mode))
+  ((corfu-mode-hook . corfu-history-mode)))
 
 (use-package corfu-info
   :if (package-installed-p 'corfu)
@@ -883,7 +883,7 @@
   :if (package-installed-p 'apheleia)
   :diminish apheleia-mode
   :hook
-  (after-init-hook apheleia-global-mode))
+  ((after-init-hook . apheleia-global-mode)))
 
 (use-package smartparens
   :if (package-installed-p 'smartparens)
@@ -1034,7 +1034,7 @@
 
 (use-package rbenv
   :if (package-installed-p 'rbenv)
-  :hook (after-init-hook . global-rbenv-mode))
+  :hook ((after-init-hook . global-rbenv-mode)))
 
 (use-package terraform-mode
   :if (package-installed-p 'terraform-mode)
