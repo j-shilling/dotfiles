@@ -5,16 +5,49 @@
 ;;;
 ;;; Code:
 
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+(defconst IS-WSL     (and IS-LINUX
+                          (string-match-p "Microsoft"
+                                          (shell-command-to-string "uname -a"))))
+
+(defun init--parts-to-path (&rest args)
+  (require 'seq)
+  (seq-reduce (lambda (acc part)
+                (expand-file-name part acc))
+              args
+              default-directory))
+
+(defun init--state-file (&rest args)
+  (require 'xdg)
+  (declare-function xdg-state-home 'xdg)
+  (apply #'init--parts-to-path (xdg-state-home) "emacs" emacs-version args))
+
+(defun init--cache-file (&rest args)
+  (require 'xdg)
+  (declare-function xdg-cache-home 'xdg)
+  (apply #'init--parts-to-path (xdg-cache-home) "emacs" emacs-version args))
+
 ;;;
 ;;; Packages
 ;;;
 
 (require 'package)
+
 (setopt package-archives '(("melpa" . "http://melpa.org/packages/")
                             ("org" . "http://orgmode.org/elpa/")
                             ("gnu" . "https://elpa.gnu.org/packages/")
-                            ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+                            ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+        package-user-dir (init--state-file "elpa")
+        package-quickstart-file (init--state-file "package-quickstart.el")
+        package-quickstart t
+        package-install-upgrade-built-in t)
 
+(package-initialize)
+
+;; TOOD: replace with `package-selected-packages'
 (defconst init--packages
   '(
     which-key
@@ -51,8 +84,6 @@
     avy
     rbenv
     gptel
-    gptel-prompts
-    magit-gtpelcommit
     )
   "External packages to install.")
 
@@ -77,36 +108,9 @@
   (setq use-package-verbose nil
         use-package-expand-minimally t))
 
-(setq package-install-upgrade-built-in t)
-
 ;;;
 ;;; General
 ;;;
-
-(defconst IS-MAC     (eq system-type 'darwin))
-(defconst IS-LINUX   (eq system-type 'gnu/linux))
-(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
-(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
-(defconst IS-WSL     (and IS-LINUX
-                          (string-match-p "Microsoft"
-                                          (shell-command-to-string "uname -a"))))
-
-(defun init--parts-to-path (&rest args)
-  (require 'seq)
-  (seq-reduce (lambda (acc part)
-                (expand-file-name part acc))
-              args
-              default-directory))
-
-(defun init--state-file (&rest args)
-  (require 'xdg)
-  (declare-function xdg-state-home 'xdg)
-  (apply #'init--parts-to-path (xdg-state-home) "emacs" args))
-
-(defun init--cache-file (&rest args)
-  (require 'xdg)
-  (declare-function xdg-cache-home 'xdg)
-  (apply #'init--parts-to-path (xdg-cache-home) "emacs" args))
 
 (use-package emacs
   :custom

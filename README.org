@@ -15,11 +15,19 @@ stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v .
     --without-gconf \
     --with-mailutils \
     --with-native-compilation \
+    --with-tree-sitter \
     --with-json \
     --with-xml2 \
     --with-modules \
     --with-pgtk
 #+end_src
+
+** deps
+
+- build-essentials
+- autoconf
+- texinfo
+
 
 * PyEnv
 
