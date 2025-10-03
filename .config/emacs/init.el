@@ -37,63 +37,50 @@
 (require 'package)
 
 (setopt package-archives '(("melpa" . "http://melpa.org/packages/")
-                            ("org" . "http://orgmode.org/elpa/")
-                            ("gnu" . "https://elpa.gnu.org/packages/")
-                            ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+                           ("org" . "http://orgmode.org/elpa/")
+                           ("gnu" . "https://elpa.gnu.org/packages/")
+                           ("nongnu" . "https://elpa.nongnu.org/nongnu/"))
         package-user-dir (init--state-file "elpa")
         package-quickstart-file (init--state-file "package-quickstart.el")
         package-quickstart t
-        package-install-upgrade-built-in t)
+        package-install-upgrade-built-in t
+        package-selected-packages '(which-key
+                                    vertico
+                                    orderless
+                                    marginalia
+                                    diminish
+                                    consult
+                                    corfu
+                                    embark
+                                    embark-consult
+                                    terraform-mode
+                                    envrc
+                                    exec-path-from-shell
+                                    consult-eglot
+                                    consult-eglot-embark
+                                    multiple-cursors
+                                    pass
+                                    wgrep
+                                    diff-hl
+                                    ibuffer
+                                    magit
+                                    magit-todos
+                                    forge
+                                    helpful
+                                    devdocs
+                                    apheleia
+                                    smartparens
+                                    treesit-auto
+                                    all-the-icons
+                                    all-the-icons-dired
+                                    all-the-icons-ibuffer
+                                    all-the-icons-completion
+                                    ace-window
+                                    avy
+                                    rbenv
+                                    gptel))
 
 (package-initialize)
-
-;; TOOD: replace with `package-selected-packages'
-(defconst init--packages
-  '(
-    which-key
-    vertico
-    orderless
-    marginalia
-    diminish
-    consult
-    corfu
-    embark
-    embark-consult
-    envrc
-    exec-path-from-shell
-    consult-eglot
-    consult-eglot-embark
-    multiple-cursors
-    pass
-    wgrep
-    diff-hl
-    ibuffer
-    magit
-    magit-todos
-    forge
-    helpful
-    devdocs
-    apheleia
-    smartparens
-    treesit-auto
-    all-the-icons
-    all-the-icons-dired
-    all-the-icons-ibuffer
-    all-the-icons-completion
-    ace-window
-    avy
-    rbenv
-    gptel
-    )
-  "External packages to install.")
-
-(defun init-install-packages ()
-  "Install all packages in `init--packages'."
-  (interactive)
-  (package-refresh-contents)
-  (dolist (pkg init--packages)
-    (unless (package-installed-p pkg)
-      (package-install pkg))))
 
 (setopt use-package-enable-imenu-support t
         use-package-hook-name-suffix nil)
