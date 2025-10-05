@@ -6,31 +6,41 @@
 
 (use-package gptel
   :if (package-installed-p 'gptel)
-  :custom
-  (gptel-tools '())
-  (gptel-model 'claude-sonnet-4-5-20250929)
-  ;; (gptel-backend (gptel-make-anthropic "Claude"
-  ;;                  :stream t
-  ;;                  :key #'init-get-anthropic-key))
   :preface
 
   (defun init-get-anthropic-key ()
     (password-store-get "anthropic-api-key"))
 
   :config
+  (setq gptel-backend (gptel-make-anthropic "Claude"
+                        :stream t
+                        :models '(claude-sonnet-4-5-20250929)
+                        :key #'init-get-anthropic-key))
 
-  (gptel-make-preset 'coder
-                     :description "A preset for general programming tasks"
-                     :backend "Claude"
-                     :model 'claude-sonnet-4-5-20250929
-                     :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."))
+  (gptel-make-tool
+   :function (lambda (buffer)
+               (unless (buffer-live-p (get-buffer buffer))
+                 (error "Error: buffer %s is not live." buffer))
+               (with-current-buffer buffer
+                 (buffer-substring-no-properties (point-min) (point-max))))
+   :name "read_buffer"
+   :description "Return the contents of an Emacs buffer"
+   :args '((:name "buffer"
+                  :type string
+                  :description "The name of the buffer whose contents are to be retrieved"))
+   :category "emacs"))
 
 (use-package mcp
   :if (package-installed-p 'mcp)
   :after gptel
   :custom (mcp-hub-servers
-           `(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem")))))
-  :config (require 'mcp-hub)
+           `(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem")))
+             ("git" . (:command "uvx" :args ("mcp-server-git")))
+             ("effect-mcp" . (:command "npx" :args ("-y" "effect-mcp@latest")))))
+  :config
+  (require 'mcp-hub)
+  (when (package-installed-p 'gptel)
+    (require 'gptel-integrations))
   :hook (after-init . mcp-hub-start-all-server))
 
 (provide 'init-ai)

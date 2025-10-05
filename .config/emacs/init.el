@@ -108,6 +108,8 @@
   (use-short-answers  t)
   (ring-bell-function #'ignore)
 
+  (load-prefer-newer t)
+
   (delete-by-moving-to-trash nil)
 
   (kill-ring-max 120)
