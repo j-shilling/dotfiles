@@ -7,19 +7,14 @@ stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v .
 * Emacs
 
 #+begin_src sh
-./configure \
-    --with-libsystemd \
-    --with-pop=yes \
-    --with-sound=alsa \
-    --with-imagemagick \
-    --without-gconf \
-    --with-mailutils \
-    --with-native-compilation \
-    --with-tree-sitter \
-    --with-json \
-    --with-xml2 \
+CFLAGS='-march=native -O3' ../configure \
     --with-modules \
-    --with-pgtk
+    --with-mailutils \
+    --with-xwidgets \
+    --with-imagemagick \
+    --with-native-compilation=aot \
+    --with-pgtk \
+    --with-tree-sitter
 #+end_src
 
 ** deps
@@ -27,6 +22,10 @@ stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v .
 - build-essentials
 - autoconf
 - texinfo
+- libmagickwand-dev libmagick++-dev imagemagick
+- libgccjit0 libgccjit-14-dev
+- libwebkit2gtk-4.1-dev
+
 
 
 * PyEnv

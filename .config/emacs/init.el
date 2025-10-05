@@ -78,7 +78,8 @@
                                     ace-window
                                     avy
                                     rbenv
-                                    gptel))
+                                    gptel
+                                    mcp))
 
 (package-initialize)
 
@@ -997,23 +998,7 @@
         ("M-n" . flymake-goto-next-error)
         ("M-p" . flymake-goto-prev-error)))
 
-(use-package gptel
-  :if (package-installed-p 'gptel)
-  :preface
-  (defun init-get-anthropic-key ()
-    (password-store-get "anthropic-api-key"))
-  :config
-  (require 'gptel-integrations)
-  (setq gptel-model 'claude-sonnet-4-5-20250929
-        gptel-backend (gptel-make-anthropic "Claude"
-                        :stream t
-                        :key #'init-get-anthropic-key))
-  (gptel-make-preset 'coder
-    :description "A preset for general programming tasks"
-    :backend "Claude"
-    :model 'claude-sonnet-4-5-20250929
-    :system "You are an expert coding assistant. Your role is to provide high-quality code solutions, refactorings, and explanations."
-    :tools '("read_buffer" "modify_buffer")))
+(load (expand-file-name "./init-ai.el" user-emacs-directory))
 
 ;;;
 ;;; Ruby
