@@ -28,7 +28,20 @@
    :args '((:name "buffer"
                   :type string
                   :description "The name of the buffer whose contents are to be retrieved"))
-   :category "emacs"))
+   :category "emacs")
+
+  (gptel-make-preset "effect-backend"
+    :system 'effect-backend
+    :tools "read_buffer"))
+
+(use-package gptel-prompts
+  :if (package-installed-p 'gptel-prompts)
+  :after gptel
+  :custom
+  (gptel-prompts-directory (expand-file-name "prompts" user-emacs-directory))
+  :config
+  (when (file-exists-p gptel-prompts-directory)
+    (gptel-prompts-update)))
 
 (use-package mcp
   :if (package-installed-p 'mcp)

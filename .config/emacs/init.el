@@ -35,6 +35,7 @@
 ;;;
 
 (require 'package)
+(require 'package-vc)
 
 (setopt package-archives '(("melpa" . "http://melpa.org/packages/")
                            ("org" . "http://orgmode.org/elpa/")
@@ -79,6 +80,8 @@
                                     rbenv
                                     gptel
                                     mcp))
+(setopt package-vc-selected-packages
+        '((gptel-prompts :url "https://github.com/jwiegley/gptel-prompts.git")))
 
 (package-initialize)
 

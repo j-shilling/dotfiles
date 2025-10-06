@@ -7,4 +7,4 @@
 .config/doom
 
 .aider*
-.*\.md
+!prompts/*\.md
