@@ -79,7 +79,10 @@
                                     avy
                                     rbenv
                                     gptel
-                                    mcp))
+                                    mcp
+                                    mermaid-mode
+                                    ob-mermaid))
+
 (setopt package-vc-selected-packages
         '((gptel-prompts :url "https://github.com/jwiegley/gptel-prompts.git")))
 
@@ -785,7 +788,6 @@
   (dired-recursive-copies 'always)
   (dired-recursive-deletes 'top)
   (dired-create-destination-dirs 'ask)
-  (dired-listing-switches "-lah -v --group-directories-first")
   :hook
   ((dired-mode-hook . dired-omit-mode)
    (dired-mode-hook . dired-hide-details-mode)))
