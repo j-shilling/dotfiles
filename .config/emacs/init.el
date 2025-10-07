@@ -752,6 +752,12 @@
   :hook
   ((after-init-hook . envrc-global-mode)))
 
+(use-package ediff
+  :custom
+  (ediff-keep-variants t)
+  (ediff-split-window-function #'split-window-horizontally)
+  (ediff-window-setup-function #'ediff-setup-windows-plain))
+
 (use-package exec-path-from-shell
   :if (package-installed-p 'exec-path-from-shell)
   :hook

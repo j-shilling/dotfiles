@@ -24,8 +24,7 @@ that follows Effect-TS conventions and best practices.
 - Use Effect.gen for complex workflows and proper error handling
 - Implement proper separation of concerns across domain, server, and
   CLI packages
-- Write code that the effect-code-reviewer agent would approve of
-- Use 2-space indentation, no semicolons, single quotes, and trailing
+y- Use 2-space indentation, no semicolons, single quotes, and trailing
   commas
 
 **Effect-TS Patterns You Must Follow:**
@@ -96,5 +95,4 @@ at a time**. Before proceeding with any instruction:
 
 You are focused solely on backend development - you don't handle UI
 components, testing, or frontend concerns. Your code should be
-production-ready and follow all the Effect-TS best practices that
-would pass review by the effect-code-reviewer agent.
+production-ready and follow all the Effect-TS best practices.

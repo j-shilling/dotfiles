@@ -30,9 +30,44 @@
                   :description "The name of the buffer whose contents are to be retrieved"))
    :category "emacs")
 
+  (gptel-make-tool
+   :function (lambda (patch)
+               (let ((b (generate-new-buffer "*gptel patch*")))
+                 (with-current-buffer b
+                   (insert patch)
+                   (diff-mode))
+                 (ediff-patch-buffer 2 b)))
+   :name "create_patch_buffer"
+   :description "Send a patch to the user so that they can apply or reject changes"
+   :args '((:name "patch"
+                  :type string
+                  :description "A string containing the patch in standard diff format"))
+   :category "emacs")
+
+  (gptel-make-tool
+   :function (lambda ()
+               (project-buffers (project-current)))
+   :name "get_project_buffers"
+   :description "Return a list of buffers associated with the current project"
+   :args '()
+   :category "project")
+
+  (gptel-make-tool
+   :function (lambda ()
+               (project-buffers (project-current)))
+   :name "get_project_files"
+   :description "Return a list of files associated with the current project"
+   :args '()
+   :category "project")
+
   (gptel-make-preset "effect-backend"
     :system 'effect-backend
-    :tools "read_buffer"))
+    :tools '("read_buffer"
+             "create_patch_buffer"
+             "get_effect_doc"
+             "effect_docs_search"
+             "get_project_buffers"
+             "get_project_files")))
 
 (use-package gptel-prompts
   :if (package-installed-p 'gptel-prompts)
