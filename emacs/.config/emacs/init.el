@@ -81,6 +81,7 @@
                                     gptel
                                     mcp
                                     mermaid-mode
+                                    mermaid-ts-mode
                                     ob-mermaid))
 
 (setopt package-vc-selected-packages
@@ -1010,7 +1011,33 @@
 
 (use-package rbenv
   :if (package-installed-p 'rbenv)
-  :hook ((after-init-hook . global-rbenv-mode)))
+  :hook ((after-init-hook . global-rbenv-mode))
+  :custom
+  (rbenv-executable (executable-find "rbenv")))
+
+(use-package ruby-ts-mode
+  :mode ("\\.rbw?"
+         "\\.ru"
+         "\\.rake"
+         "\\.thor"
+         "\\.axlsx"
+         "\\.jbuilder"
+         "\\.rabl"
+         "\\.gemspec"
+         "\\.podspec"
+         "Gemfile"
+         "Rakefile"
+         "Capfile"
+         "Thorfile"
+         "Puppetfile"
+         "Berksfile"
+         "Brewfile"
+         "Fastfile"
+         "Vagrantfile"
+         "Guardfile"
+         "Podfile")
+  :hook
+  ((ruby-base-mode-hook . eglot-ensure)))
 
 (use-package terraform-mode
   :if (package-installed-p 'terraform-mode)

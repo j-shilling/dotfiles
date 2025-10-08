@@ -51,7 +51,8 @@
                "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript"
                       "master" "typescript/src")
-          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml")))
+          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml")
+          (mermaid "https://github.com/monaqa/tree-sitter-mermaid")))
   (defun init-tree-sitter-install-all ()
     (interactive)
     (mapc (lambda (lang)
