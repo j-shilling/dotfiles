@@ -942,13 +942,7 @@
 
 (use-package eglot
   :config
-  (add-to-list 'eglot-server-programs
-               '(((js-mode :language-id "javascript")
-                  (js-ts-mode :language-id "javascript")
-                  (tsx-ts-mode :language-id "typescriptreact")
-                  (typescript-ts-mode :language-id "typescript")
-                  (typescript-mode :language-id "typescript"))
-                 "npx" "typescript-language-server" "--stdio"))
+
   (add-to-list 'eglot-server-programs
                '((js-json-mode json-mode json-ts-mode jsonc-mode)
                  .
@@ -1052,5 +1046,6 @@
 
 (load (expand-file-name "./init-tree-sitter.el" user-emacs-directory))
 (load (expand-file-name "./init-ai.el" user-emacs-directory))
+(load (expand-file-name "./init-javascript.el" user-emacs-directory))
 
 ;;; init.el ends here
