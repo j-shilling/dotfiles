@@ -82,6 +82,7 @@
                                     mcp
                                     mermaid-mode
                                     mermaid-ts-mode
+                                    eat
                                     ob-mermaid))
 
 (setopt package-vc-selected-packages
@@ -279,12 +280,7 @@
   :if (package-installed-p 'all-the-icons)
   :commands (all-the-icons-insert all-the-icons-install-fonts))
 
-(use-package all-the-icons-dired
-  :if (package-installed-p 'all-the-icons-dired)
-  :custom
-  (all-the-icons-dired-monochrome nil)
-  :hook
-  ((dired-mode-hook . all-the-icons-dired-mode)))
+
 
 (use-package all-the-icons-ibuffer
   :if (package-installed-p 'all-the-icons-ibuffer)
@@ -404,43 +400,7 @@
   :custom
   (bookmark-default-file (init--cache-file "bookmark-default.el")))
 
-(use-package eshell
-  :custom
-  (eshell-aliases-file (init--state-file "eshell" "aliases"))
-  (eshell-directory-name (init--cache-file "eshell"))
-  (eshell-login-script (init--state-file "eshell" "login"))
-  (eshell-rc-script (init--state-file "eshell" "rc"))
-  (eshell-history-file-name (init--cache-file "eshell" "history"))
-  (eshell-modules-list '(eshell-alias
-                         eshell-banner
-                         eshell-cmpl
-                         eshell-dirs
-                         eshell-elecslash
-                         eshell-extpipe
-                         eshell-glob
-                         eshell-hist
-                         eshell-ls
-                         eshell-prompt
-                         eshell-script
-                         eshell-smart
-                         eshell-tramp
-                         eshell-unix
-                         eshell-xtra))
-  (eshell-visual-commands '("pnpm"
-                            "yarn"
-                            "npx"
-                            "flatpak"
-                            "docker"
-                            "docker-compose"
-                            "devcontainer"
-                            "guix"
-                            "terraform"))
-  (eshell-scroll-to-bottom-on-input 'all)
-  (eshell-scroll-to-bottom-on-output'all)
-  (eshell-kill-processes-on-exit t)
-  (eshell-hist-ignoredups t)
-  (eshell-glob-case-insensitive t)
-  (eshell-error-if-no-glob t))
+
 
 (use-package recentf
   :diminish recentf-mode
@@ -756,12 +716,6 @@
   :hook
   ((after-init-hook . envrc-global-mode)))
 
-(use-package ediff
-  :custom
-  (ediff-keep-variants t)
-  (ediff-split-window-function #'split-window-horizontally)
-  (ediff-window-setup-function #'ediff-setup-windows-plain))
-
 (use-package exec-path-from-shell
   :if (package-installed-p 'exec-path-from-shell)
   :hook
@@ -781,18 +735,6 @@
    'grep-find-command
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
-(use-package dired
-  :custom
-  (dired-dwim-target t)
-  (dired-hide-details-hide-symlink-targets nil)
-  (dired-auto-revert-buffer #'dired-buffer-stale-p)
-  (dired-recursive-copies 'always)
-  (dired-recursive-deletes 'top)
-  (dired-create-destination-dirs 'ask)
-  :hook
-  ((dired-mode-hook . dired-omit-mode)
-   (dired-mode-hook . dired-hide-details-mode)))
-
 (use-package diff-hl
   :if (package-installed-p 'diff-hl)
   :diminish (diff-hl-mode diff-hl-dir-mode)
@@ -801,11 +743,6 @@
    (magit-post-refresh-hook . diff-hl-magit-post-refresh)
    (prog-mode-hook . diff-hl-mode)
    (vc-dir-mode . diff-hl-dir-mode)))
-
-(use-package diff-hl-dired
-  :if (package-installed-p 'diff-hl)
-  :diminish diff-hl-dired-mode
-  :hook (dired-mode-hook diff-hl-dired-mode))
 
 (use-package ibuffer
   :if (package-installed-p 'ibuffer)
@@ -1047,5 +984,6 @@
 (load (expand-file-name "./init-tree-sitter.el" user-emacs-directory))
 (load (expand-file-name "./init-ai.el" user-emacs-directory))
 (load (expand-file-name "./init-javascript.el" user-emacs-directory))
+(load (expand-file-name "./init-tools.el" user-emacs-directory))
 
 ;;; init.el ends here
