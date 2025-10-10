@@ -36,13 +36,57 @@
                  (with-current-buffer b
                    (insert patch)
                    (diff-mode))
-                 (ediff-patch-buffer 2 b)))
+                 (pop-to-buffer b)))
    :name "create_patch_buffer"
    :description "Send a patch to the user so that they can apply or reject changes"
    :args '((:name "patch"
                   :type string
                   :description "A string containing the patch in standard diff format"))
    :category "emacs")
+
+  (gptel-make-tool
+   :function (lambda (buffer &optional beg end)
+               (unless (buffer-live-p (get-buffer buffer))
+                 (error "error: buffer %s is not live." buffer))
+               (with-current-buffer buffer
+                 (when-let ((diags (flymake-diagnostics beg end)))
+                   (json-encode
+                    (mapcar #'flymake-diagnostic-data
+                            diags)))))
+   :name "get_buffer_diagnostics"
+   :description "Return a json array describing errors within a buffer"
+   :args (list '(:name "buffer"
+                       :type string
+                       :description "The name of the buffer to check")
+               '(:name "beg"
+                       :type integer
+                       :optional t
+                       :description "If provided, searches for diagnostics after this point")
+               '(:name "beg"
+                       :type integer
+                       :optional t
+                       :description "If provided, searches for diagnostics before this point"))
+   :category "flymake")
+
+  (gptel-make-tool
+   :function (lambda (buffer line)
+               (unless (buffer-live-p (get-buffer buffer))
+                 (error "error: buffer %s is not live." buffer))
+               (with-current-buffer buffer
+                 (let ((region (flymake-diag-region buffer line)))
+                   (when-let ((diags (flymake-diagnostics (car region) (cdr region))))
+                     (json-encode
+                      (mapcar #'flymake-diagnostic-data
+                              diags))))))
+   :name "get_buffer_diagnostics_by_line_number"
+   :description "Return a json array describing errors at a line"
+   :args (list '(:name "buffer"
+                       :type string
+                       :description "The name of the buffer to check")
+               '(:name "line"
+                       :type integer
+                       :description "The line to examine"))
+   :category "flymake")
 
   (gptel-make-tool
    :function (lambda ()
@@ -60,14 +104,23 @@
    :args '()
    :category "project")
 
-  (gptel-make-preset "effect-backend"
-    :system 'effect-backend
+  (gptel-make-preset 'coding
+    :description "A general programming preset"
+    :system "You are an expert AI programming assistant."
+    :backend "Claude"
+    :model 'claude-sonnet-4-5-20250929
+    :temperature 0.0
     :tools '("read_buffer"
              "create_patch_buffer"
-             "get_effect_doc"
-             "effect_docs_search"
              "get_project_buffers"
-             "get_project_files")))
+             "get_project_files"
+             "get_buffer_diagnostics"
+             "get_buffer_diagnostics_by_line_number"))
+
+  (gptel-make-preset 'effect-backend
+    :parents '(coding)
+    :system 'effect-backend
+    :tools '(:append "get_effect_doc")))
 
 (use-package gptel-prompts
   :if (package-installed-p 'gptel-prompts)
@@ -89,7 +142,7 @@
   (require 'mcp-hub)
   (when (package-installed-p 'gptel)
     (require 'gptel-integrations))
-  :hook (after-init . mcp-hub-start-all-server))
+  :hook ((after-init . mcp-hub-start-all-server)))
 
 (provide 'init-ai)
 ;;; init-ai.el ends here.

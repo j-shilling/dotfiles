@@ -983,7 +983,7 @@
 
 (load (expand-file-name "./init-tree-sitter.el" user-emacs-directory))
 (load (expand-file-name "./init-ai.el" user-emacs-directory))
-(load (expand-file-name "./init-javascript.el" user-emacs-directory))
+(load (expand-file-name "./init-prog.el" user-emacs-directory))
 (load (expand-file-name "./init-tools.el" user-emacs-directory))
 
 ;;; init.el ends here
