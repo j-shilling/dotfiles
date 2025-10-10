@@ -47,7 +47,7 @@
   (eshell-glob-case-insensitive t)
   (eshell-error-if-no-glob t))
 
-(use-package
+(use-package eat
   :if (package-installed-p 'eat)
   :hook
   ((eshell-load-hook . eat-eshell-mode)
