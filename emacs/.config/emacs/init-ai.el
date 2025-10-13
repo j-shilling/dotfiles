@@ -11,6 +11,9 @@
   (defun init-get-anthropic-key ()
     (password-store-get "anthropic-api-key"))
 
+  :hook
+  ((gptel-post-response-functions . gptel-end-of-response))
+
   :config
   (setq gptel-backend (gptel-make-anthropic "Claude"
                         :stream t
@@ -31,15 +34,29 @@
    :category "emacs")
 
   (gptel-make-tool
-   :function (lambda (patch)
-               (let ((b (generate-new-buffer "*gptel patch*")))
+   :function (lambda (filename)
+               (buffer-name
+                (find-file-noselect filename t)))
+   :name "open_file_buffer"
+   :description "Find or create a buffer with the contents of a file and return that buffer's name"
+   :args '((:name "filename"
+                  :type string
+                  :description "The path to the file"))
+   :category)
+
+  (gptel-make-tool
+   :function (lambda (buffer-name patch)
+               (let ((b (generate-new-buffer buffer-name)))
                  (with-current-buffer b
                    (insert patch)
                    (diff-mode))
                  (pop-to-buffer b)))
    :name "create_patch_buffer"
    :description "Send a patch to the user so that they can apply or reject changes"
-   :args '((:name "patch"
+   :args '((:name "buffer-name"
+                  :type string
+                  :description "A name to use to generate a new buffer. This should begin and end with a '*' character.")
+           (:name "patch"
                   :type string
                   :description "A string containing the patch in standard diff format"))
    :category "emacs")
@@ -105,22 +122,23 @@
    :category "project")
 
   (gptel-make-preset 'coding
-    :description "A general programming preset"
-    :system "You are an expert AI programming assistant."
-    :backend "Claude"
-    :model 'claude-sonnet-4-5-20250929
-    :temperature 0.0
-    :tools '("read_buffer"
-             "create_patch_buffer"
-             "get_project_buffers"
-             "get_project_files"
-             "get_buffer_diagnostics"
-             "get_buffer_diagnostics_by_line_number"))
+                     :description "A general programming preset"
+                     :system "You are an expert AI programming assistant."
+                     :backend "Claude"
+                     :model 'claude-sonnet-4-5-20250929
+                     :temperature 0.0
+                     :tools '("read_buffer"
+                              "open_file_buffer"
+                              "create_patch_buffer"
+                              "get_project_buffers"
+                              "get_project_files"
+                              "get_buffer_diagnostics"
+                              "get_buffer_diagnostics_by_line_number"))
 
   (gptel-make-preset 'effect-backend
-    :parents '(coding)
-    :system 'effect-backend
-    :tools '(:append "get_effect_doc")))
+                     :parents '(coding)
+                     :system 'effect-backend
+                     :tools '(:append ())))
 
 (use-package gptel-prompts
   :if (package-installed-p 'gptel-prompts)
