@@ -905,8 +905,6 @@
                  ("npx" "-p" "@astrojs/language-server" "astro-ls" "--stdio"
                   :initializationOptions
                   (:typescript (:tsdk "./node_modules/typescript/lib")))))
-  (add-to-list 'eglot-server-programs
-               '((ruby-mode ruby-ts-mode) "ruby-lsp"))
   :bind
   (:map eglot-mode-map
         ("C-c C-d" . eldoc-doc-buffer)))
@@ -939,36 +937,6 @@
 ;;;
 ;;; Ruby
 ;;;
-
-(use-package rbenv
-  :if (package-installed-p 'rbenv)
-  :hook ((after-init-hook . global-rbenv-mode))
-  :custom
-  (rbenv-executable (executable-find "rbenv")))
-
-(use-package ruby-ts-mode
-  :mode ("\\.rbw?"
-         "\\.ru"
-         "\\.rake"
-         "\\.thor"
-         "\\.axlsx"
-         "\\.jbuilder"
-         "\\.rabl"
-         "\\.gemspec"
-         "\\.podspec"
-         "Gemfile"
-         "Rakefile"
-         "Capfile"
-         "Thorfile"
-         "Puppetfile"
-         "Berksfile"
-         "Brewfile"
-         "Fastfile"
-         "Vagrantfile"
-         "Guardfile"
-         "Podfile")
-  :hook
-  ((ruby-base-mode-hook . eglot-ensure)))
 
 (use-package terraform-mode
   :if (package-installed-p 'terraform-mode)
