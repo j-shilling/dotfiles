@@ -99,4 +99,12 @@
   (ediff-split-window-function #'split-window-horizontally)
   (ediff-window-setup-function #'ediff-setup-windows-plain))
 
+;;;;;;;;;;;;;;;;;;
+;;; grep
+;;;;;;;;;;;;;;;;;;
+
+(use-package wgrep
+  :if (package-installed-p 'wgrep)
+  :demand t)
+
 ;;; init-tools.el ends here.
