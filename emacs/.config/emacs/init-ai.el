@@ -17,7 +17,7 @@
     :config
     (setq gptel-backend (gptel-make-anthropic "Claude"
                           :stream t
-                          :models '(claude-sonnet-4-5-20250929)
+                          :models '(claude-sonnet-4-5-20250929 claude-opus-4-1-20250805)
                           :key #'init-get-anthropic-key)
           gptel-model 'claude-sonnet-4-5-20250929
           gptel-default-mode 'org-mode

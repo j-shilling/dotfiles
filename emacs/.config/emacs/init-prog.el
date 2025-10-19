@@ -171,7 +171,7 @@
 
 (use-package typescript-ts-mode
     :mode (("\\.ts\\'" . typescript-ts-mode)
-           ("\\.txs\\'" . tsx-ts-mode))
+           ("\\.tsx\\'" . tsx-ts-mode))
     :hook
     ((typescript-ts-base-mode-hook . eglot-ensure)))
 
