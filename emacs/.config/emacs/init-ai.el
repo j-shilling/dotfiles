@@ -23,56 +23,28 @@
           gptel-default-mode 'org-mode
           gptel-temperature 0.0
           gptel-cache t
-          gptel-use-tools t)
+          gptel-use-tools t
+          gptel-include-tool-results t
+          gptel-tools (nconc (gptel-get-tool "buffers")
+                             (gptel-get-tool "files")))
 
     (require 'init-ai-tools
              (expand-file-name "init-ai-tools.el" user-emacs-directory))
 
     (gptel-make-preset 'prompt-generator
       :description "An assistant for writting system prompts"
-      :system 'prompt-generator
-      :backend "Claude"
-      :model 'claude-sonnet-4-5-20250929
-      :temperature 0.0
-      :tools '("read_buffer"
-               "create_buffer"
-               "pop_to_buffer"
-               "insert_into_buffer"
-               "open_file_buffer"))
+      :system 'prompt-generator)
 
     (gptel-make-preset 'mermaid
-      :description "An assistant for generating mermaid documents"
-      :system 'mermaid-diagram-assistant
-      :backend "Claude"
-      :model 'claude-sonnet-4-5-20250929
-      :temperature 0.0
-      :tools '("read_buffer"
-               "create_buffer"
-               "pop_to_buffer"
-               "insert_into_buffer"
-               "open_file_buffer"))
+      :description "An assistant for generating mermaid docupments"
+      :system 'mermaid-diagram-assistant)
 
     (gptel-make-preset 'coding
       :description "A general programming preset"
       :system "You are an expert AI programming assistant."
-      :backend "Claude"
-      :model 'claude-sonnet-4-5-20250929
-      :temperature 0.0
-      :tools '("read_buffer"
-               "create_buffer"
-               "pop_to_buffer"
-               "insert_into_buffer"
-               "open_file_buffer"
-               "create_patch_buffer"
-               "get_project_buffers"
-               "get_project_files"
-               "get_buffer_diagnostics"
-               "get_buffer_diagnostics_by_line_number"))
-
-    (gptel-make-preset 'effect-backend
-      :parents '(coding)
-      :system 'effect-backend
-      :tools '(:append ())))
+      :tools `(:append ,(nconc (gptel-get-tool "flymake")
+                               (gptel-get-tool "project")
+                               (gptel-get-tool "xref")))))
 
 (use-package gptel-prompts
     :if (package-installed-p 'gptel-prompts)
