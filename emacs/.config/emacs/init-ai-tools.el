@@ -164,6 +164,204 @@ buffer exists visiting FILENAME, return that one."
    (find-file-noselect filename t)))
 
 (gptel-make-tool
+ :name "append_region_to_file"
+ :category "files"
+ :description
+ "This function appends the contents of the region delimited by START
+and END in the buffer identified by BUFFER-NAME to the end of file FILENAME. If
+that file does not exist, it is created.
+
+An error is signaled if you cannot write or create FILENAME."
+ :args
+ '((:name "bufferName"
+    :type string
+    :description
+    "A name identifying which buffer to read. This can be the return
+ value of `create_buffer' or one of the names returned by
+ `list_buffers', `list_visible_buffers', or similar tools.")
+   (:name "fileName"
+    :type string
+    :description
+    "A name of the file to append to.")
+   (:name "start"
+    :type integer
+    :description
+    "The starting position of the region to write to the file.")
+   (:name "end"
+    :type integer
+    :description
+    "The ending position of the region to write to the file."))
+ :function
+ (lambda (buffer-name file-name start end)
+   (let ((b (get-buffer buffer-name)))
+     (unless (buffer-live-p b)
+       (error "Error: buffer %s is not live." buffer))
+     (save-excursion
+       (with-current-buffer b
+         (append-to-file start end file-name))))))
+
+(gptel-make-tool
+ :name "append_buffer_to_file"
+ :category "files"
+ :description
+ "This function appends the entire contents the buffer identified by BUFFER-NAME
+to the end of file FILENAME. If that file does not exist, it is created.
+
+An error is signaled if you cannot write or create FILENAME."
+ :args
+ '((:name "bufferName"
+    :type string
+    :description
+    "A name identifying which buffer to read. This can be the return
+ value of `create_buffer' or one of the names returned by
+ `list_buffers', `list_visible_buffers', or similar tools.")
+   (:name "fileName"
+    :type string
+    :description
+    "A name of the file to append to."))
+ :function
+ (lambda (buffer-name file-name)
+   (let ((b (get-buffer buffer-name)))
+     (unless (buffer-live-p b)
+       (error "Error: buffer %s is not live." buffer))
+     (save-excursion
+       (with-current-buffer b
+         (append-to-file nil nil file-name))))))
+
+(gptel-make-tool
+ :name "append_string_to_file"
+ :category "files"
+ :description
+ "This function appends the string TEXT to the end of file FILENAME. If
+that file does not exist, it is created.
+
+An error is signaled if you cannot write or create FILENAME."
+ :args
+ '((:name "fileName"
+    :type string
+    :description
+    "A name of the file to append to.")
+   (:name "text"
+    :type string
+    :description
+    "The string to append to the file"))
+ :function
+ (lambda (file-name text)
+   (append-to-file text nil file-name)))
+
+(gptel-make-tool
+ :name "rename_file"
+ :category "files"
+ :description
+ "Rename FILE as NEWNAME.  Both args must be strings.
+
+If file has names other than FILE, it continues to have those names.
+If NEWNAME is a directory name, rename FILE to a like-named file under
+NEWNAME.  For NEWNAME to be recognized as a directory name, it should
+end in a slash.
+
+Signal a file-already-exists error if a file NEWNAME already exists
+unless optional third argument OK-IF-ALREADY-EXISTS is non-nil.
+An integer third arg means request confirmation if NEWNAME already exists.
+This is what happens in interactive use with M-x."
+ :args
+ '((:name "file"
+    :type string
+    :description
+    "The current name of the file.")
+   (:name "newname"
+    :type string
+    :description
+    "The desired name of the file.")
+   (:name "okIfAlreadyExists"
+    :type boolean
+    :description
+    "When `true', then no error is signaled when a file called NEWNAME
+already exists. Defaults to `false'"))
+ :function
+ (lambda (file newname &optional ok-if-already-exists)
+   (rename-file file newname ok-if-already-exists)))
+
+(gptel-make-tool
+ :name "copy_file"
+ :category "files"
+ :description
+ "Copy FILE to NEWNAME.  Both args must be strings.
+
+If NEWNAME is a directory name, copy FILE to a like-named file under
+NEWNAME.  For NEWNAME to be recognized as a directory name, it should
+end in a slash.
+
+This function always sets the file modes of the output file to match
+the input file.
+
+The optional third argument OK-IF-ALREADY-EXISTS specifies what to do
+if file NEWNAME already exists.  If OK-IF-ALREADY-EXISTS is not provided,
+signal a file-already-exists error without overwriting.  If
+OK-IF-ALREADY-EXISTS is an integer, request confirmation from the user
+about overwriting.  Any other value for OK-IF-ALREADY-EXISTS means to
+overwrite the existing file.
+
+If KEEP-TIME is provided and true, give the output file the same
+last-modified time as the old one.  (This works on only some systems.)
+
+If PRESERVE-UID-GID is provided and true, try to transfer the uid and gid of
+FILE to NEWNAME.
+
+If PRESERVE-PERMISSIONS is provided and true, copy permissions of FILE to NEWNAME;
+this includes the file modes, along with ACL entries and SELinux
+context if present.  Otherwise, if NEWNAME is created its file
+permission bits are those of FILE, masked by the default file
+permissions."
+ :args
+ '((:name "file"
+    :type string
+    :description
+    "The source file to copy.")
+   (:name "newname"
+    :type string
+    :description
+    "The destination path for the copy.")
+   (:name "okIfAlreadyExists"
+    :type boolean
+    :optional t
+    :description
+    "When `true', overwrite existing file without error. Defaults to `false'.")
+   (:name "keepTime"
+    :type boolean
+    :optional t
+    :description
+    "When `true', preserve the last-modified time of the original file. Defaults to `false'.")
+   (:name "preserveUidGid"
+    :type boolean
+    :optional t
+    :description
+    "When `true', try to transfer the uid and gid of FILE to NEWNAME. Defaults to `false'.")
+   (:name "preservePermissions"
+    :type boolean
+    :optional t
+    :description
+    "When `true', copy all permissions including ACL entries and SELinux context. Defaults to `false'."))
+ :function
+ (lambda (file newname &optional ok-if-already-exists keep-time preserve-uid-gid preserve-permissions)
+   (copy-file file newname ok-if-already-exists keep-time preserve-uid-gid preserve-permissions)))
+
+(gptel-make-tool
+ :name "delete_file"
+ :category "files"
+ :description
+ "Delete file named FILENAME. If it is a symlink, remove the symlink.
+
+If file has multiple names, it continues to exist with the other names."
+ :args
+ '((:name "filename"
+    :type string
+    :description "The name of the file to delete."))
+ :function
+ (lambda (filename)
+   (delete-file filename)))
+
+(gptel-make-tool
  :name "list_directory_files"
  :category "files"
  :description
