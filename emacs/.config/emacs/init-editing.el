@@ -61,5 +61,35 @@
   :hook
   ((after-init-hook . delete-selection-mode)))
 
+(use-package hippie-exp
+  :bind
+  ("M-/" . hippie-expand))
+
+(use-package tempel
+  ;; TODO: think about tempel-abbrev-mode
+  :if (package-installed-p 'tempel)
+  :preface
+  (defun init-editing-tempel-setup-capf ()
+    "Add tempel-expand to the buffer local capfs list."
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+  :hook
+  ((conf-mode-hook . init-editing-tempel-setup-capf)
+   (text-mode-hook . init-editing-tempel-setup-capf)
+   (prog-mode-hook . init-editing-tempel-setup-capf))
+  :bind
+  (("M-+" . tempel-complete)
+   ("M-*" . tempel-insert)))
+
+(use-package tempel-collection
+  :if (package-installed-p 'tempel-collection))
+
+(use-package eglot-tempel
+  :if (package-installed-p 'eglot-tempel)
+  :after (eglot)
+  :config
+  (eglot-tempel-mode))
+
 (provide 'init-editing)
 ;;; init-editing.el ends here
