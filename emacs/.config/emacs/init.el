@@ -73,6 +73,7 @@
                                     tempel-collection
                                     devdocs
                                     apheleia
+                                    rbs-mode
                                     smartparens
                                     all-the-icons
                                     all-the-icons-dired
