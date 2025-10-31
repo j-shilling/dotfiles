@@ -26,33 +26,43 @@
 (require 'init-lib (expand-file-name "init-lib.el" user-emacs-directory))
 
 (use-package treesit
-  :init
+    :init
   (add-to-list 'treesit-extra-load-path
                (init-lib-state-file "tree-sitter"))
+  ;; TODO:
+  ;; - https://github.com/tree-sitter/tree-sitter-c
+  ;; - https://github.com/tree-sitter/tree-sitter-embedded-template
+  ;; - https://github.com/tree-sitter/tree-sitter-haskell
+  ;; - https://github.com/tree-sitter/tree-sitter-jsdoc
+  ;; - https://github.com/tree-sitter-grammars/tree-sitter-csv
+  ;; - https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
+  ;; - https://github.com/tree-sitter-grammars/tree-sitter-hcl
+  ;; - https://github.com/tree-sitter-grammars/tree-sitter-scss
+  ;; - https://github.com/tree-sitter-grammars/tree-sitter-xml
   (setq treesit-language-source-alist
-        '((awk "https://github.com/Beaglefoot/tree-sitter-awk")
-          (bash "https://github.com/tree-sitter/tree-sitter-bash")
-          (css "https://github.com/tree-sitter/tree-sitter-css")
-          (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-          (html "https://github.com/tree-sitter/tree-sitter-html")
+        '((bash "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
+          (css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2")
+          (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "v0.2.0")
+          (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
           (javascript "https://github.com/tree-sitter/tree-sitter-javascript"
-                      "master" "src")
-          (json "https://github.com/tree-sitter/tree-sitter-json")
-          (make "https://github.com/tree-sitter-grammars/tree-sitter-make")
+           "v0.23.1")
+          (json "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
+          (make "https://github.com/tree-sitter-grammars/tree-sitter-make" "v1.1.1")
           (markdown
-           "https://github.com/tree-sitter-grammars/tree-sitter-markdown")
-          (python "https://github.com/tree-sitter/tree-sitter-python")
-          (ruby "https://github.com/tree-sitter/tree-sitter-ruby")
-
-          (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages")
-
-          (toml "https://github.com/tree-sitter/tree-sitter-toml")
-          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master"
-               "tsx/src")
+           "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+           "v0.4.1"
+           "tree-sitter-markdown/src")
+          (markdown-inline
+           "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+           "v0.4.1"
+           "tree-sitter-markdown-inline/src")
+          (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
+          (ruby "https://github.com/tree-sitter/tree-sitter-ruby" "v0.23.1")
+          (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2"
+           "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript"
-                      "master" "typescript/src")
-          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml")
-          (mermaid "https://github.com/monaqa/tree-sitter-mermaid")))
+           "v0.23.2" "typescript/src")
+          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.2")))
   (defun init-tree-sitter-install-all ()
     (interactive)
     (mapc (lambda (lang)

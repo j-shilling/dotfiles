@@ -776,4 +776,6 @@
 (load (expand-file-name "./init-tools.el" user-emacs-directory))
 (load (expand-file-name "./init-editing.el" user-emacs-directory))
 
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
 ;;; init.el ends here
