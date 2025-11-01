@@ -1,20 +1,25 @@
 to update run:
 
 #+begin_src sh
-stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v .
+stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v emacs
 #+end_src
 
 * Emacs
 
 #+begin_src sh
-CFLAGS='-march=native -O3' ../configure \
-    --with-modules \
-    --with-mailutils \
-    --with-xwidgets \
-    --with-imagemagick \
-    --with-native-compilation=aot \
-    --with-pgtk \
-    --with-tree-sitter
+CFLAGS='-march=native -O3' \
+CC=gcc-14 \
+../configure --with-native-compilation=aot \
+      --with-tree-sitter \
+      --with-gif \
+      --with-png \
+      --with-jpeg \
+      --with-rsvg \
+      --with-tiff \
+      --with-imagemagick \
+      --with-pgtk \
+      --with-mailutils \
+      --with-modules --prefix=/home/jake/.local
 #+end_src
 
 ** deps
@@ -25,8 +30,6 @@ CFLAGS='-march=native -O3' ../configure \
 - libmagickwand-dev libmagick++-dev imagemagick
 - libgccjit0 libgccjit-14-dev
 - libwebkit2gtk-4.1-dev
-
-
 
 * PyEnv
 
