@@ -15,6 +15,9 @@
     ((gptel-post-response-functions . gptel-end-of-response))
 
     :config
+    (require 'init-ai-tools
+             (expand-file-name "init-ai-tools.el" user-emacs-directory))
+
     (setq gptel-backend (gptel-make-anthropic "Claude"
                           :stream t
                           :models '(claude-sonnet-4-5-20250929 claude-opus-4-1-20250805)
@@ -27,9 +30,6 @@
           gptel-include-tool-results t
           gptel-tools (nconc (gptel-get-tool "buffers")
                              (gptel-get-tool "files")))
-
-    (require 'init-ai-tools
-             (expand-file-name "init-ai-tools.el" user-emacs-directory))
 
     (gptel-make-preset 'prompt-generator
       :description "An assistant for writting system prompts"
