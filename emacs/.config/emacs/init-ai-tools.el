@@ -136,7 +136,7 @@
  provided, this defaults to the end."))
  :function
  (lambda (buffer text &optional loc)
-   (let ((b (get-buffer b)))
+   (let ((b (get-buffer buffer)))
      (unless (buffer-live-p b)
        (error "Error: buffer %s is not live." buffer))
      (save-excursion
