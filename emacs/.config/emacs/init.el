@@ -68,9 +68,10 @@
                                     magit-todos
                                     forge
                                     helpful
-                                    ;; eglot-tempel
-                                    ;; tempel
-                                    ;; tempel-collection
+                                    eglot-tempel
+                                    tempel
+                                    tempel-collection
+                                    ox-gfm
                                     devdocs
                                     apheleia
                                     rbs-mode
