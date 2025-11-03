@@ -62,7 +62,8 @@
            "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript"
            "v0.23.2" "typescript/src")
-          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.2")))
+          (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.2")
+          (hcl "https://github.com/tree-sitter-grammars/tree-sitter-hcl" "v1.2.0")))
   (defun init-tree-sitter-install-all ()
     (interactive)
     (mapc (lambda (lang)
