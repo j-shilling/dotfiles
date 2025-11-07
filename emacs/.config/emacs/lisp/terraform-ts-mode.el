@@ -22,60 +22,78 @@
 
 ;;; Code:
 
+;;; TODO:
+;;; - face-lock-doc-face
 (defvar terraform-ts-mode--treesit-font-lock-settings
   ;; todo
   '(:language hcl
-    :override t
-    :feature comments
-    ((comment) @font-lock-comment-face)
+              :override t
+              :feature comments
+              ((comment) @font-lock-comment-face)
 
-    :language hcl
-    :override t
-    :feature brackets
-    (["(" ")" "[" "]" "{" "}"] @font-lock-bracket-face)
+              :language hcl
+              :override t
+              :feature contants
+              ((literal_value) @font-lock-constant-face)
 
-    :language hcl
-    :override t
-    :feature delimiters
-    (["." ".*" "," "[*]" "=>"] @font-lock-delimiter-face)
+              :language hcl
+              :override t
+              :feature constants
+              ([(string_lit) (quoted_template)] @font-lock-string-face)
 
-    :language hcl
-    :override t
-    :feature operators
-    (["!"] @font-lock-negation-char-face)
+              :language hcl
+              :override t
+              :feature brackets
+              (["(" ")" "[" "]" "{" "}"
+                (template_interpolation_start)
+                (template_interpolation_end)]
+               @font-lock-bracket-face)
 
-    :language terraform
-    :override t
-    :feature operators
-    (["\*" "/" "%" "\+" "-" ">" ">=" "<" "<=" "==" "!=" "&&" "||"] @font-lock-operator-face)
+              :language hcl
+              :override t
+              :feature delimiters
+              (["." ".*" "," "[*]" "=>"] @font-lock-delimiter-face)
 
-    :language terraform
-    :feature builtin
-    '((function_call (identifier) @font-lock-builtin-face))
+              :language hcl
+              :override t
+              :feature operators
+              (["!"] @font-lock-negation-char-face)
 
-    :language hcl
-    :override t
-    :feature blocks
-    ((block (identifier) @font-lock-builtin-face
-            (string_lit (template_literal) @font-lock-type-face)
-            (string_lit (template_literal) @font-lock-function-name-face)))
+              :language hcl
+              :override t
+              :feature operators
+              (["\*" "/" "%" "\+" "-" ">" ">=" "<" "<=" "==" "!=" "&&" "||"] @font-lock-operator-face)
 
-    :language hcl
-    :override t
-    :feature blocks
-    ((block (identifier) @font-lock-builtin-face
-            (string_lit (template_literal) @font-lock-function-name-face)))
+              :language hcl
+              :override t
+              :feature expressions
+              ((variable_expr (identifier) @font-lock-variable-name-face)
+               (get_attr (identifier) @font-lock-variable-name-face))
 
-    :language hcl
-    :override t
-    :feature blocks
-    ((block (identifier) @font-lock-builtin-face))
+              :language hcl
+              :feature builtin
+              ((function_call (identifier) @font-lock-builtin-face))
 
-    :language hcl
-    :override t
-    :feature constants
-    (string_lit (template_literal) @font-lock-string-face)
-    ))
+              :language hcl
+              :override t
+              :feature blocks
+              ((block (identifier) @font-lock-builtin-face
+                      (string_lit) @font-lock-type-face
+                      (string_lit) @font-lock-function-name-face))
+
+              :language hcl
+              :override t
+              :feature blocks
+              ((block (identifier) @font-lock-builtin-face
+                      (string_lit) @font-lock-function-name-face))
+
+              :language hcl
+              :override t
+              :feature blocks
+              ((block (identifier) @font-lock-builtin-face))
+
+
+              ))
 
 (defun terraform-ts-mode--treesit-defun-name (node)
   "Return the defun name of NODE.
