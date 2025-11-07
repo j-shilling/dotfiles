@@ -24,8 +24,58 @@
 
 (defvar terraform-ts-mode--treesit-font-lock-settings
   ;; todo
-  (treesit-font-lock-rules
-   ))
+  '(:language hcl
+    :override t
+    :feature comments
+    ((comment) @font-lock-comment-face)
+
+    :language hcl
+    :override t
+    :feature brackets
+    (["(" ")" "[" "]" "{" "}"] @font-lock-bracket-face)
+
+    :language hcl
+    :override t
+    :feature delimiters
+    (["." ".*" "," "[*]" "=>"] @font-lock-delimiter-face)
+
+    :language hcl
+    :override t
+    :feature operators
+    (["!"] @font-lock-negation-char-face)
+
+    :language terraform
+    :override t
+    :feature operators
+    (["\*" "/" "%" "\+" "-" ">" ">=" "<" "<=" "==" "!=" "&&" "||"] @font-lock-operator-face)
+
+    :language terraform
+    :feature builtin
+    '((function_call (identifier) @font-lock-builtin-face))
+
+    :language hcl
+    :override t
+    :feature blocks
+    ((block (identifier) @font-lock-builtin-face
+            (string_lit (template_literal) @font-lock-type-face)
+            (string_lit (template_literal) @font-lock-function-name-face)))
+
+    :language hcl
+    :override t
+    :feature blocks
+    ((block (identifier) @font-lock-builtin-face
+            (string_lit (template_literal) @font-lock-function-name-face)))
+
+    :language hcl
+    :override t
+    :feature blocks
+    ((block (identifier) @font-lock-builtin-face))
+
+    :language hcl
+    :override t
+    :feature constants
+    (string_lit (template_literal) @font-lock-string-face)
+    ))
 
 (defun terraform-ts-mode--treesit-defun-name (node)
   "Return the defun name of NODE.
@@ -56,13 +106,13 @@ Return nil if there is no name or if NODE is not a defun node."
     (setq-local treesit-defun-name-function #'terraform-ts-mode--treesit-defun-name)
 
     ;; Fontification.
-    (setq-local treesit-font-lock-settings terraform-ts-mode--treesit-font-lock-settings)
-    (setq-local treesit-font-lock-feature-list
-                '(( comment document definition)
-                  ( keyword string)
-                  ( assignment constant escape-sequence jsx number
-                   pattern string-interpolation)
-                  ( bracket delimiter function operator property)))
+    (setq-local treesit-font-lock-settings
+                (apply #'treesit-font-lock-rules
+                       terraform-ts-mode--treesit-font-lock-settings))
+    (setq-local treesit-font-lock-feature-list '((comments)
+                                                 (keywords attributes blocks strings numbers constants objects output modules workspaces vars)
+                                                 (builtin brackets delimiters expressions operators interpolations conditionals)
+                                                 ()))
 
     (treesit-major-mode-setup)))
 

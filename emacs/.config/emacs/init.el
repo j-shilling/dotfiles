@@ -75,7 +75,6 @@
                                     devdocs
                                     apheleia
                                     rbs-mode
-                                    smartparens
                                     all-the-icons
                                     all-the-icons-dired
                                     all-the-icons-ibuffer
@@ -113,7 +112,7 @@
 ;;;
 
 (use-package emacs
-    :custom
+  :custom
   (custom-file (init--state-file "custom.el"))
   (user-full-name    "Jake Shilling")
   (user-mail-address "shilling.jake@gmail.com")
@@ -210,7 +209,7 @@
                          set-keyboard-coding-system
                          set-buffer-file-coding-system
                          set-selection-coding-system)
-          do (apply fn (list encoding))))
+             do (apply fn (list encoding))))
   (set-language-environment "English")
 
   (setq-default indent-tabs-mode nil)
@@ -225,162 +224,40 @@
           interprogram-cut-function #'gui-select-text)))
 
 (use-package emacs
-    :if IS-MAC
-    :preface
-    (defun init-macify ()
-      (interactive)
-      (setopt ns-option-modifier 'super
-              ns-command-modifier 'meta))
-    (defun init-unmacify ()
-      (interactive)
-      (setopt ns-option-modifier 'meta
-              ns-command-modifier 'super))
-    :hook
-    ((after-init-hook . init-macify)))
-
-;;;
-;;; Appearance
-;;;
-
-(use-package emacs
-    :init
-  (set-default 'cursor-type '(bar . 1))
-  (setq-default cursor-in-non-selected-windows nil)
-  (set-frame-parameter (selected-frame) 'internal-border-width 8)
-  (setq window-divider-default-right-width 8)
-
-  (when IS-MAC
-    (set-frame-font "JetBrains Mono 16")
-    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-    (add-to-list 'default-frame-alist '(ns-appearance . dark)))
+  :if IS-MAC
+  :preface
+  (defun init-macify ()
+    (interactive)
+    (setopt ns-option-modifier 'super
+            ns-command-modifier 'meta))
+  (defun init-unmacify ()
+    (interactive)
+    (setopt ns-option-modifier 'meta
+            ns-command-modifier 'super))
   :hook
-  ((after-init-hook . window-divider-mode)))
-
-(use-package menu-bar
-    :config
-  (menu-bar-mode 0))
-
-(use-package tool-bar
-    :config
-  (tool-bar-mode 0))
-
-(use-package scroll-bar
-    :config
-  (scroll-bar-mode 0))
-
-(use-package fringe
-    :config
-  (set-fringe-mode 8))
-
-(use-package fontset
-    :init
-  (setq use-default-font-for-symbols nil)
-  :config
-  (set-fontset-font t 'symbol "Noto Emoji" nil 'append)
-  (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
-  (set-fontset-font "fontset-default" nil
-                    (font-spec :name "Noto Emoji")))
-
-(use-package all-the-icons
-    :if (package-installed-p 'all-the-icons)
-    :commands (all-the-icons-insert all-the-icons-install-fonts))
-
-
-
-(use-package all-the-icons-ibuffer
-    :if (package-installed-p 'all-the-icons-ibuffer)
-    :hook
-    ((ibuffer-mode-hook . all-the-icons-ibuffer-mode)))
-
-(use-package all-the-icons-completion
-    :if (and (package-installed-p 'all-the-icons-completion)
-             (package-installed-p 'marginalia))
-    :hook
-    ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)))
-
-(use-package all-the-icons-completion
-    :if (and (package-installed-p 'all-the-icons-completion)
-             (not (package-installed-p 'marginalia)))
-    :hook
-    ((after-init-hook . all-the-icons-completion-mode)))
-
-(use-package pixel-scroll
-    :diminish pixel-scroll-precision-mode
-    :hook
-    ((after-init-hook . pixel-scroll-precision-mode)))
-
-(use-package display-line-numbers
-    :diminish display-line-numbers-mode
-    :preface
-    (defun init-display-line-numbers-mode-on ()
-      "Turn on display-line-numbers-mode."
-      (display-line-numbers-mode +1))
-    (defun init-display-line-numbers-mode-off ()
-      "Turn off display-line-numbers-mode."
-      (display-line-numbers-mode -1))
-    :hook
-    (prog-mode-hook init-display-line-numbers-mode-on)
-    (text-mode-hook init-display-line-numbers-mode-off))
-
-(use-package whitespace
-    :diminish whitespace-mode
-    :preface
-    (defun init-whitespace-mode-on ()
-      "Turn on whitespace-mode."
-      (whitespace-mode +1))
-    (defun init-whitespace-mode-off ()
-      "Turn off whitespace-mode."
-      (whitespace-mode -1))
-    :custom
-    (whitespace-action '(cleanup auto-cleanup))
-    :hook
-    (prog-mode-hook whitespace-mode-on)
-    (text-mode-hook whitespace-mode-off))
-
-(use-package modus-themes
-    :defines
-  modus-themes-mode-line
-  modus-themes-diffs
-  modus-themes-deuteranopia
-  modus-themes-fringes
-  :init
-  (load-theme 'modus-vivendi t)
-  :config
-  (setq modus-themes-mode-line '(borderless)
-        modus-themes-diffs 'desaturated
-        modus-themes-deuteranopia t))
-
-(use-package which-key
-    :if (package-installed-p 'which-key)
-    :diminish which-key-mode
-    :hook
-    (after-init-hook . which-key-mode))
-
-(use-package prog-mode
-    :hook
-  (prog-mode-hook . prettify-symbols-mode))
+  ((after-init-hook . init-macify)))
 
 ;;;
 ;;; Auto Save / History
 ;;;
 
 (use-package emacs
-    :custom
+  :custom
   (auto-save-default  t)
   (auto-save-timeout  20)
   (auto-save-interval 200)
   (auto-save-list-file-prefix (init--cache-file "auto-save-list" ".saves-")))
 
 (use-package desktop
-    :custom
+  :custom
   (desktop-path (init--cache-file "desktop/")))
 
 (use-package diary-lib
-    :custom
+  :custom
   (diary-file (init--cache-file "diary")))
 
 (use-package emacs
-    :custom
+  :custom
   (make-backup-files    t)
   (vc-make-backup-files nil)
   (backup-by-copying    t)
@@ -390,31 +267,31 @@
   (delete-old-versions  t))
 
 (use-package calc
-    :custom
+  :custom
   (calc-settings-file (init--state-file "calc-settings.el")))
 
 (use-package abbrev
-    :custom
+  :custom
   (abbrev-file-name (init--state-file "abbrev.el")))
 
 (use-package autoinsert
-    :custom
+  :custom
   (auto-insert-directory (init--state-file "auto-insert/")))
 
 (use-package bookmark
-    :custom
+  :custom
   (bookmark-default-file (init--cache-file "bookmark-default.el")))
 
 
 
 (use-package recentf
-    :diminish recentf-mode
-    :custom
-    (recentf-max-menu-items 50)
-    (recentf-max-saved-items 50)
-    (recentf-auto-cleanup 300)
-    :hook
-    ((after-init-hook . recentf-mode)))
+  :diminish recentf-mode
+  :custom
+  (recentf-max-menu-items 50)
+  (recentf-max-saved-items 50)
+  (recentf-auto-cleanup 300)
+  :hook
+  ((after-init-hook . recentf-mode)))
 
 (defun unpropertize-kill-ring ()
   "Remove properties from `kill-ring'."
@@ -422,35 +299,35 @@
 (add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
 
 (use-package savehist
-    :diminish savehist-mode
-    :defines savehist-minibuffer-history-variables
-    :custom
-    (savehist-additional-variables '(kill-ring
-                                     command-history
-                                     set-variable-value-history
-                                     query-replace-history
-                                     read-expression-history
-                                     minibuffer-history
-                                     read-char-history
-                                     face-name-history
-                                     bookmark-history
-                                     file-name-history))
-    :hook
-    (after-init-hook savehist-mode))
+  :diminish savehist-mode
+  :defines savehist-minibuffer-history-variables
+  :custom
+  (savehist-additional-variables '(kill-ring
+                                   command-history
+                                   set-variable-value-history
+                                   query-replace-history
+                                   read-expression-history
+                                   minibuffer-history
+                                   read-char-history
+                                   face-name-history
+                                   bookmark-history
+                                   file-name-history))
+  :hook
+  (after-init-hook savehist-mode))
 
 (use-package saveplace
-    :diminish save-place-mode
-    :custom
-    (save-place-forget-unreadable-files t)
-    :hook
-    ((after-init-hook . save-place-mode)))
+  :diminish save-place-mode
+  :custom
+  (save-place-forget-unreadable-files t)
+  :hook
+  ((after-init-hook . save-place-mode)))
 
 ;;;
 ;;; Completion
 ;;;
 
 (use-package minibuffer
-    :custom
+  :custom
   (completion-cycle-threshold nil)
   (enable-recursive-minibuffers t)
   (tab-always-indent 'complete)
@@ -460,180 +337,174 @@
   (minibuffer-setup-hook . cursor-intangible-mode))
 
 (use-package icomplete
-    :unless (package-installed-p 'vertico)
-    :hook
-    ((after-init-hook . fido-mode)))
+  :unless (package-installed-p 'vertico)
+  :hook
+  ((after-init-hook . fido-mode)))
 
 (use-package vertico
-    :if (package-installed-p 'vertico)
-    :diminish vertico-mode
-    :hook
-    ((after-init-hook . vertico-mode)))
+  :if (package-installed-p 'vertico)
+  :diminish vertico-mode
+  :hook
+  ((after-init-hook . vertico-mode)))
 
 (use-package vertico-multiform
-    :if (package-installed-p 'vertico)
-    :diminish vertico-multiform-mode
-    :defines (vertico-multiform-categories vertico-multiform-commands)
-    :hook (vertico-mode-hook vertico-multiform-mode)
-    :init
-    (setq vertico-multiform-categories
-          '((consult-grep buffer)
-            (imenu buffer)
-            (buffer)
-            (info-menu buffer)
-            (consult-org-heading buffer)
-            (consult-history buffer)
-            (consult-lsp-symbols buffer)
-            (consult-xref buffer)
-            (embark-keybinding buffer)
-            (consult-location buffer))
-          vertico-multiform-commands
-          '((telega-chat-with buffer)
-            (magit:--author flat)
-            (Info-goto-node buffer)
-            (info-lookup-symbol buffer)
-            (Info-follow-reference buffer)
-            (consult-yank-pop buffer))))
+  :if (package-installed-p 'vertico)
+  :diminish vertico-multiform-mode
+  :defines (vertico-multiform-categories vertico-multiform-commands)
+  :hook (vertico-mode-hook vertico-multiform-mode)
+  :init
+  (setq vertico-multiform-categories
+        '((consult-grep buffer)
+          (imenu buffer)
+          (buffer)
+          (info-menu buffer)
+          (consult-org-heading buffer)
+          (consult-history buffer)
+          (consult-lsp-symbols buffer)
+          (consult-xref buffer)
+          (embark-keybinding buffer)
+          (consult-location buffer))
+        vertico-multiform-commands
+        '((telega-chat-with buffer)
+          (magit:--author flat)
+          (Info-goto-node buffer)
+          (info-lookup-symbol buffer)
+          (Info-follow-reference buffer)
+          (consult-yank-pop buffer))))
 
 (use-package orderless
-    :if (package-installed-p 'orderless)
-    :hook
-    ((after-init-hook .
-                      (lambda (&rest _)
-                        (require 'orderless)
-                        (setq completion-styles '(orderless basic))
-                        (setq completion-category-overrides
-                              '((project-file (styles . (partial-completion basic orderless)))
-                                (file (styles . (partial-completion basic orderless)))))))))
+  :if (package-installed-p 'orderless)
+  :hook
+  ((after-init-hook .
+                    (lambda (&rest _)
+                      (require 'orderless)
+                      (setq completion-styles '(orderless basic))
+                      (setq completion-category-overrides
+                            '((project-file (styles . (partial-completion basic orderless)))
+                              (file (styles . (partial-completion basic orderless)))))))))
 
 (use-package marginalia
-    :if (package-installed-p 'marginalia)
-    :bind
-    (:map minibuffer-local-map
-          ("M-A" . marginalia-cycle))
-    :hook
-    ((after-init-hook . marginalia-mode)))
+  :if (package-installed-p 'marginalia)
+  :bind
+  (:map minibuffer-local-map
+        ("M-A" . marginalia-cycle))
+  :hook
+  ((after-init-hook . marginalia-mode)))
 
 (use-package consult
-    :if (package-installed-p 'consult)
-    :functions (consult-register-window consult-register-format)
-    :bind (;; C-c bindings (mode-specific-map)
-           ("C-c h" . consult-history)
-           ("C-c m" . consult-mode-command)
-           ("C-c k" . consult-kmacro)
-           ;; C-x bindings (ctl-x-map)
-           ("C-x r" . consult-recent-file)
-           ("C-x M-:" . consult-complex-command)
-           ("C-x b" . consult-buffer)
-           ("C-x 4 b" . consult-buffer-other-window)
-           ("C-x 5 b" . consult-buffer-other-frame)
-           ("C-x p b" . consult-project-buffer)
-           ;; Custom M-# bindings for fast register access
-           ("M-#" . consult-register-load)
-           ("M-'" . consult-register-store)
-           ("C-M-#" . consult-register)
-           ;; Other custom bindings
-           ("M-y" . consult-yank-pop)
-           ;; M-g bindings (goto-map)
-           ("M-g e" . consult-compile-error)
-           ("M-g f" . consult-flymake)
-           ("M-g g" . consult-goto-line)
-           ("M-g M-g" . consult-goto-line)
-           ("M-g o" . consult-outline)
-           ("M-g m" . consult-mark)
-           ("M-g k" . consult-global-mark)
-           ;; M-s bindings (search-map)
-           ("M-s d" . consult-fd)
-           ("M-s D" . consult-locate)
-           ("M-s g" . consult-ripgrep)
-           ("M-s G" . consult-git-grep)
-           ("M-s r" . consult-ripgrep)
-           ("M-s l" . consult-line)
-           ("M-s L" . consult-line-multi)
-           ("M-s k" . consult-keep-lines)
-           ("M-s u" . consult-focus-lines)
-           ;; Isearch integration
-           ("M-s e" . consult-isearch-history)
-           :map isearch-mode-map
-           ("M-e" . consult-isearch-history)
-           ("M-s e" . consult-isearch-history)
-           ("M-s l" . consult-line)
-           ("M-s L" . consult-line-multi)
-           ;; Minibuffer history
-           :map minibuffer-local-map
-           ("M-s" . consult-history)
-           ("M-r" . consult-history))
+  :if (package-installed-p 'consult)
+  :functions (consult-register-window consult-register-format)
+  :bind (;; C-c bindings (mode-specific-map)
+         ("C-c h" . consult-history)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-kmacro)
+         ;; C-x bindings (ctl-x-map)
+         ("C-x r" . consult-recent-file)
+         ("C-x M-:" . consult-complex-command)
+         ("C-x b" . consult-buffer)
+         ("C-x 4 b" . consult-buffer-other-window)
+         ("C-x 5 b" . consult-buffer-other-frame)
+         ("C-x p b" . consult-project-buffer)
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)
+         ;; M-g bindings (goto-map)
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)
+         ("M-g g" . consult-goto-line)
+         ("M-g M-g" . consult-goto-line)
+         ("M-g o" . consult-outline)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ;; M-s bindings (search-map)
+         ("M-s d" . consult-fd)
+         ("M-s D" . consult-locate)
+         ("M-s g" . consult-ripgrep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)
+         ("M-r" . consult-history))
 
-    :hook (completion-list-mode-hook consult-preview-at-point-mode)
+  :hook (completion-list-mode-hook consult-preview-at-point-mode)
 
-    :config
-    (setq register-preview-delay 0.5
-          register-preview-function #'consult-register-format)
+  :config
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
 
-    (advice-add #'register-preview :override #'consult-register-window))
+  (advice-add #'register-preview :override #'consult-register-window))
 
 (use-package consult-imenu
-    :if (package-installed-p 'consult)
-    :bind
-    (("M-g i" . consult-imenu)
-     ("M-g I" . consult-imenu-multi)))
+  :if (package-installed-p 'consult)
+  :bind
+  (("M-g i" . consult-imenu)
+   ("M-g I" . consult-imenu-multi)))
 
 (use-package corfu
-    :if (package-installed-p 'corfu)
-    :diminish global-corfu-mode
-    :custom
-    (corfu-auto t)
-    (corfu-quite-no-match 'separator)
-    :hook
-    ((after-init-hook . global-corfu-mode)))
+  :if (package-installed-p 'corfu)
+  :diminish global-corfu-mode
+  :custom
+  (corfu-auto t)
+  (corfu-quite-no-match 'separator)
+  :hook
+  ((after-init-hook . global-corfu-mode)))
 
 (use-package corfu-history
-    :if (package-installed-p 'corfu)
-    :diminish corfu-history-mode
-    :hook
-    ((corfu-mode-hook . corfu-history-mode)))
+  :if (package-installed-p 'corfu)
+  :diminish corfu-history-mode
+  :hook
+  ((corfu-mode-hook . corfu-history-mode)))
 
 (use-package corfu-info
-    :if (package-installed-p 'corfu)
-    :defines corfu-mode-map
-    :bind
-    (:map corfu-mode-map
-          ("M-g" . corfu-info-location)
-          ("M-h" . corfu-info-documentation)))
+  :if (package-installed-p 'corfu)
+  :defines corfu-mode-map
+  :bind
+  (:map corfu-mode-map
+        ("M-g" . corfu-info-location)
+        ("M-h" . corfu-info-documentation)))
 
 (use-package corfu-popupinfo
-    :if (package-installed-p 'corfu)
-    :diminish corfu-popupinfo-mode
-    :hook
-    (corfu-mode-hook corfu-popupinfo-mode))
+  :if (package-installed-p 'corfu)
+  :diminish corfu-popupinfo-mode
+  :hook
+  (corfu-mode-hook corfu-popupinfo-mode))
 
 (use-package embark
-    :if (package-installed-p 'embark)
-    :autoload embark-prefix-help-command
-    :bind
-    (("C-." . embark-act)
-     ("C-;". embark-dwim)
-     ("C-h B" . embark-become))
-    :init
-    (setq prefix-help-command #'embark-prefix-help-command))
+  :if (package-installed-p 'embark)
+  :autoload embark-prefix-help-command
+  :bind
+  (("C-." . embark-act)
+   ("C-;". embark-dwim)
+   ("C-h B" . embark-become))
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command))
 
 (use-package embark-consult
-    :if (package-installed-p 'embark-consult)
-    :hook
-    (embark-collect-mode-hook consult-preview-at-point-mode))
-
-;;;
-;;; Editing
-;;;
-
-
+  :if (package-installed-p 'embark-consult)
+  :hook
+  (embark-collect-mode-hook consult-preview-at-point-mode))
 
 ;;;
 ;;; Org
 ;;;
 
 (use-package org
-    :custom
+  :custom
   (org-M-RET-may-split-line '((default . nil)))
   (org-insert-heading-respect-content t)
   (org-adapt-indentation nil)
@@ -644,11 +515,11 @@
   (org-default-notes-file (concat org-directory "/todo.org")))
 
 (use-package org-src
-    :custom
+  :custom
   (org-edit-src-content-indentation 0))
 
 (use-package org-refile
-    :custom
+  :custom
   (org-outline-path-complete-in-steps nil)
   (org-refile-use-outline-path 'full-file-path)
   (org-refile-allow-creating-parent-nodes 'confirm)
@@ -656,11 +527,11 @@
                         (org-agenda-files . (:maxlevel . 3)))))
 
 (use-package org-id
-    :custom
+  :custom
   (org-id-locations-file (concat (xdg-cache-home) "/emacs/org-id-locations")))
 
 (use-package org-capture
-    :bind
+  :bind
   (:map mode-specific-map
         ("c" . org-capture)))
 
@@ -669,96 +540,96 @@
 ;;;
 
 (use-package envrc
-    :if (package-installed-p 'envrc)
-    :diminish
-    :hook
-    ((after-init-hook . envrc-global-mode)))
+  :if (package-installed-p 'envrc)
+  :diminish
+  :hook
+  ((after-init-hook . envrc-global-mode)))
 
 (use-package exec-path-from-shell
-    :if (package-installed-p 'exec-path-from-shell)
-    :hook
-    ((after-init-hook . exec-path-from-shell-initialize)))
+  :if (package-installed-p 'exec-path-from-shell)
+  :hook
+  ((after-init-hook . exec-path-from-shell-initialize)))
 
 (use-package auth-source-pass
-    :hook
+  :hook
   ((after-init-hook . auth-source-pass-enable)))
 
 (use-package grep
-    :autoload grep-apply-setting
-    :config
-    (grep-apply-setting
-     'grep-command
-     "rg -n -H --no-heading ")
-    (grep-apply-setting
-     'grep-find-command
-     '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
+  :autoload grep-apply-setting
+  :config
+  (grep-apply-setting
+   'grep-command
+   "rg -n -H --no-heading ")
+  (grep-apply-setting
+   'grep-find-command
+   '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
 (use-package diff-hl
-    :if (package-installed-p 'diff-hl)
-    :diminish (diff-hl-mode diff-hl-dir-mode)
-    :hook
-    ((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
-     (magit-post-refresh-hook . diff-hl-magit-post-refresh)
-     (prog-mode-hook . diff-hl-mode)
-     (vc-dir-mode . diff-hl-dir-mode)))
+  :if (package-installed-p 'diff-hl)
+  :diminish (diff-hl-mode diff-hl-dir-mode)
+  :hook
+  ((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+   (prog-mode-hook . diff-hl-mode)
+   (vc-dir-mode . diff-hl-dir-mode)))
 
 (use-package ibuffer
-    :if (package-installed-p 'ibuffer)
-    :bind
-    (("C-x C-b" . ibuffer)))
+  :if (package-installed-p 'ibuffer)
+  :bind
+  (("C-x C-b" . ibuffer)))
 
 (use-package proced
-    :custom
+  :custom
   (proced-auto-update-flag t)
   (proced-auto-update-interval 1)
   (proced-enable-color-flag t))
 
 (use-package eldoc
-    :diminish eldoc-mode
-    :custom
-    (eldoc-echo-area-use-multiline-p nil)
-    (eldoc--echo-area-prefer-doc-buffer-p t))
+  :diminish eldoc-mode
+  :custom
+  (eldoc-echo-area-use-multiline-p nil)
+  (eldoc--echo-area-prefer-doc-buffer-p t))
 
 (use-package magit
-    :if (package-installed-p 'magit)
-    :bind ("C-x g" . magit-status))
+  :if (package-installed-p 'magit)
+  :bind ("C-x g" . magit-status))
 
 (use-package magit-todos
-    :if (package-installed-p 'magit-todos)
-    :functions magit-todos-mode
-    :after magit
-    :commands magit-todos-list
-    :config (magit-todos-mode +1))
+  :if (package-installed-p 'magit-todos)
+  :functions magit-todos-mode
+  :after magit
+  :commands magit-todos-list
+  :config (magit-todos-mode +1))
 
 (use-package forge
-    :if (package-installed-p 'forge)
-    :after magit)
+  :if (package-installed-p 'forge)
+  :after magit)
 
 (use-package helpful
-    :if (package-installed-p 'helpful)
-    :bind
-    (("C-h f" . helpful-callable)
-     ("C-h F" . helpful-function)
-     ("C-h v" . helpful-variable)
-     ("C-h k" . helpful-key)
-     ("C-h x" . helpful-command)
-     ("C-c C-d" . helpful-at-point)))
+  :if (package-installed-p 'helpful)
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h F" . helpful-function)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)
+   ("C-h x" . helpful-command)
+   ("C-c C-d" . helpful-at-point)))
 
 (use-package devdocs
-    :if (package-installed-p 'devdocs)
-    :bind
-    (("C-h D" . devdocs-lookup)))
+  :if (package-installed-p 'devdocs)
+  :bind
+  (("C-h D" . devdocs-lookup)))
 
 (use-package emacs
-    :custom
+  :custom
   (epa-pinentry-mode 'loopback))
 
 (use-package transient
-    :custom
+  :custom
   (transient-history-file (init--cache-file "transient" "history.el")))
 
 (use-package project
-    :custom
+  :custom
   (project-list-buffers #'project-list-buffers-ibuffer)
   (project-list-file (init--state-file "project"))
   (project-switch-commands `((project-find-file "Find file" "f")
@@ -776,6 +647,7 @@
 (load (expand-file-name "./init-prog.el" user-emacs-directory))
 (load (expand-file-name "./init-tools.el" user-emacs-directory))
 (load (expand-file-name "./init-editing.el" user-emacs-directory))
+(load (expand-file-name "./init-appearance.el" user-emacs-directory))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 

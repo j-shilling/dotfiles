@@ -6,6 +6,20 @@
 
 ;; Prog Mode
 
+(use-package display-line-numbers
+  :hook
+  ((prog-mode-hook . display-line-numbers-mode)))
+
+(use-package whitespace
+  :custom
+  (whitespace-action '(cleanup auto-cleanup))
+  :hook
+  ((prog-mode-hook . whitespace-mode)))
+
+(use-package prog-mode
+  :hook
+  ((prog-mode-hook . prettify-symbols-mode)))
+
 (use-package subword
   :diminish subword-mode
   :hook
@@ -20,50 +34,6 @@
   :diminish apheleia-mode
   :hook
   ((after-init-hook . apheleia-global-mode)))
-
-(use-package smartparens
-  :if (package-installed-p 'smartparens)
-  :diminish smart-parens-mode
-  :defines smartparens-mode-map
-  :bind
-  (:map smartparens-mode-map
-        ("C-M-f" . sp-forward-sexp)
-        ("C-M-b" . sp-backward-sexp)
-        ("C-M-u" . sp-backward-up-sexp)
-        ("C-M-d" . sp-down-sexp)
-        ("C-M-p" . sp-backward-down-sexp)
-        ("C-M-n" . sp-up-sexp)
-        ("C-M-a" . sp-beginning-of-sexp)
-        ("C-M-e" . sp-end-of-sexp)
-        ("C-k"   . sp-kill-hybrid-sexp)
-        ("C-)"   . sp-forward-slurp-sexp)
-        ("C-("   . sp-backward-slurp-sexp)
-        ("C-}"   . sp-forward-barf-sexp)
-        ("C-{"   . sp-backward-barf-sexp)
-        ("M-r"   . sp-raise-sexp)
-        ("M-<up>" . sp-splice-sexp-killing-backward)
-        ("M-<down>" . sp-splice-sexp-killing-forward)
-        ("M-s"   . sp-splice-sexp)
-        ("M-S"   . sp-split-sexp)
-        ("M-J"   . sp-join-sexp))
-  :config
-  ;; load default configuration to setup other pairs
-  (require 'smartparens-config)
-  :hook
-  ((emacs-lisp-mode-hook . smartparens-strict-mode)
-   (eval-expression-minibuffer-setup-hook . smartparens-mode)
-   (ielm-mode-hook . smartparens-strict-mode)
-   (lisp-mode-hook . smartparens-strict-mode)
-   (lisp-data-mode-hook . smartparens-strict-mode)
-   (scheme-mode-hook . smartparens-strict-mode)
-   (geiser-repl-mode-hook . smartparens-strict-mode)
-   (clojure-mode-hook . smartparens-strict-mode)
-   (clojurec-mode-hook . smartparens-strict-mode)
-   (clojurescope-mode-hook . smartparens-strict-mode)
-   (cider-repl-mode-hook . smartparens-strict-mode)
-   (prog-mode-hook . smartparens-mode)
-   (org-mode-hook . smartparens-mode)
-   (markdown-mode-hook . smartparens-mode)))
 
 (use-package eglot
   :custom
@@ -109,6 +79,7 @@
                                     https://json.schemastore.org/yamllint.json ["/*.yml"])
                           :schemaStore (:enable t))
                   :terraform ( :path ,(executable-find "terraform")
+                               :validation (:enableEnhancedValidation nil)
                                :experimentalFeatures (:prefillRequiredFields t))))
   :bind
   (:map eglot-mode-map
@@ -151,7 +122,7 @@
 
 (use-package lisp-mode
   :custom
-  (lisp-indent-function 'common-lisp-indent-function))
+  (lisp-indent-function 'lisp-indent-function))
 
 ;;; CSS
 
