@@ -39,9 +39,9 @@
  Return the actual name of the resulting buffer."
  :args
  '((:name "name"
-    :type string
-    :description
-    "The name used to create the buffer. If a buffer already
+          :type string
+          :description
+          "The name used to create the buffer. If a buffer already
  exists with the same name, then a suffix will be addeed to make it
  unique."))
  :function
@@ -76,9 +76,9 @@
  "Return the text currently stored in `BUFFER'."
  :args
  '((:name "buffer"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools."))
  :function
@@ -96,9 +96,9 @@
  "Display buffer identified by `NAME' to the user."
  :args
  '((:name "buffer"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools."))
  :function
@@ -117,25 +117,24 @@
  inserted at the end of the buffer.'"
  :args
  '((:name "buffer"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools.")
    (:name "text"
-    :type string
-    :description
-    "The text to be inserted.")
+          :type string
+          :description
+          "The text to be inserted.")
    (:name "loc"
-    :type integer
-    :optional t
-    :description
-    "An integer no less than 1 which services as an index between two
+          :type integer
+          :description
+          "An integer no less than 1 which services as an index between two
  characters in the buffer's string contents. Inserting text at index 1
  would put the text at the beginning of the buffer. If no value is
  provided, this defaults to the end."))
  :function
- (lambda (buffer text &optional loc)
+ (lambda (buffer text loc)
    (let ((b (get-buffer buffer)))
      (unless (buffer-live-p b)
        (error "Error: buffer %s is not live." buffer))
@@ -156,12 +155,13 @@
 buffer exists visiting FILENAME, return that one."
  :args
  '((:name "filename"
-    :type string
-    :description
-    "Name of the file to read"))
+          :type string
+          :description
+          "Name of the file to read"))
  :function
  (lambda (filename)
-   (find-file-noselect filename t)))
+   (buffer-name
+    (find-file-noselect filename t))))
 
 (gptel-make-tool
  :name "append_region_to_file"
@@ -174,23 +174,23 @@ that file does not exist, it is created.
 An error is signaled if you cannot write or create FILENAME."
  :args
  '((:name "bufferName"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools.")
    (:name "fileName"
-    :type string
-    :description
-    "A name of the file to append to.")
+          :type string
+          :description
+          "A name of the file to append to.")
    (:name "start"
-    :type integer
-    :description
-    "The starting position of the region to write to the file.")
+          :type integer
+          :description
+          "The starting position of the region to write to the file.")
    (:name "end"
-    :type integer
-    :description
-    "The ending position of the region to write to the file."))
+          :type integer
+          :description
+          "The ending position of the region to write to the file."))
  :function
  (lambda (buffer-name file-name start end)
    (let ((b (get-buffer buffer-name)))
@@ -210,15 +210,15 @@ to the end of file FILENAME. If that file does not exist, it is created.
 An error is signaled if you cannot write or create FILENAME."
  :args
  '((:name "bufferName"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools.")
    (:name "fileName"
-    :type string
-    :description
-    "A name of the file to append to."))
+          :type string
+          :description
+          "A name of the file to append to."))
  :function
  (lambda (buffer-name file-name)
    (let ((b (get-buffer buffer-name)))
@@ -238,13 +238,13 @@ that file does not exist, it is created.
 An error is signaled if you cannot write or create FILENAME."
  :args
  '((:name "fileName"
-    :type string
-    :description
-    "A name of the file to append to.")
+          :type string
+          :description
+          "A name of the file to append to.")
    (:name "text"
-    :type string
-    :description
-    "The string to append to the file"))
+          :type string
+          :description
+          "The string to append to the file"))
  :function
  (lambda (file-name text)
    (append-to-file text nil file-name)))
@@ -266,17 +266,17 @@ An integer third arg means request confirmation if NEWNAME already exists.
 This is what happens in interactive use with M-x."
  :args
  '((:name "file"
-    :type string
-    :description
-    "The current name of the file.")
+          :type string
+          :description
+          "The current name of the file.")
    (:name "newname"
-    :type string
-    :description
-    "The desired name of the file.")
+          :type string
+          :description
+          "The desired name of the file.")
    (:name "okIfAlreadyExists"
-    :type boolean
-    :description
-    "When `true', then no error is signaled when a file called NEWNAME
+          :type boolean
+          :description
+          "When `true', then no error is signaled when a file called NEWNAME
 already exists. Defaults to `false'"))
  :function
  (lambda (file newname &optional ok-if-already-exists)
@@ -315,33 +315,33 @@ permission bits are those of FILE, masked by the default file
 permissions."
  :args
  '((:name "file"
-    :type string
-    :description
-    "The source file to copy.")
+          :type string
+          :description
+          "The source file to copy.")
    (:name "newname"
-    :type string
-    :description
-    "The destination path for the copy.")
+          :type string
+          :description
+          "The destination path for the copy.")
    (:name "okIfAlreadyExists"
-    :type boolean
-    :optional t
-    :description
-    "When `true', overwrite existing file without error. Defaults to `false'.")
+          :type boolean
+          :optional t
+          :description
+          "When `true', overwrite existing file without error. Defaults to `false'.")
    (:name "keepTime"
-    :type boolean
-    :optional t
-    :description
-    "When `true', preserve the last-modified time of the original file. Defaults to `false'.")
+          :type boolean
+          :optional t
+          :description
+          "When `true', preserve the last-modified time of the original file. Defaults to `false'.")
    (:name "preserveUidGid"
-    :type boolean
-    :optional t
-    :description
-    "When `true', try to transfer the uid and gid of FILE to NEWNAME. Defaults to `false'.")
+          :type boolean
+          :optional t
+          :description
+          "When `true', try to transfer the uid and gid of FILE to NEWNAME. Defaults to `false'.")
    (:name "preservePermissions"
-    :type boolean
-    :optional t
-    :description
-    "When `true', copy all permissions including ACL entries and SELinux context. Defaults to `false'."))
+          :type boolean
+          :optional t
+          :description
+          "When `true', copy all permissions including ACL entries and SELinux context. Defaults to `false'."))
  :function
  (lambda (file newname &optional ok-if-already-exists keep-time preserve-uid-gid preserve-permissions)
    (copy-file file newname ok-if-already-exists keep-time preserve-uid-gid preserve-permissions)))
@@ -355,8 +355,8 @@ permissions."
 If file has multiple names, it continues to exist with the other names."
  :args
  '((:name "filename"
-    :type string
-    :description "The name of the file to delete."))
+          :type string
+          :description "The name of the file to delete."))
  :function
  (lambda (filename)
    (delete-file filename)))
@@ -390,32 +390,32 @@ COUNT number of files, or names of all files, whichever occurs
 first.  COUNT has to be an integer greater than zero."
  :args
  '((:name "directory"
-    :type string
-    :description
-    "Name of the directory to examine")
+          :type string
+          :description
+          "Name of the directory to examine")
    (:name "fullName"
-    :type boolean
-    :optional t
-    :description
-    "When, `true', this function returns the files' absolute file names.
+          :type boolean
+          :optional t
+          :description
+          "When, `true', this function returns the files' absolute file names.
 Defaults to `false'.")
    (:name "matchRegexp"
-    :type string
-    :optional t
-    :description
-    "When provided, this should be a regular expression. Only files use
+          :type string
+          :optional t
+          :description
+          "When provided, this should be a regular expression. Only files use
 non-directory part contain a match will be returned.")
    (:name "noSort"
-    :type boolean
-    :optional t
-    :description
-    "When `true', results are returned in no particular order. Use this when
+          :type boolean
+          :optional t
+          :description
+          "When `true', results are returned in no particular order. Use this when
 you want the utmost possible speed. Defaults to `false'.")
    (:name "count"
-    :type integer
-    :optional t
-    :description
-    "When provided, this function will return limit the number of files
+          :type integer
+          :optional t
+          :description
+          "When provided, this function will return limit the number of files
 returned to this number. It must be an integer greater than 0."))
  :function
  (lambda (directory &optional full-name match-regexp nosort count)
@@ -441,25 +441,25 @@ Symbolic links to subdirectories are not followed by default, but
 if FOLLOW-SYMLINKS is `true', they are followed."
  :args
  '((:name "directory"
-    :type string
-    :description
-    "Name of the directory to examine")
+          :type string
+          :description
+          "Name of the directory to examine")
    (:name "regexp"
-    :type string
-    :description
-    "Should be a regular expression. Only files use non-directory part
+          :type string
+          :description
+          "Should be a regular expression. Only files use non-directory part
 contain a match will be returned.")
    (:name "includeDirectories"
-    :type boolean
-    :optional t
-    :description
-    "When `true', include directories whose name matches `REGEX'. Defaults to
+          :type boolean
+          :optional t
+          :description
+          "When `true', include directories whose name matches `REGEX'. Defaults to
 `false'.")
    (:name "followSymlinks"
-    :type boolean
-    :optional t
-    :description
-    "When `true', this function will follow symlinks. Defaults to `false'."))
+          :type boolean
+          :optional t
+          :description
+          "When `true', this function will follow symlinks. Defaults to `false'."))
  :function
  (lambda (directory regexp &optional include-directories follow-symlinks)
    (directory-files-recursively directory regexp include-directories nil follow-symlinks)))
@@ -479,13 +479,13 @@ the filesystem without finding NAME – in the latter case the
 function returns `null'."
  :args
  '((:name "file"
-    :type string
-    :description
-    "Name of the file in the directory tree hierarchy to start at.")
+          :type string
+          :description
+          "Name of the file in the directory tree hierarchy to start at.")
    (:name "name"
-    :type string
-    :description
-    "The name of the file to search for."))
+          :type string
+          :description
+          "The name of the file to search for."))
  :function
  (lambda (file name)
    (locate-dominating-file file name)))
@@ -512,20 +512,20 @@ are normally also relative to the current default directory.
 However, if FULL is non-‘nil’, they are absolute."
  :args
  '((:name "pattern"
-    :type string
-    :description
-    "The pattern with wildcards to try to expand.")
+          :type string
+          :description
+          "The pattern with wildcards to try to expand.")
    (:name "full"
-    :type boolean
-    :optional t
-    :description
-    "When `true', the results are absolute file names, otherwise they are
+          :type boolean
+          :optional t
+          :description
+          "When `true', the results are absolute file names, otherwise they are
 relative to the current directory. Defaults to `false'.")
    (:name "regexp"
-    :type boolean
-    :optional t
-    :description
-    "When `true', then `PATTERN' is treated as a regular expression instead
+          :type boolean
+          :optional t
+          :description
+          "When `true', then `PATTERN' is treated as a regular expression instead
 of a wildcard pattern. Defaults to `false'."))
  :function
  (lambda (pattern &optional full regexp)
@@ -541,14 +541,14 @@ parent directories first if they don't already exist (similar to
 and PARENTS is `true', otherwise returns `false' on successful creation."
  :args
  '((:name "dirname"
-    :type string
-    :description
-    "Name of the directory to create. Can be an absolute or relative path.")
+          :type string
+          :description
+          "Name of the directory to create. Can be an absolute or relative path.")
    (:name "parents"
-    :type boolean
-    :optional t
-    :description
-    "When `true', create parent directories if they don't exist. Defaults
+          :type boolean
+          :optional t
+          :description
+          "When `true', create parent directories if they don't exist. Defaults
 to `false'."))
  :function
  (lambda (dirname &optional parents)
@@ -563,14 +563,14 @@ parent directories first if they don't already exist. Signals an error
 if FILENAME already exists."
  :args
  '((:name "filename"
-    :type string
-    :description
-    "Name of the empty file to create. Can be an absolute or relative path.")
+          :type string
+          :description
+          "Name of the empty file to create. Can be an absolute or relative path.")
    (:name "parents"
-    :type boolean
-    :optional t
-    :description
-    "When `true', create parent directories if they don't exist. Defaults
+          :type boolean
+          :optional t
+          :description
+          "When `true', create parent directories if they don't exist. Defaults
 to `false'."))
  :function
  (lambda (filename &optional parents)
@@ -585,31 +585,31 @@ name, DIRNAME will be copied to a subdirectory there. Always sets the
 file modes of copied files to match the original files."
  :args
  '((:name "dirname"
-    :type string
-    :description
-    "Name of the source directory to copy.")
+          :type string
+          :description
+          "Name of the source directory to copy.")
    (:name "newname"
-    :type string
-    :description
-    "Destination path. If this is a directory, DIRNAME will be copied as
+          :type string
+          :description
+          "Destination path. If this is a directory, DIRNAME will be copied as
 a subdirectory within it.")
    (:name "keepTime"
-    :type boolean
-    :optional t
-    :description
-    "When `true', preserve the modification time of copied files. Defaults
+          :type boolean
+          :optional t
+          :description
+          "When `true', preserve the modification time of copied files. Defaults
 to `false'.")
    (:name "parents"
-    :type boolean
-    :optional t
-    :description
-    "When `true', create parent directories if they don't exist. Defaults
+          :type boolean
+          :optional t
+          :description
+          "When `true', create parent directories if they don't exist. Defaults
 to `false'.")
    (:name "copyContents"
-    :type boolean
-    :optional t
-    :description
-    "When `true', if NEWNAME is a directory, copy the contents of DIRNAME
+          :type boolean
+          :optional t
+          :description
+          "When `true', if NEWNAME is a directory, copy the contents of DIRNAME
 directly into it instead of copying DIRNAME as a subdirectory. Defaults
 to `false'."))
  :function
@@ -625,14 +625,14 @@ directory contains files, signals an error. Only follows symbolic links
 at the level of parent directories."
  :args
  '((:name "dirname"
-    :type string
-    :description
-    "Name of the directory to delete.")
+          :type string
+          :description
+          "Name of the directory to delete.")
    (:name "recursive"
-    :type boolean
-    :optional t
-    :description
-    "When `true', delete the directory and all its contents recursively.
+          :type boolean
+          :optional t
+          :description
+          "When `true', delete the directory and all its contents recursively.
 When `false', signals an error if directory contains files. Defaults
 to `false'."))
  :function
@@ -653,15 +653,15 @@ there is already a buffer called `NAME', then append a suffix to `NAME'
  buffer."
  :args
  '((:name "name"
-    :type string
-    :description
-    "The name used to create the buffer. If a buffer already
+          :type string
+          :description
+          "The name used to create the buffer. If a buffer already
  exists with the same name, then a suffix will be addeed to make it
  unique.")
    (:name "text"
-    :type string
-    :description
-    "A string containing the patch in standard diff format"))
+          :type string
+          :description
+          "A string containing the patch in standard diff format"))
  :function
  (lambda (name text)
    (let ((b (generate-new-buffer name)))
@@ -682,19 +682,19 @@ there is already a buffer called `NAME', then append a suffix to `NAME'
  "Return a JSON array describing errors within a buffer"
  :args
  '((:name "buffer"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools.")
    (:name "beg"
-    :type integer
-    :optional t
-    :description "If provided, searches for diagnostics after this point")
+          :type integer
+          :optional t
+          :description "If provided, searches for diagnostics after this point")
    (:name "beg"
-    :type integer
-    :optional t
-    :description "If provided, searches for diagnostics before this point"))
+          :type integer
+          :optional t
+          :description "If provided, searches for diagnostics before this point"))
  :function
  (lambda (buffer &optional beg end)
    (unless (buffer-live-p (get-buffer buffer))
@@ -712,14 +712,14 @@ there is already a buffer called `NAME', then append a suffix to `NAME'
  "Return a JSON array describing errors at a line"
  :args
  '((:name "buffer"
-    :type string
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools.")
    (:name "line"
-    :type integer
-    :description "The line to examine"))
+          :type integer
+          :description "The line to examine"))
  :function
  (lambda (buffer line)
    (unless (buffer-live-p (get-buffer buffer))
@@ -770,17 +770,17 @@ corresponding buffer or file.
 If no results are found, then this function returns `null'.'"
  :args
  '((:name "bufferName"
-    :type string
-    :description
-    "A name identifying which buffer to use to start the search. This defines
+          :type string
+          :description
+          "A name identifying which buffer to use to start the search. This defines
 which backend will be used (i.e. a buffer with JavaScript will use the
 JavaScript backend, but a buffer with lisp will use the lisp backend).
 This can be the return value of `create_buffer' or one of the names
 returned by `list_buffers', `list_visible_buffers', or similar tools.")
    (:name "identifier"
-    :type string
-    :description
-    "The identifier to search for"))
+          :type string
+          :description
+          "The identifier to search for"))
  :function
  (lambda (buffer-name id)
    (init-ai-tools--xref-find-definitions buffer-name id)))
@@ -800,10 +800,10 @@ provided, then use the buffer identified by `BUFFER' to determine what
  the current project is. Otherwise, use the current buffer."
  :args
  '((:name "buffer"
-    :type string
-    :optional t
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :optional t
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools."))
  :function
@@ -825,10 +825,10 @@ provided, then use the buffer identified by `BUFFER' to determine what
  the current project is. Otherwise, use the current buffer."
  :args
  '((:name "buffer"
-    :type string
-    :optional t
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :optional t
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools."))
  :function
@@ -851,10 +851,10 @@ provided, then use the buffer identified by `BUFFER' to determine what
  buffer."
  :args
  '((:name "buffer"
-    :type string
-    :optional t
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :optional t
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools."))
  :function
@@ -877,10 +877,10 @@ provided, then use the buffer identified by `BUFFER' to determine what
  buffer."
  :args
  '((:name "buffer"
-    :type string
-    :optional t
-    :description
-    "A name identifying which buffer to read. This can be the return
+          :type string
+          :optional t
+          :description
+          "A name identifying which buffer to read. This can be the return
  value of `create_buffer' or one of the names returned by
  `list_buffers', `list_visible_buffers', or similar tools."))
  :function
