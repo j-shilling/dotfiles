@@ -87,10 +87,14 @@
                                     mermaid-mode
                                     mermaid-ts-mode
                                     eat
-                                    ob-mermaid))
+                                    ob-mermaid
+                                    org
+                                    org-modern
+                                    org-modern-indent))
 
 (setopt package-vc-selected-packages
-        '((gptel-prompts :url "https://github.com/jwiegley/gptel-prompts.git")))
+        '((gptel-prompts :url "https://github.com/jwiegley/gptel-prompts.git")
+          (org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent.git")))
 
 (package-initialize)
 
@@ -499,41 +503,6 @@
   :hook
   (embark-collect-mode-hook consult-preview-at-point-mode))
 
-;;;
-;;; Org
-;;;
-
-(use-package org
-  :custom
-  (org-M-RET-may-split-line '((default . nil)))
-  (org-insert-heading-respect-content t)
-  (org-adapt-indentation nil)
-  (org-startup-indented nil)
-  (org-ellipsis "⤵")
-  (org-hide-emphasis-markers t)
-  (org-log-into-drawer t)
-  (org-default-notes-file (concat org-directory "/todo.org")))
-
-(use-package org-src
-  :custom
-  (org-edit-src-content-indentation 0))
-
-(use-package org-refile
-  :custom
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-use-outline-path 'full-file-path)
-  (org-refile-allow-creating-parent-nodes 'confirm)
-  (org-refile-targets `((nil . (:maxlevel . 3))
-                        (org-agenda-files . (:maxlevel . 3)))))
-
-(use-package org-id
-  :custom
-  (org-id-locations-file (concat (xdg-cache-home) "/emacs/org-id-locations")))
-
-(use-package org-capture
-  :bind
-  (:map mode-specific-map
-        ("c" . org-capture)))
 
 ;;;
 ;;; Tools
@@ -648,6 +617,7 @@
 (load (expand-file-name "./init-tools.el" user-emacs-directory))
 (load (expand-file-name "./init-editing.el" user-emacs-directory))
 (load (expand-file-name "./init-appearance.el" user-emacs-directory))
+(load (expand-file-name "./init-org.el" user-emacs-directory))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
