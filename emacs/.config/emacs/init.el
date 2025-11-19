@@ -89,8 +89,7 @@
                                     eat
                                     ob-mermaid
                                     org
-                                    org-modern
-                                    org-modern-indent))
+                                    org-modern))
 
 (setopt package-vc-selected-packages
         '((gptel-prompts :url "https://github.com/jwiegley/gptel-prompts.git")
