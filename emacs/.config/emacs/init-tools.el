@@ -53,6 +53,17 @@
   ((eshell-load-hook . eat-eshell-mode)
    (eshell-load-hook . eat-eshell-visual-command-mode)))
 
+(use-package envrc
+  :if (package-installed-p 'envrc)
+  :diminish
+  :hook
+  ((after-init-hook . envrc-global-mode)))
+
+(use-package exec-path-from-shell
+  :if (package-installed-p 'exec-path-from-shell)
+  :hook
+  ((after-init-hook . exec-path-from-shell-initialize)))
+
 ;;;;;;;;;;;;;;;;;;
 ;;; Dired
 ;;;;;;;;;;;;;;;;;;
@@ -106,5 +117,23 @@
 (use-package wgrep
   :if (package-installed-p 'wgrep)
   :demand t)
+
+(use-package grep
+  :autoload grep-apply-setting
+  :config
+  (grep-apply-setting
+   'grep-command
+   "rg -n -H --no-heading ")
+  (grep-apply-setting
+   'grep-find-command
+   '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
+
+;;;;;;;;;;;;;;;;;;
+;;; pass
+;;;;;;;;;;;;;;;;;;
+
+(use-package auth-source-pass
+  :hook
+  ((after-init-hook . auth-source-pass-enable)))
 
 ;;; init-tools.el ends here.

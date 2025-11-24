@@ -42,6 +42,9 @@
                                     embark-consult
                                     terraform-mode
                                     envrc
+                                    inf-ruby
+                                    robe
+                                    nvm
                                     exec-path-from-shell
                                     consult-eglot
                                     consult-eglot-embark

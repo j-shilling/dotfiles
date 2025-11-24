@@ -6,34 +6,19 @@
 
 ;; Prog Mode
 
-(use-package display-line-numbers
-  :hook
-  ((prog-mode-hook . display-line-numbers-mode)))
-
-(use-package whitespace
-  :custom
-  (whitespace-action '(cleanup auto-cleanup))
-  :hook
-  ((prog-mode-hook . whitespace-mode)))
-
 (use-package prog-mode
   :hook
-  ((prog-mode-hook . prettify-symbols-mode)))
-
-(use-package subword
-  :diminish subword-mode
-  :hook
-  ((prog-mode-hook . subword-mode)))
-
-(use-package editorconfig
-  :hook
-  ((prog-mode-hook . editorconfig-mode)))
+  ((prog-mode-hook . display-line-numbers-mode)
+   (prog-mode-hook . white-space-mode)
+   (prog-mode-hook . prettify-symbols-mode)
+   (prog-mode-hook . editorconfig-mode)
+   (prog-mode-hook . electric-pair-mode)))
 
 (use-package apheleia
   :if (package-installed-p 'apheleia)
   :diminish apheleia-mode
   :hook
-  ((after-init-hook . apheleia-global-mode)))
+  ((prog-mode-hook . apheleia-global-mode)))
 
 (use-package eglot
   :custom
@@ -131,6 +116,9 @@
 
 ;;; TypetScript / JavaScript
 
+(use-package nvm
+  :if (package-installed-p 'nvm))
+
 (use-package eglot
   :config
   (add-to-list 'eglot-server-programs
@@ -161,6 +149,10 @@
   :config
   (setopt rbenv-executable (executable-find "rbenv")))
 
+(use-package robe
+  :if (package-installed-p 'robe)
+  :hook ((ruby-base-mode . robe-mode)))
+
 (use-package ruby-ts-mode
   :mode ("\\.rbw?"
          "\\.ru"
@@ -181,9 +173,7 @@
          "Fastfile"
          "Vagrantfile"
          "Guardfile"
-         "Podfile")
-  :hook
-  ((ruby-base-mode-hook . eglot-ensure)))
+         "Podfile"))
 
 (use-package rbs-mode
   :mode ("\\.rbs\\'")
