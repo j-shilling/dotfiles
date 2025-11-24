@@ -6,19 +6,34 @@
 
 ;; Prog Mode
 
+(use-package display-line-numbers
+  :hook
+  ((prog-mode-hook . display-line-numbers-mode)))
+
+(use-package whitespace
+  :custom
+  (whitespace-action '(cleanup auto-cleanup))
+  :hook
+  ((prog-mode-hook . whitespace-mode)))
+
 (use-package prog-mode
   :hook
-  ((prog-mode-hook . display-line-numbers-mode)
-   (prog-mode-hook . white-space-mode)
-   (prog-mode-hook . prettify-symbols-mode)
-   (prog-mode-hook . editorconfig-mode)
-   (prog-mode-hook . electric-pair-mode)))
+  ((prog-mode-hook . prettify-symbols-mode)))
+
+(use-package subword
+  :diminish subword-mode
+  :hook
+  ((prog-mode-hook . subword-mode)))
+
+(use-package editorconfig
+  :hook
+  ((prog-mode-hook . editorconfig-mode)))
 
 (use-package apheleia
   :if (package-installed-p 'apheleia)
   :diminish apheleia-mode
   :hook
-  ((prog-mode-hook . apheleia-global-mode)))
+  ((prog-mode-hook . apheleia-mode)))
 
 (use-package eglot
   :custom
@@ -141,6 +156,19 @@
   :hook
   ((typescript-ts-base-mode-hook . eglot-ensure)))
 
+;; Web
+
+(use-package web-mode
+  :if (package-installed-p 'web-mode)
+  :mode ("\\.erb\\'")
+  :config
+  (when (package-installed-p 'apheleia)
+    (add-to-list 'apheleia-formatters
+                 (cons 'erb-lint
+                       '("bundle" "exec" "erb_lint" "--autocorrect" inplace)))
+    (add-to-list 'apheleia-mode-alist
+                 (cons 'web-mode 'erb-lint))))
+
 ;; Ruby
 
 (use-package rbenv
@@ -152,6 +180,10 @@
 (use-package robe
   :if (package-installed-p 'robe)
   :hook ((ruby-base-mode . robe-mode)))
+
+(use-package rvm
+  :if (package-installed-p 'rvm)
+  :hook ((ruby-base-mode . rvm-activate-corresponding-ruby)))
 
 (use-package ruby-ts-mode
   :mode ("\\.rbw?"

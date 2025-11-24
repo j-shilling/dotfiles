@@ -44,6 +44,7 @@
                                     envrc
                                     inf-ruby
                                     robe
+                                    web-mode
                                     nvm
                                     exec-path-from-shell
                                     consult-eglot

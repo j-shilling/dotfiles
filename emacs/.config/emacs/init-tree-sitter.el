@@ -26,17 +26,15 @@
 (require 'init-lib (expand-file-name "init-lib.el" user-emacs-directory))
 
 (use-package treesit
-    :init
+  :init
   (add-to-list 'treesit-extra-load-path
                (init-lib-state-file "tree-sitter"))
   ;; TODO:
   ;; - https://github.com/tree-sitter/tree-sitter-c
-  ;; - https://github.com/tree-sitter/tree-sitter-embedded-template
   ;; - https://github.com/tree-sitter/tree-sitter-haskell
   ;; - https://github.com/tree-sitter/tree-sitter-jsdoc
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-csv
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
-  ;; - https://github.com/tree-sitter-grammars/tree-sitter-hcl
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-scss
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-xml
   (setq treesit-language-source-alist
@@ -45,7 +43,7 @@
           (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile" "v0.2.0")
           (html "https://github.com/tree-sitter/tree-sitter-html" "v0.23.2")
           (javascript "https://github.com/tree-sitter/tree-sitter-javascript"
-           "v0.23.1")
+                      "v0.23.1")
           (json "https://github.com/tree-sitter/tree-sitter-json" "v0.24.8")
           (make "https://github.com/tree-sitter-grammars/tree-sitter-make" "v1.1.1")
           (markdown
@@ -59,11 +57,12 @@
           (python "https://github.com/tree-sitter/tree-sitter-python" "v0.23.6")
           (ruby "https://github.com/tree-sitter/tree-sitter-ruby" "v0.23.1")
           (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "v0.23.2"
-           "tsx/src")
+               "tsx/src")
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript"
-           "v0.23.2" "typescript/src")
+                      "v0.23.2" "typescript/src")
           (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.2")
-          (hcl "https://github.com/tree-sitter-grammars/tree-sitter-hcl" "v1.2.0")))
+          (hcl "https://github.com/tree-sitter-grammars/tree-sitter-hcl" "v1.1.0")
+          (embedded-template "https://github.com/tree-sitter/tree-sitter-embedded-template" "v0.23.2")))
   (defun init-tree-sitter-install-all ()
     (interactive)
     (mapc (lambda (lang)
