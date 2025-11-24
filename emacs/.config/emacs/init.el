@@ -75,13 +75,13 @@
                                     devdocs
                                     apheleia
                                     rbs-mode
+                                    rvm
                                     all-the-icons
                                     all-the-icons-dired
                                     all-the-icons-ibuffer
                                     all-the-icons-completion
                                     ace-window
                                     avy
-                                    rbenv
                                     gptel
                                     mcp
                                     mermaid-mode
