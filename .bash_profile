@@ -9,3 +9,5 @@ if [ -f ~/.bashrc ]; then source ~/.bashrc; fi
 export HISTFILE="$XDG_CACHE_HOME/.bash_history"
 export HISTFILESIZE="100000"
 export HISTIGNORE="ls:exit:history:clear"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
