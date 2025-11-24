@@ -22,6 +22,59 @@
 
 ;;; Code:
 
+(require 'json)
+
+(defvar-local terraform-ts-mode--flymake-proc nil)
+
+(defun terraform-ts-mode--flymake-make-diagnostic (source diag)
+  ""
+
+  (let-alist diag
+    (flymake-make-diagnostic
+     .range.filename
+     (cons .range.start.line .range.start.column)
+     (cons .range.end.line .range.end.column)
+     (cond
+      ((string-equal .severity "error")
+       :error)
+      ((string-equal .severity "warning")
+       :warning)
+      (t :note))
+     .detail)))
+
+(defun terraform-ts-mode--flymake-sentinel (source)
+  (lambda (proc _event)
+    (with-current-buffer source
+      (when (and (memq (process-status proc) '(exit signal))
+                 (eq proc terraform-ts-mode--flymake-proc))
+        (unwind-protect
+            (progn
+              (goto-char (point-min))
+              (let* ((parsed (json-read))
+                     (diags (alist-get 'diagnostics parsed)))
+                (funcall report-fn
+                         (mapcar #'terraform-ts-mode--flymake-make-diagnostic
+                                 diags)))))
+        (kill-buffer (process-buffer proc))))))
+
+(defun terraform-ts-mode-flymake (report-fn &rest _more)
+  "A flymake backend for terraform.
+Calls REPORT-FN after using `terraform-command' to validate the current module."
+  (when (process-live-p terraform-ts-mode--flymake-proc)
+    (kill-process terraform-ts-mode--flymake-proc))
+
+  (let ((source (current-buffer)))
+    (setq terraform-ts-mode--flymake-proc
+          (make-process
+           :name "terraform-flymake" :noquery t :connection-type 'pipe
+           :buffer (generate-new-buffer "*terraform-flymake*")
+           :command `(,terraform-command "validate" "-json")
+           :sentinel (terraform-ts-mode--flymake-sentinel source)))))
+
+(defun terraform-ts-mode-setup-flymake-backend ()
+  ""
+  (add-hook 'flymake-diagnostic-functions 'terraform-ts-mode-flymake nil t))
+
 ;;; TODO:
 ;;; - face-lock-doc-face
 (defvar terraform-ts-mode--treesit-font-lock-settings
@@ -118,7 +171,7 @@ Return nil if there is no name or if NODE is not a defun node."
   "Major ode for editing terraform files."
   (when (treesit-ready-p 'hcl)
     (setq-local treesit-primary-parser (treesit-parser-create 'hcl))
-
+    ;;
     ;; Navigation
     (setq-local treesit-defun-type-regexp "block")
     (setq-local treesit-defun-name-function #'terraform-ts-mode--treesit-defun-name)
