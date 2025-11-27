@@ -42,9 +42,7 @@
   (gptel-make-preset 'coding
     :description "A general programming preset"
     :system "You are an expert AI programming assistant."
-    :tools `(:append ,(nconc (gptel-get-tool "flymake")
-                             (gptel-get-tool "project")
-                             (gptel-get-tool "xref")))))
+    :tools `(:append ,(nconc (gptel-get-tool "project")))))
 
 (use-package gptel-prompts
   :if (package-installed-p 'gptel-prompts)

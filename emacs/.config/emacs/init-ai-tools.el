@@ -143,6 +143,27 @@
          (goto-char (or loc (point-max)))
          (insert text))))))
 
+(gptel-make-tool
+ :name "save_buffer"
+ :category "buffer"
+ :description
+ "Save `BUFFER' in visited file if modified."
+ :args
+ '((
+    :name "buffer"
+    :type string
+    :description
+    "A name identifying which buffer to read. This can be the return
+ value of `create_buffer' or one of the names returned by
+ `list_buffers', `list_visible_buffers', or similar tools."))
+ :function
+ (lambda (buffer)
+   (let ((b (get-buffer buffer)))
+     (unless (buffer-live-p b)
+       (error "Error: buffer %s is not live." buffer))
+     (with-current-buffer b
+       (save-buffer)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
