@@ -10,6 +10,10 @@
   :hook
   ((prog-mode-hook . display-line-numbers-mode)))
 
+(use-package elec-pair
+  :hook
+  ((prog-mode-hook . electric-pair-local-mode)))
+
 (use-package whitespace
   :custom
   (whitespace-action '(cleanup auto-cleanup))
