@@ -183,11 +183,11 @@
 
 (use-package robe
   :if (package-installed-p 'robe)
-  :hook ((ruby-base-mode . robe-mode)))
+  :hook ((ruby-base-mode-hook . robe-mode)))
 
 (use-package rvm
   :if (package-installed-p 'rvm)
-  :hook ((ruby-base-mode . rvm-activate-corresponding-ruby)))
+  :hook ((ruby-base-mode-hook . rvm-activate-corresponding-ruby)))
 
 (use-package ruby-ts-mode
   :mode ("\\.rbw?"
