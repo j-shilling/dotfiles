@@ -1,0 +1,7 @@
+ruby-base-mode
+
+(factorybot "FactoryBot.define do" n
+            "  factory " (p ":factory_name") " do" n
+            "  " (p) n
+            "  end" n
+            "end")

@@ -43,6 +43,10 @@
   (declare-function xdg-cache-home 'xdg)
   (apply #'init--parts-to-path (xdg-cache-home) "emacs" emacs-version args))
 
+(defun init-lib-config-file (&rest args)
+  "Return `ARGS' as a path relative to `user-emacs-directory'."
+  (apply #'init--parts-to-path user-emacs-directory args))
+
 (defun init-lib-mac-p ()
   "Return non-nil if this is running on a mac."
   (eq system-type 'darwin))

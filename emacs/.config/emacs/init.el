@@ -203,15 +203,9 @@
   :custom
   (abbrev-file-name (init--state-file "abbrev.el")))
 
-(use-package autoinsert
-  :custom
-  (auto-insert-directory (init--state-file "auto-insert/")))
-
 (use-package bookmark
   :custom
   (bookmark-default-file (init--cache-file "bookmark-default.el")))
-
-
 
 (use-package recentf
   :diminish recentf-mode

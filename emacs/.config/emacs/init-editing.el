@@ -83,13 +83,18 @@
    ("M-*" . tempel-insert)))
 
 (use-package tempel-collection
-  :if (package-installed-p 'tempel-collection))
+  :if (package-installed-p 'tempel-collection)
+  :after tempel)
 
 (use-package eglot-tempel
   :if (package-installed-p 'eglot-tempel)
   :after (eglot)
   :config
   (eglot-tempel-mode))
+
+(use-package autoinsert
+  :custom
+  (auto-insert-directory (init-lib-config-file "auto-insert/")))
 
 (provide 'init-editing)
 ;;; init-editing.el ends here
