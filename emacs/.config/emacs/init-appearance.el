@@ -37,18 +37,35 @@
   :config
   (set-fringe-mode 8))
 
-;; (use-package fontset
-;;   :init
-;;   (setq use-default-font-for-symbols nil)
-;;   :config
-;;   (set-fontset-font t 'symbol "Noto Emoji" nil 'append)
-;;   (set-fontset-font t 'unicode "Noto Emoji" nil 'append)
-;;   (set-fontset-font "fontset-default" nil
-;;                     (font-spec :name "Noto Emoji")))
-
-(use-package all-the-icons
-  :if (package-installed-p 'all-the-icons)
-  :commands (all-the-icons-insert all-the-icons-install-fonts))
+(use-package fontaine
+  :if (package-installed-p 'fontaine)
+  :custom
+  (fontaine-latest-state-file
+   (init-lib-state-file "fontaine.eld"))
+  (fontaine-presets
+   '((regular
+      :default-height 150)
+     (large
+      :default-weight semilight
+      :default-height 180
+      :bold-weight extrabold)
+     (t ; our shared fallback properties
+      :default-family "Iosevka"
+      :default-weight normal
+      ;; :default-height 100
+      :fixed-pitch-family nil ; falls back to :default-family
+      :fixed-pitch-weight nil ; falls back to :default-weight
+      :fixed-pitch-height 1.0
+      :variable-pitch-family "Iosevka Aile"
+      :variable-pitch-weight normal
+      :variable-pitch-height 1.05
+      :bold-family nil ; use whatever the underlying face has
+      :bold-weight bold
+      :italic-family nil
+      :italic-slant italic
+      :line-spacing nil)))
+  :bind (("C-c f" . fontaine-set-preset))
+  :hook ((after-init-hook . fontaine-mode)))
 
 (use-package all-the-icons-ibuffer
   :if (package-installed-p 'all-the-icons-ibuffer)
