@@ -59,7 +59,8 @@
   :custom
   (mcp-hub-servers
    `(("playwright" . (:command "npx" :args ("-y" "@playwright/mcp@latest")))
-     ("mermaid" . (:command "npx" :args ("-y" "@peng-shawn/mermaid-mcp-server")))))
+     ("mermaid" . (:command "npx" :args ("-y" "@peng-shawn/mermaid-mcp-server")))
+     ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))))
   :config
   (require 'mcp-hub)
   (when (package-installed-p 'gptel)
