@@ -6,6 +6,9 @@
 
 ;; Prog Mode
 
+(eval-when-compile
+  (require 'rx))
+
 (use-package display-line-numbers
   :hook
   ((prog-mode-hook . display-line-numbers-mode)))
@@ -124,6 +127,10 @@
 
 ;;; Lisp
 
+(use-package elisp-mode
+  :bind (:map emacs-lisp-mode-map
+              ("C-c C-z" . ielm)))
+
 (use-package lisp-mode
   :custom
   (lisp-indent-function 'lisp-indent-function))
@@ -163,15 +170,7 @@
 ;; Web
 
 (use-package web-mode
-  :if (package-installed-p 'web-mode)
-  :mode ("\\.erb\\'")
-  :config
-  (when (package-installed-p 'apheleia)
-    (add-to-list 'apheleia-formatters
-                 (cons 'erb-lint
-                       '("bundle" "exec" "erb_lint" "--autocorrect" inplace)))
-    (add-to-list 'apheleia-mode-alist
-                 (cons 'web-mode 'erb-lint))))
+  :if (package-installed-p 'web-mode))
 
 ;; Ruby
 
@@ -181,9 +180,17 @@
   :config
   (setopt rbenv-executable (executable-find "rbenv")))
 
+(use-package inf-ruby
+  :if (package-installed-p 'inf-ruby)
+  :hook ((ruby-base-mode-hook . inf-ruby-minor-mode)))
+
 (use-package robe
   :if (package-installed-p 'robe)
   :hook ((ruby-base-mode-hook . robe-mode)))
+
+(use-package rspec-mode
+  :if (package-installed-p 'rspec-mode)
+  :hook ((ruby-base-mode-hook . rspec-mode)))
 
 (use-package rvm
   :if (package-installed-p 'rvm)
@@ -209,7 +216,12 @@
          "Fastfile"
          "Vagrantfile"
          "Guardfile"
-         "Podfile"))
+         "Podfile")
+  :config
+  (add-to-list 'auto-insert-alist
+               (cons (cons (rx "factories" (zero-or-more anychar) ".rb" line-end)
+                           "FactorBot file")
+                     (lambda () (tempel-insert 'factorybot)))))
 
 (use-package rbs-mode
   :mode ("\\.rbs\\'")
