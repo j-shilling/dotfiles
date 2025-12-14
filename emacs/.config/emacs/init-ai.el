@@ -29,7 +29,7 @@
         gptel-use-tools t
         gptel-include-tool-results t
         gptel-tools (nconc (gptel-get-tool "buffers")
-                           (gptel-get-tool "files")))
+                           (gptel-get-tool "filesystem")))
 
   (gptel-make-preset 'prompt-generator
     :description "An assistant for writting system prompts"
