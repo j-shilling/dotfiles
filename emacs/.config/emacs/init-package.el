@@ -41,6 +41,7 @@
                                     embark-consult
                                     terraform-mode
                                     envrc
+                                    fontaine
                                     inf-ruby
                                     robe
                                     web-mode
