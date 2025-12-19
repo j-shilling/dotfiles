@@ -40,6 +40,10 @@
 ;;; General
 ;;;
 
+(when init-file-debug
+  (toggle-debug-on-quit)
+  (toggle-debug-on-error))
+
 (use-package emacs
   :custom
   (custom-file (init--state-file "custom.el"))

@@ -73,6 +73,7 @@
                                     ace-window
                                     avy
                                     gptel
+                                    gptel-agent
                                     mcp
                                     mermaid-mode
                                     mermaid-ts-mode
@@ -82,8 +83,7 @@
                                     org-modern))
 
 (setopt package-vc-selected-packages
-        '((gptel-prompts :url "https://github.com/jwiegley/gptel-prompts.git")
-          (org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent.git")))
+        '((org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent.git")))
 
 (package-initialize)
 

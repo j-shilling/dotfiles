@@ -29,29 +29,7 @@
         gptel-use-tools t
         gptel-include-tool-results t
         gptel-tools (nconc (gptel-get-tool "buffers")
-                           (gptel-get-tool "filesystem")))
-
-  (gptel-make-preset 'prompt-generator
-    :description "An assistant for writting system prompts"
-    :system 'prompt-generator)
-
-  (gptel-make-preset 'mermaid
-    :description "An assistant for generating mermaid docupments"
-    :system 'mermaid-diagram-assistant)
-
-  (gptel-make-preset 'coding
-    :description "A general programming preset"
-    :system "You are an expert AI programming assistant."
-    :tools `(:append ,(nconc (gptel-get-tool "project")))))
-
-(use-package gptel-prompts
-  :if (package-installed-p 'gptel-prompts)
-  :after gptel
-  :custom
-  (gptel-prompts-directory (expand-file-name "prompts" user-emacs-directory))
-  :config
-  (when (file-exists-p gptel-prompts-directory)
-    (gptel-prompts-update)))
+                           (gptel-get-tool "filesystem"))))
 
 (use-package mcp
   :if (package-installed-p 'mcp)
