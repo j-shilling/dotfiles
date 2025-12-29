@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+FILES="$(find . -name '*.~*~')"
+
+echo "Found files:"
+echo "${FILES}"
+
+read -p "Remove these files [Yn]: " confirm
+
+case "${confirm}" in
+    y|Y|"")
+        find . -name '*.~*~' -exec rm -v {} \;
+        ;;
+    *)
+        echo "no"
+        ;;
+esac
