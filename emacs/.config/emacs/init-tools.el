@@ -111,6 +111,16 @@
   (ediff-window-setup-function #'ediff-setup-windows-plain))
 
 ;;;;;;;;;;;;;;;;;;
+;;; proced
+;;;;;;;;;;;;;;;;;;
+
+(use-package proced
+  :custom
+  (proced-auto-update-flag t)
+  (proced-auto-update-interval 1)
+  (proced-enable-color-flag t))
+
+;;;;;;;;;;;;;;;;;;
 ;;; grep
 ;;;;;;;;;;;;;;;;;;
 
@@ -129,11 +139,81 @@
    '("rg -n -H --no-heading -e '' $(git rev-parse --show-toplevel || pwd)" . 27)))
 
 ;;;;;;;;;;;;;;;;;;
-;;; pass
+;;; pass / gpg
 ;;;;;;;;;;;;;;;;;;
 
 (use-package auth-source-pass
   :hook
   ((after-init-hook . auth-source-pass-enable)))
+
+(use-package emacs
+  :custom
+  (epa-pinentry-mode 'loopback))
+
+;;;;;;;;;;;;;;;;;;
+;;; git
+;;;;;;;;;;;;;;;;;;
+
+(use-package magit
+  :if (package-installed-p 'magit)
+  :bind ("C-x g" . magit-status))
+
+(use-package magit-todos
+  :if (package-installed-p 'magit-todos)
+  :functions magit-todos-mode
+  :after magit
+  :commands magit-todos-list
+  :config (magit-todos-mode +1))
+
+(use-package forge
+  :if (package-installed-p 'forge)
+  :after magit)
+
+(use-package diff-hl
+  :if (package-installed-p 'diff-hl)
+  :diminish (diff-hl-mode diff-hl-dir-mode)
+  :hook
+  ((magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+   (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+   (prog-mode-hook . diff-hl-mode)
+   (vc-dir-mode . diff-hl-dir-mode)))
+
+;;;;;;;;;;;;;;;;;;
+;;; docs / help
+;;;;;;;;;;;;;;;;;;
+
+(use-package eldoc
+  :diminish eldoc-mode
+  :custom
+  (eldoc-echo-area-use-multiline-p nil)
+  (eldoc--echo-area-prefer-doc-buffer-p t))
+
+(use-package helpful
+  :if (package-installed-p 'helpful)
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h F" . helpful-function)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)
+   ("C-h x" . helpful-command)
+   ("C-c C-d" . helpful-at-point)))
+
+(use-package devdocs
+  :if (package-installed-p 'devdocs)
+  :bind
+  (("C-h D" . devdocs-lookup)))
+
+;;;;;;;;;;;;;;;;;;
+;;; misc
+;;;;;;;;;;;;;;;;;;
+
+(use-package ibuffer
+  :if (package-installed-p 'ibuffer)
+  :bind
+  (("C-x C-b" . ibuffer)))
+
+(use-package transient
+  :custom
+  (transient-history-file (init-lib-cache-file "transient" "history.el")))
 
 ;;; init-tools.el ends here.
