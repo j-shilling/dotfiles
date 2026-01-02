@@ -38,9 +38,7 @@
 
 (use-package apheleia
   :if (package-installed-p 'apheleia)
-  :diminish apheleia-mode
-  :hook
-  ((prog-mode-hook . apheleia-mode)))
+  :diminish apheleia-mode)
 
 (use-package project
   :custom
@@ -207,7 +205,8 @@
   :hook ((ruby-base-mode-hook . rspec-mode)))
 
 (use-package rvm
-  :if (package-installed-p 'rvm)
+  :if (and (package-installed-p 'rvm)
+           (file-exists-p "~/.rvm"))
   :hook ((ruby-base-mode-hook . rvm-activate-corresponding-ruby)))
 
 (use-package ruby-ts-mode
