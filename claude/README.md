@@ -29,6 +29,25 @@ The following ephemeral/sensitive files are excluded via `.stow-local-ignore`:
 
 These files are managed by Claude Code and should not be version controlled.
 
+## Plugins
+
+The `enabledPlugins` section in `settings.json` contains all installed plugins. When you stow this package on a new machine, Claude Code will prompt you to install these plugins automatically.
+
+Currently enabled plugins:
+- **frontend-design** - Production-grade frontend interfaces
+- **context7** - Context management
+- **github** - GitHub integration
+- **feature-dev** - Guided feature development
+- **code-review** - PR code review
+- **commit-commands** - Git commit/push/PR workflows
+- **typescript-lsp** - TypeScript language server
+- **security-guidance** - Security best practices
+- **playwright** - Browser automation
+- **agent-sdk-dev** - Claude Agent SDK development
+- **figma** - Figma design integration
+
+To install plugins, run `/plugin` in Claude Code. The configuration will be automatically updated.
+
 ## Configuration Hierarchy
 
 Claude Code uses the following precedence (highest to lowest):
