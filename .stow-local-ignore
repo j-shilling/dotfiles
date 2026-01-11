@@ -8,3 +8,23 @@
 
 .aider*
 !prompts/*\.md
+
+# Claude Code ephemeral files
+\.claude\.json
+\.claude/cache
+\.claude/history\.jsonl
+\.claude/stats-cache\.json
+\.claude/\.credentials\.json
+\.claude/debug
+\.claude/downloads
+\.claude/file-history
+\.claude/plans
+\.claude/projects
+\.claude/session-env
+\.claude/shell-snapshots
+\.claude/statsig
+\.claude/telemetry
+\.claude/todos
+\.claude/plugins/install-counts-cache\.json
+\.claude/plugins/known_marketplaces\.json
+\.claude/plugins/marketplaces

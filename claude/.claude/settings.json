@@ -1,0 +1,14 @@
+{
+  "editor": {
+    "fontSize": 14,
+    "fontFamily": "monospace"
+  },
+  "permissions": {
+    "allow": [],
+    "deny": []
+  },
+  "hooks": {},
+  "ui": {
+    "confirmBeforeQuit": false
+  }
+}
