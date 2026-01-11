@@ -174,10 +174,22 @@
   ((js-base-mode-hook . eglot-ensure)))
 
 (use-package typescript-ts-mode
+  :init
+  (defun init-prog--typescript-ts-mode-add-jsdoc ()
+    "Add range settings to include jsdoc in ts files."
+    (when (treesit-ready-p 'jsdoc t)
+      (setq-local treesit-range-settings
+                  (treesit-range-rules
+                   :embed 'jsdoc
+                   :host 'typescript
+                   :local t
+                   `(((comment) @capture (:match ,(rx bos "/**") @capture)))))))
+
   :mode (("\\.ts\\'" . typescript-ts-mode)
          ("\\.tsx\\'" . tsx-ts-mode))
   :hook
-  ((typescript-ts-base-mode-hook . eglot-ensure)))
+  ((typescript-ts-base-mode-hook . eglot-ensure)
+   (typescript-ts-mode . init-prog--typescript-ts-mode-add-jsdoc)))
 
 ;; Web
 

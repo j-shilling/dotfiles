@@ -27,12 +27,14 @@
 
 (use-package treesit
   :init
+  (defconst init-tree-sitter-grammars-directory
+    (init-lib-state-file "tree-sitter")
+    "Directory to install tree-sitter grammar files into.")
+
   (add-to-list 'treesit-extra-load-path
-               (init-lib-state-file "tree-sitter"))
+               init-tree-sitter-grammars-directory)
   ;; TODO:
   ;; - https://github.com/tree-sitter/tree-sitter-c
-  ;; - https://github.com/tree-sitter/tree-sitter-haskell
-  ;; - https://github.com/tree-sitter/tree-sitter-jsdoc
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-csv
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
   ;; - https://github.com/tree-sitter-grammars/tree-sitter-scss
@@ -63,11 +65,24 @@
           (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "v0.7.2")
           (hcl "https://github.com/tree-sitter-grammars/tree-sitter-hcl" "v1.1.0")
           (embedded-template "https://github.com/tree-sitter/tree-sitter-embedded-template" "v0.23.2")
-          (go "https://github.com/tree-sitter/tree-sitter-go" "v0.23.4")))
+          (go "https://github.com/tree-sitter/tree-sitter-go" "v0.23.4")
+          (jsdoc "https://github.com/tree-sitter/tree-sitter-jsdoc" "v0.23.2")
+          (haskell "https://github.com/tree-sitter/tree-sitter-haskell" "v0.23.1")))
+
+  (defun init-tree-sitter-install-language-grammar (lang)
+    "Build and install a tree-sitter language grammar library for `LANG'.
+
+This is a wrapper around `treesit-install-language-grammar' that always
+sets `OUT-DIR' to `init-tree-sitter-grammars-directory'."
+    (interactive (list (intern
+                        (completing-read
+                         "Language: "
+                         (mapcar #'car treesit-language-source-alist)))))
+    (treesit-install-language-grammar lang init-tree-sitter-grammars-directory))
+
   (defun init-tree-sitter-install-all ()
     (interactive)
-    (mapc (lambda (lang)
-            (treesit-install-language-grammar lang (init-lib-state-file "tree-sitter")))
+    (mapc #'init-tree-sitter-install-language-grammar
           (mapcar #'car treesit-language-source-alist))))
 
 (provide 'init-tree-sitter)
