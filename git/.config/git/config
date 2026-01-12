@@ -1,5 +1,5 @@
 [core]
-	editor = emacsclient --reuse-frame
+	editor = emacsclient -a '' --reuse-frame
 [merge]
 	conflictStyle = diff3
 [diff]
@@ -28,7 +28,7 @@
 	sendmailcmd = msmtp --read-envelope-from
 [include]
     path = "~/.config/git/config_personal"
-[includeIf "gitdir/i:**/functorfactory/**/"]
-    path = "~/.config/git/config_functorfactory"
-[github]
-	user = j-shilling
+[includeIf "hasconfig:remote.*.url:https://*@github.com/DSACMS/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:https://*@github.com/CMS-Enterprise/**"]
+    path = "~/.config/git/config_cms"
