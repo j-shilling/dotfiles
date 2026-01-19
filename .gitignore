@@ -1,3 +1,5 @@
 .guix-time-marker
 .nrepl-port
 .aider*
+.claude/
+settings.local.json
