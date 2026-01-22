@@ -11,17 +11,20 @@
 
 (use-package display-line-numbers
   :hook
-  ((prog-mode-hook . display-line-numbers-mode)))
+  ((prog-mode-hook . display-line-numbers-mode)
+   (yaml-ts-mode-hook . display-line-numbers-mode)))
 
 (use-package elec-pair
   :hook
-  ((prog-mode-hook . electric-pair-local-mode)))
+  ((prog-mode-hook . electric-pair-local-mode)
+   (yaml-ts-mode-hook . electric-pair-local-mode)))
 
 (use-package whitespace
   :custom
   (whitespace-action '(cleanup auto-cleanup))
   :hook
-  ((prog-mode-hook . whitespace-mode)))
+  ((prog-mode-hook . whitespace-mode)
+   (yaml-ts-mode-hook . whitespace-mode)))
 
 (use-package prog-mode
   :hook
@@ -34,7 +37,7 @@
 
 (use-package editorconfig
   :hook
-  ((prog-mode-hook . editorconfig-mode)))
+  ((after-init-hook . editorconfig-mode)))
 
 (use-package apheleia
   :if (package-installed-p 'apheleia)
@@ -95,6 +98,8 @@
                           :hover t
                           :completion t
                           :schemas (
+                                    https://www.schemastore.org/github-workflow.json ["**/.github/workflows/*.yml"]
+                                    https://www.schemastore.org/pre-commit-config.json [".pre-commit-config.yaml" ".pre-commit-config.yml"]
                                     https://json.schemastore.org/yamllint.json ["/*.yml"])
                           :schemaStore (:enable t))
                   :terraform ( :path ,(executable-find "terraform")
