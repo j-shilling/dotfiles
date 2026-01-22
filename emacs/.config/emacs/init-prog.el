@@ -264,7 +264,9 @@
 
 (use-package terraform-mode
   :if (package-installed-p 'terraform-mode)
-  :mode ("\\.tf" "\\.tfvars" "\\.tfbackend"))
+  :mode ("\\.tf" "\\.tfvars" "\\.tfbackend")
+  :hook
+  ((terraform-mode-hook . eglot-ensure)))
 
 ;; YAML
 
