@@ -40,3 +40,6 @@ fi
 
 # Haskell (GHCup)
 [ -f "${HOME}/.ghcup/env" ] && source "${HOME}/.ghcup/env"
+
+# Ruby
+command -v rbenv >/dev/null && eval "$(rbenv init - --no-rehash bash)"
