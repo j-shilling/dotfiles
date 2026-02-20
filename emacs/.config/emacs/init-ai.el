@@ -15,12 +15,14 @@
   ((gptel-post-response-functions . gptel-end-of-response))
 
   :config
+
   (require 'init-ai-tools
            (expand-file-name "init-ai-tools.el" user-emacs-directory))
 
   (setq gptel-backend (gptel-make-anthropic "Claude"
                         :stream t
-                        :models '(claude-sonnet-4-5-20250929 claude-opus-4-1-20250805)
+                        :models '(claude-sonnet-4-5-20250929
+                                  claude-opus-4-6)
                         :key #'init-get-anthropic-key)
         gptel-model 'claude-sonnet-4-5-20250929
         gptel-default-mode 'org-mode
@@ -28,8 +30,7 @@
         gptel-cache t
         gptel-use-tools t
         gptel-include-tool-results t
-        gptel-tools (nconc (gptel-get-tool "buffers")
-                           (gptel-get-tool "filesystem"))))
+        gptel-tools (nconc (gptel-get-tool "buffers"))))
 
 (use-package mcp
   :if (package-installed-p 'mcp)
@@ -38,12 +39,17 @@
   (mcp-hub-servers
    `(("playwright" . (:command "npx" :args ("-y" "@playwright/mcp@latest")))
      ("mermaid" . (:command "npx" :args ("-y" "@peng-shawn/mermaid-mcp-server")))
+     ("a11y" . (:command "npx" :args ("-y" "a11y-mcp")))
+     ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp")))
+     ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
+     ("aws" . (:command "uvx" :args ("mcp-proxy-for-aws@latest" "https://aws-mcp.us-east-1.api.aws/mcp")))
+     ("vitest" . (:command "npx" :args ("-y" "@madrus/vitest-mcp-server@latest")))
+     ("terraform" . (:command "docker" :args ("run" "-i" "--rm" "hashicorp/terraform-mcp-server:0.4.0")))
      ("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(getenv "HOME"))))))
   :config
   (require 'mcp-hub)
   (when (package-installed-p 'gptel)
-    (require 'gptel-integrations))
-  :hook ((after-init . mcp-hub-start-all-server)))
+    (require 'gptel-integrations)))
 
 (provide 'init-ai)
 ;;; init-ai.el ends here.
