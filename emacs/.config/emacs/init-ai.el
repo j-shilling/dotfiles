@@ -30,7 +30,8 @@
         gptel-cache t
         gptel-use-tools t
         gptel-include-tool-results t
-        gptel-tools (nconc (gptel-get-tool "buffers"))))
+        gptel-tools (nconc (gptel-get-tool "buffers")
+                           (gptel-get-tool "filesystem"))))
 
 (use-package mcp
   :if (package-installed-p 'mcp)
