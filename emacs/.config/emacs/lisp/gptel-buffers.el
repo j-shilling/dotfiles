@@ -26,18 +26,68 @@
 
 (require 'gptel)
 
-(defun gptel-buffers--create-buffer (name)
-  "Create a new buffer using NAME.
+(defun gptel-buffers--create-buffer (name &optional mode)
+  "Create a new buffer using NAME and initialize it with the appropriate mode.
 If there is already a buffer called NAME, then append a suffix to NAME
-so that it becomes unique. Return the actual name of the resulting
-buffer."
+so that it becomes unique.
+
+The major mode is determined in the following order:
+1. If MODE is provided and is a valid mode function, use it
+2. If MODE is provided as a string (file extension), find the mode for that extension
+3. Try to auto-detect mode from buffer NAME using `auto-mode-alist'
+4. Fall back to `text-mode'
+
+MODE can be:
+  - A major mode function symbol (e.g., `python-mode', `markdown-mode')
+  - A string representing a file extension (e.g., \"py\", \"md\", \"js\")
+  - nil (auto-detect from name, or default to `text-mode')
+
+Return the actual name of the resulting buffer."
   (let* ((buffer (generate-new-buffer name))
          (buffer-name (buffer-name buffer))
-         (text (format "Successfully created buffer: %s" buffer-name)))
-    `((content . (((type . "text")
-                   (text . ,text))))
-      (structuredContent . ((content . ,text)
-                            (bufferName . ,buffer-name))))))
+         (resolved-mode nil))
+
+    ;; Initialize the buffer with the appropriate mode
+    (with-current-buffer buffer
+      (cond
+       ;; Case 1: MODE is a valid mode function symbol
+       ((and mode (symbolp mode) (fboundp mode))
+        (setq resolved-mode mode)
+        (funcall mode))
+
+       ;; Case 2: MODE is a string (file extension)
+       ((stringp mode)
+        (let* ((ext-with-dot (if (string-prefix-p "." mode)
+                                 mode
+                               (concat "." mode)))
+               (fake-filename (concat "file" ext-with-dot))
+               (mode-entry (assoc-default fake-filename auto-mode-alist #'string-match)))
+          (if (and mode-entry (symbolp mode-entry) (fboundp mode-entry))
+              (progn
+                (setq resolved-mode mode-entry)
+                (funcall mode-entry))
+            ;; Extension didn't match, fall back to text-mode
+            (text-mode)
+            (setq resolved-mode 'text-mode))))
+
+       ;; Case 3: No MODE provided, try auto-detection from buffer name
+       (t
+        (let ((mode-entry (assoc-default buffer-name auto-mode-alist #'string-match)))
+          (if (and mode-entry (symbolp mode-entry) (fboundp mode-entry))
+              (progn
+                (setq resolved-mode mode-entry)
+                (funcall mode-entry))
+            ;; No match found, use text-mode
+            (text-mode)
+            (setq resolved-mode 'text-mode))))))
+
+    (let ((text (format "Successfully created buffer: %s (mode: %s)"
+                       buffer-name resolved-mode)))
+      `((content . (((type . "text")
+                     (text . ,text))))
+        (structuredContent . ((content . ,text)
+                              (bufferName . ,buffer-name)
+                              (mode . ,(symbol-name resolved-mode))))))))
 
 (defun gptel-buffers--list-buffers ()
   "Return a list of currently available buffers."
@@ -189,13 +239,21 @@ This erases all existing content in the buffer. Use with caution."
  :name "create_buffer"
  :function #'gptel-buffers--create-buffer
  :description
- "Create a new buffer using NAME. If there is already a buffer called
-NAME, then append a suffix to NAME so that it becomes unique. Return the
-actual name of the resulting buffer."
+ "Create a new buffer using NAME with an optional MODE. If there is already
+a buffer called NAME, then append a suffix to NAME so that it becomes unique.
+Return the actual name of the resulting buffer. The mode is determined by:
+1) Using MODE if it's a valid mode function symbol
+2) Finding the mode for MODE if it's a file extension string
+3) Auto-detecting from the buffer NAME using set-auto-mode
+4) Falling back to text-mode if auto-detection fails"
  :category "buffers"
  :args (list (list :name "name"
                    :type 'string
-                   :description "The name used to create the buffer. If a buffer already exists with the same name, then a suffix will be added to make it unique.")))
+                   :description "The name used to create the buffer. If a buffer already exists with the same name, then a suffix will be added to make it unique. Can include file extension for auto-detection (e.g., 'script.py').")
+             (list :name "mode"
+                   :type 'string
+                   :optional t
+                   :description "Optional major mode hint. Can be a mode name (e.g., 'python-mode', 'org-mode') or a file extension (e.g., 'py', 'md', 'js'). If not specified, mode will be auto-detected from the buffer name.")))
 
 (gptel-make-tool
  :name "list_buffers"
@@ -280,6 +338,7 @@ or displays it in another window, making it visible to the user."
 
 (gptel-make-tool
  :name "kill_buffer"
+
  :function #'gptel-buffers--kill-buffer
  :description
  "Kill (close) BUFFER. If the buffer is modified and has an associated
