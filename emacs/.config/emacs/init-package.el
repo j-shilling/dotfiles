@@ -53,6 +53,7 @@
                                     pass
                                     wgrep
                                     diff-hl
+                                    cape
                                     ibuffer
                                     magit
                                     magit-todos
