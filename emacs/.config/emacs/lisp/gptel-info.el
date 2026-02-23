@@ -28,6 +28,13 @@
 (require 'gptel)
 (require 'info)
 
+(defun gptel-info--get-info-buffer ()
+  "Find and return the first Info buffer, or nil if none exists."
+  (seq-find (lambda (buf)
+              (with-current-buffer buf
+                (derived-mode-p 'Info-mode)))
+            (buffer-list)))
+
 (defun gptel-info--search-topic (topic &optional manual)
   "Search for TOPIC in Info documentation.
 If MANUAL is specified, restrict search to that manual.
@@ -50,7 +57,8 @@ Navigate to the first relevant result."
                          (text . ,success-msg))))
             (structuredContent . ((message . ,success-msg)
                                   (file . ,Info-current-file)
-                                  (node . ,Info-current-node)))))
+                                  (node . ,Info-current-node)
+                                  (buffer . ,(buffer-name))))))
       (error
        ;; If index lookup fails, try text search
        (condition-case search-err
@@ -64,7 +72,8 @@ Navigate to the first relevant result."
                             (text . ,success-msg))))
                (structuredContent . ((message . ,success-msg)
                                      (file . ,Info-current-file)
-                                     (node . ,Info-current-node)))))
+                                     (node . ,Info-current-node)
+                                     (buffer . ,(buffer-name))))))
          (error
           (let ((error-msg (format "Could not find topic '%s' in manual '%s': %s"
                                    topic search-manual
@@ -74,31 +83,42 @@ Navigate to the first relevant result."
               (structuredContent . ((error . t)
                                     (message . ,error-msg)))))))))))
 
-(defun gptel-info--read-current-node ()
-  "Read and return the complete text content of the current Info node."
-  (unless (derived-mode-p 'Info-mode)
-    (error "Not in an Info buffer"))
-
-  (let* ((node-name Info-current-node)
-         (file-name Info-current-file)
-         (content (save-excursion
-                    (goto-char (point-min))
-                    ;; Skip the header line
-                    (forward-line 1)
-                    ;; Read from after header to end of buffer
-                    (buffer-substring-no-properties (point) (point-max))))
-         (summary (format "Content of node '%s' in '%s' (%d characters)"
-                          node-name
-                          (if (stringp file-name)
-                              (file-name-nondirectory file-name)
-                            file-name)
-                          (length content))))
-    `((content . (((type . "text")
-                   (text . ,(concat summary "\n\n" content)))))
-      (structuredContent . ((node . ,node-name)
-                            (file . ,file-name)
-                            (content . ,content)
-                            (length . ,(length content)))))))
+(defun gptel-info--read-current-node (&optional buffer-name)
+  "Read and return the complete text content of the current Info node.
+If BUFFER-NAME is provided, read from that buffer. Otherwise, use the
+current buffer or find the first Info buffer."
+  (let ((info-buffer (cond
+                      (buffer-name (get-buffer buffer-name))
+                      ((derived-mode-p 'Info-mode) (current-buffer))
+                      (t (gptel-info--get-info-buffer)))))
+    (unless info-buffer
+      (error "No Info buffer found"))
+    
+    (with-current-buffer info-buffer
+      (unless (derived-mode-p 'Info-mode)
+        (error "Buffer '%s' is not an Info buffer" (buffer-name info-buffer)))
+      
+      (let* ((node-name Info-current-node)
+             (file-name Info-current-file)
+             (content (save-excursion
+                        (goto-char (point-min))
+                        ;; Skip the header line
+                        (forward-line 1)
+                        ;; Read from after header to end of buffer
+                        (buffer-substring-no-properties (point) (point-max))))
+             (summary (format "Content of node '%s' in '%s' (%d characters)"
+                              node-name
+                              (if (stringp file-name)
+                                  (file-name-nondirectory file-name)
+                                file-name)
+                              (length content))))
+        `((content . (((type . "text")
+                       (text . ,(concat summary "\n\n" content)))))
+          (structuredContent . ((node . ,node-name)
+                                (file . ,file-name)
+                                (buffer . ,(buffer-name info-buffer))
+                                (content . ,content)
+                                (length . ,(length content)))))))))
 
 (defun gptel-info--index-lookup (topic &optional manual)
   "Look up TOPIC in the index of MANUAL (defaults to 'emacs').
@@ -119,6 +139,7 @@ Navigate to the first matching index entry."
               (structuredContent . ((message . ,msg)
                                     (file . ,Info-current-file)
                                     (node . ,Info-current-node)
+                                    (buffer . ,(buffer-name))
                                     (topic . ,topic))))))
       (error
        (let ((error-msg (format "No index entry for '%s' in manual '%s': %s"
@@ -130,65 +151,87 @@ Navigate to the first matching index entry."
                                  (message . ,error-msg)
                                  (topic . ,topic)))))))))
 
-(defun gptel-info--follow-reference (reference-name)
-  "Follow a cross-reference named REFERENCE-NAME from the current node."
-  (unless (derived-mode-p 'Info-mode)
-    (error "Not in an Info buffer"))
+(defun gptel-info--follow-reference (reference-name &optional buffer-name)
+  "Follow a cross-reference named REFERENCE-NAME from the current node.
+If BUFFER-NAME is provided, use that buffer. Otherwise, use the current
+buffer or find the first Info buffer."
+  (let ((info-buffer (cond
+                      (buffer-name (get-buffer buffer-name))
+                      ((derived-mode-p 'Info-mode) (current-buffer))
+                      (t (gptel-info--get-info-buffer)))))
+    (unless info-buffer
+      (error "No Info buffer found"))
+    
+    (with-current-buffer info-buffer
+      (unless (derived-mode-p 'Info-mode)
+        (error "Buffer '%s' is not an Info buffer" (buffer-name info-buffer)))
+      
+      (let ((old-node Info-current-node)
+            (old-file Info-current-file))
+        (condition-case err
+            (progn
+              (Info-follow-reference reference-name)
+              (let ((msg (format "Followed reference '%s' from node '%s' to node '%s'"
+                                 reference-name old-node Info-current-node)))
+                `((content . (((type . "text")
+                               (text . ,msg))))
+                  (structuredContent . ((message . ,msg)
+                                        (from-node . ,old-node)
+                                        (to-node . ,Info-current-node)
+                                        (file . ,Info-current-file)
+                                        (buffer . ,(buffer-name info-buffer))
+                                        (reference . ,reference-name))))))
+          (error
+           (let ((error-msg (format "Could not follow reference '%s': %s"
+                                    reference-name
+                                    (error-message-string err))))
+             `((content . (((type . "text")
+                            (text . ,error-msg))))
+               (structuredContent . ((error . t)
+                                     (message . ,error-msg)
+                                     (reference . ,reference-name)))))))))))
 
-  (let ((old-node Info-current-node)
-        (old-file Info-current-file))
-    (condition-case err
-        (progn
-          (Info-follow-reference reference-name)
-          (let ((msg (format "Followed reference '%s' from node '%s' to node '%s'"
-                             reference-name old-node Info-current-node)))
-            `((content . (((type . "text")
-                           (text . ,msg))))
-              (structuredContent . ((message . ,msg)
-                                    (from-node . ,old-node)
-                                    (to-node . ,Info-current-node)
-                                    (file . ,Info-current-file)
-                                    (reference . ,reference-name))))))
-      (error
-       (let ((error-msg (format "Could not follow reference '%s': %s"
-                                reference-name
-                                (error-message-string err))))
-         `((content . (((type . "text")
-                        (text . ,error-msg))))
-           (structuredContent . ((error . t)
-                                 (message . ,error-msg)
-                                 (reference . ,reference-name)))))))))
-
-(defun gptel-info--list-references ()
-  "List all cross-references available in the current Info node."
-  (unless (derived-mode-p 'Info-mode)
-    (error "Not in an Info buffer"))
-
-  (let ((references '())
-        (case-fold-search t))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward "\\*note[ \n\t]+\\([^:]+\\):" nil t)
-        (let ((ref-name (match-string-no-properties 1)))
-          ;; Clean up whitespace
-          (setq ref-name (replace-regexp-in-string "[ \n\t]+" " " ref-name))
-          (push ref-name references))))
-
-    (setq references (nreverse references))
-
-    (let ((msg (if references
-                   (format "Found %d reference(s) in node '%s':\n%s"
-                           (length references)
-                           Info-current-node
-                           (mapconcat (lambda (ref) (concat "  - " ref))
-                                      references "\n"))
-                 (format "No references found in node '%s'" Info-current-node))))
-      `((content . (((type . "text")
-                     (text . ,msg))))
-        (structuredContent . ((node . ,Info-current-node)
-                              (file . ,Info-current-file)
-                              (references . ,(vconcat references))
-                              (count . ,(length references))))))))
+(defun gptel-info--list-references (&optional buffer-name)
+  "List all cross-references available in the current Info node.
+If BUFFER-NAME is provided, list references from that buffer. Otherwise,
+use the current buffer or find the first Info buffer."
+  (let ((info-buffer (cond
+                      (buffer-name (get-buffer buffer-name))
+                      ((derived-mode-p 'Info-mode) (current-buffer))
+                      (t (gptel-info--get-info-buffer)))))
+    (unless info-buffer
+      (error "No Info buffer found"))
+    
+    (with-current-buffer info-buffer
+      (unless (derived-mode-p 'Info-mode)
+        (error "Buffer '%s' is not an Info buffer" (buffer-name info-buffer)))
+      
+      (let ((references '())
+            (case-fold-search t))
+        (save-excursion
+          (goto-char (point-min))
+          (while (re-search-forward "\\*note[ \n\t]+\\([^:]+\\):" nil t)
+            (let ((ref-name (match-string-no-properties 1)))
+              ;; Clean up whitespace
+              (setq ref-name (replace-regexp-in-string "[ \n\t]+" " " ref-name))
+              (push ref-name references))))
+        
+        (setq references (nreverse references))
+        
+        (let ((msg (if references
+                       (format "Found %d reference(s) in node '%s':\n%s"
+                               (length references)
+                               Info-current-node
+                               (mapconcat (lambda (ref) (concat "  - " ref))
+                                          references "\n"))
+                     (format "No references found in node '%s'" Info-current-node))))
+          `((content . (((type . "text")
+                         (text . ,msg))))
+            (structuredContent . ((node . ,Info-current-node)
+                                  (file . ,Info-current-file)
+                                  (buffer . ,(buffer-name info-buffer))
+                                  (references . ,(vconcat references))
+                                  (count . ,(length references))))))))))
 
 ;; Register tools with gptel
 
@@ -216,7 +259,10 @@ the topic in the manual's index (most reliable), and falls back to text search i
 Use this after navigating to a node to extract the actual documentation content.
 The content includes all text from the node but excludes the header line."
  :category "info"
- :args nil)
+ :args (list (list :name "buffer_name"
+                   :type 'string
+                   :optional t
+                   :description "Name of the Info buffer to read from. If not provided, uses the current buffer or finds the first Info buffer.")))
 
 (gptel-make-tool
  :name "info_index_lookup"
@@ -245,7 +291,11 @@ Use info_list_references first to see what references are available."
  :category "info"
  :args (list (list :name "reference_name"
                    :type 'string
-                   :description "The name of the cross-reference to follow. Must match a reference from the current node.")))
+                   :description "The name of the cross-reference to follow. Must match a reference from the current node.")
+             (list :name "buffer_name"
+                   :type 'string
+                   :optional t
+                   :description "Name of the Info buffer to use. If not provided, uses the current buffer or finds the first Info buffer.")))
 
 (gptel-make-tool
  :name "info_list_references"
@@ -255,7 +305,10 @@ Use info_list_references first to see what references are available."
 Use this to discover what related topics you can explore from the current location.
 Returns a list of reference names that can be used with info_follow_reference."
  :category "info"
- :args nil)
+ :args (list (list :name "buffer_name"
+                   :type 'string
+                   :optional t
+                   :description "Name of the Info buffer to list references from. If not provided, uses the current buffer or finds the first Info buffer.")))
 
 (provide 'gptel-info)
 ;;; gptel-info.el ends here
