@@ -22,6 +22,40 @@
 ;; This package provides GPTel tools for working with Emacs buffers,
 ;; including creating, reading, modifying, and managing buffer state.
 
+;; TODO: Future Enhancements
+;;
+;; The following features are planned for future implementation:
+;;
+;; 11. Add Buffer List Filtering
+;;     Enhance `list_buffers' with filtering options:
+;;     - Filter by major mode
+;;     - Filter by modified status
+;;     - Filter by file-visiting status
+;;     - Exclude internal buffers (those starting with space or *)
+;;
+;; 12. Add Undo/Redo Support
+;;     - `undo_buffer' - Undo last change
+;;     - `redo_buffer' - Redo undone change
+;;     - `buffer_undo_list_length' - Get number of undo steps available
+;;
+;; 3. Add Point/Cursor Position Tools
+;;    The manual emphasizes point as fundamental to buffer operations:
+;;    - `get_point' - Get current cursor position in buffer
+;;    - `goto_position' - Move point to specific position
+;;    - `get_point_min' / `get_point_max' - Get accessible region bounds
+;;
+;; 4. Add Narrowing Support
+;;    Narrowing is a powerful Emacs feature for restricting buffer operations:
+;;    - `narrow_to_region' - Limit accessible portion of buffer
+;;    - `widen' - Remove narrowing restrictions
+;;    - `buffer_narrowed_p' - Check if buffer is narrowed
+;;
+;; 5. Add Indirect Buffer Support
+;;    Indirect buffers share text but have independent point/narrowing:
+;;    - `make_indirect_buffer' - Create indirect buffer sharing text with base buffer
+;;    - `clone_indirect_buffer' - Clone current buffer as indirect
+;;    - `get_base_buffer' - Get base buffer of indirect buffer
+
 ;;; Code:
 
 (require 'gptel)
@@ -110,18 +144,53 @@ Return the actual name of the resulting buffer."
 (defun gptel-buffers--read-buffer (buffer &optional start end)
   "Return the text currently stored in BUFFER.
 If START is provided, begin reading from that position (1-indexed).
-If END is provided, stop reading at that position.
-If neither START nor END are provided, return the entire buffer contents."
+If END is provided, stop reading at that position (not included in result).
+If neither START nor END are provided, return the entire buffer contents.
+
+IMPORTANT: Positions are 1-indexed and represent locations BETWEEN characters:
+  - Position 1 is BEFORE the first character
+  - Position N is BETWEEN character N-1 and character N
+  - For a buffer with N characters, position N+1 is AFTER the last character
+  - Reading from position A to position B returns characters at positions A through B-1
+
+START and END must be within the accessible portion of the buffer (which may
+be restricted by narrowing). Use get_buffer_info to check buffer bounds."
   (let ((b (get-buffer buffer)))
     (unless (buffer-live-p b)
       (error "Buffer %s is not live" buffer))
     (with-current-buffer b
-      (let* ((beg (if start (min start (point-max)) (point-min)))
-             (end (if end (min end (point-max)) (point-max)))
+      (let* ((buf-min (point-min))
+             (buf-max (point-max))
+             (beg (if start
+                      (progn
+                        (unless (and (integerp start) (>= start 1))
+                          (error "START position must be a positive integer, got %s" start))
+                        (when (< start buf-min)
+                          (error "START position %d is before buffer start %d" start buf-min))
+                        (when (> start buf-max)
+                          (error "START position %d is after buffer end %d" start buf-max))
+                        start)
+                    buf-min))
+             (end (if end
+                      (progn
+                        (unless (and (integerp end) (>= end 1))
+                          (error "END position must be a positive integer, got %s" end))
+                        (when (< end buf-min)
+                          (error "END position %d is before buffer start %d" end buf-min))
+                        (when (> end buf-max)
+                          (error "END position %d is after buffer end %d" end buf-max))
+                        (when (< end beg)
+                          (error "END position %d is before START position %d" end beg))
+                        end)
+                    buf-max))
              (content (buffer-substring-no-properties beg end)))
         `((content . (((type . "text")
                        (text . ,content))))
-          (structuredContent . ((content . ,content))))))))
+          (structuredContent . ((content . ,content)
+                                (start . ,beg)
+                                (end . ,end)
+                                (bufferMin . ,buf-min)
+                                (bufferMax . ,buf-max)))))))
 
 (defun gptel-buffers--insert-into-buffer (buffer text &optional position)
   "Insert TEXT into BUFFER.
@@ -259,6 +328,92 @@ This erases all existing content in the buffer. Use with caution."
         (structuredContent . ((message . ,msg)
                               (bufferName . ,buffer)))))))
 
+(defun gptel-buffers--set-visited-file-name (buffer filename &optional no-query)
+  "Associate BUFFER with FILENAME.
+The buffer will be saved to this file when saved. If the file already
+exists and NO-QUERY is nil, an error is raised. If NO-QUERY is non-nil,
+proceed even if the file exists.
+Returns the filename that was set."
+  (let ((b (get-buffer buffer)))
+    (unless (buffer-live-p b)
+      (error "Buffer %s is not live" buffer))
+    (with-current-buffer b
+      ;; Expand the filename to get the full path
+      (let ((expanded-filename (expand-file-name filename)))
+        ;; Check if file exists and we should error
+        (when (and (file-exists-p expanded-filename)
+                   (not no-query))
+          (error "File %s already exists. Set no_query to true to proceed anyway"
+                 expanded-filename))
+        ;; Set the visited file name
+        ;; Pass t as second argument to avoid renaming the buffer
+        (set-visited-file-name expanded-filename t)
+        (let ((msg (format "Successfully associated buffer %s with file %s"
+                           buffer expanded-filename)))
+          =((content . (((type . "text")
+                         (text . ,msg))))
+            (structuredContent . ((message . ,msg)
+                                  (bufferName . ,buffer)
+                                  (fileName . ,expanded-filename)))))))))
+
+(defun gptel-buffers--read-buffer-lines (buffer start-line end-line)
+  "Read specific lines from BUFFER.
+START-LINE and END-LINE are 1-indexed line numbers. Both the start and end
+lines are included in the result. If END-LINE is greater than the number of
+lines in the buffer, reads to the end of the buffer.
+
+Returns the text of the specified lines including their newline characters
+(except possibly the last line if the buffer doesn't end with a newline)."
+  (let ((b (get-buffer buffer)))
+    (unless (buffer-live-p b)
+      (error "Buffer %s is not live" buffer))
+    (unless (and (integerp start-line) (>= start-line 1))
+      (error "START-LINE must be a positive integer, got %s" start-line))
+    (unless (and (integerp end-line) (>= end-line 1))
+      (error "END-LINE must be a positive integer, got %s" end-line))
+    (when (> start-line end-line)
+      (error "START-LINE %d is greater than END-LINE %d" start-line end-line))
+    (with-current-buffer b
+      (save-excursion
+        (save-restriction
+          (widen)  ; Temporarily remove narrowing to count lines accurately
+          (let* ((total-lines (count-lines (point-min) (point-max)))
+                 ;; Add 1 if buffer doesn't end with newline
+                 (total-lines (if (and (> (point-max) (point-min))
+                                      (not (eq (char-before (point-max)) ?\n)))
+                                  (1+ total-lines)
+                                total-lines)))
+            ;; Validate start-line
+            (when (> start-line total-lines)
+              (error "START-LINE %d exceeds buffer line count %d"
+                     start-line total-lines))
+            ;; Clamp end-line to total-lines (allow reading to end)
+            (let ((actual-end-line (min end-line total-lines)))
+              ;; Go to start line
+              (goto-char (point-min))
+              (forward-line (1- start-line))
+              (let ((start-pos (point)))
+                ;; Go to end line
+                (forward-line (- actual-end-line start-line))
+                ;; Move to end of line to include the entire line
+                (end-of-line)
+                ;; If not at end of buffer and there's a newline, include it
+                (when (and (not (eobp)) (eq (char-after) ?\n))
+                  (forward-char))
+                (let ((end-pos (point))
+                      (content (buffer-substring-no-properties start-pos (point))))
+                  (let ((msg (format "Read lines %d-%d from buffer %s (%d lines total)"
+                                   start-line actual-end-line buffer total-lines)))
+                    `((content . (((type . "text")
+                                   (text . ,content))))
+                      (structuredContent . ((content . ,content)
+                                           (message . ,msg)
+                                           (startLine . ,start-line)
+                                           (endLine . ,actual-end-line)
+                                           (totalLines . ,total-lines)
+                                           (startPos . ,start-pos)
+                                           (endPos . ,end-pos))))))))))))))
+
 (gptel-make-tool
  :name "create_buffer"
  :function #'gptel-buffers--create-buffer
@@ -302,19 +457,32 @@ windows. This only includes buffers that are actively visible on screen."
  :function #'gptel-buffers--read-buffer
  :description
  "Return the text currently stored in BUFFER. Optionally specify START and
-END positions (1-indexed) to read only a portion of the buffer. If
-neither START nor END are provided, returns the entire buffer contents."
+END positions to read only a portion of the buffer. If neither START nor END
+are provided, returns the entire buffer contents.
+
+IMPORTANT: Positions in Emacs are 1-indexed and represent locations BETWEEN
+characters, not the characters themselves:
+  - Position 1 is BEFORE the first character
+  - Position 2 is BETWEEN the first and second characters
+  - If a buffer contains 'hello' (5 characters), valid positions are 1-6
+  - Position 6 is AFTER the last character
+  - To read the entire buffer, use START=1 and END=(buffer size + 1)
+  - To read the first character, use START=1 and END=2
+  - To read from position N to the end, omit END or set it to (buffer size + 1)
+
+The accessible region of a buffer may be restricted by narrowing. Use
+get_buffer_info to see the current buffer size and bounds."
  :category "buffers"
  :args (list (list :name "buffer"
                    :type 'string
                    :description "Name of the buffer to read. This can be the return value of create_buffer or one of the names returned by list_buffers or list_visible_buffers.")
              (list :name "start"
                    :type 'integer
-                   :description "Starting position (1-indexed) to begin reading from. If not provided, starts from the beginning."
+                   :description "Starting position (1-indexed) to begin reading from. Position 1 is BEFORE the first character. If not provided, starts from the beginning of the accessible region."
                    :optional t)
              (list :name "end"
                    :type 'integer
-                   :description "Ending position (1-indexed) to stop reading at. If not provided, reads to the end."
+                   :description "Ending position (1-indexed) to stop reading at. This position is NOT included in the result (reads up to but not including this position). If not provided, reads to the end of the accessible region."
                    :optional t)))
 
 (gptel-make-tool
@@ -421,6 +589,59 @@ the actual new name of the buffer."
                    :type 'boolean
                    :optional t
                    :description "If true, automatically make the name unique if it already exists. If false (default), raise an error if the name is already in use.")))
+
+(gptel-make-tool
+ :name "set_visited_file_name"
+ :function #'gptel-buffers--set-visited-file-name
+ :description
+ "Associate BUFFER with FILENAME. The buffer will be saved to this file when
+saved. This is useful for giving a file name to a buffer that was created
+without one, or for changing which file a buffer is associated with. If the
+file already exists, the user may be prompted for confirmation unless
+NO_QUERY is true."
+ :category "buffers"
+ :confirm t
+ :args (list (list :name "buffer"
+                   :type 'string
+                   :description "Name of the buffer to associate with a file. This can be the return value of create_buffer or one of the names returned by list_buffers or list_visible_buffers.")
+             (list :name "filename"
+                   :type 'string
+                   :description "Path to the file to associate with the buffer. Can be relative or absolute. The buffer will be saved to this location when save_buffer is called.")
+             (list :name "no_query"
+                   :type 'boolean
+                   :optional t
+                   :description "If true, proceed without asking for confirmation even if the file already exists. If false (default), may prompt the user if the file exists.")))
+
+(gptel-make-tool
+ :name "read_buffer_lines"
+ :function #'gptel-buffers--read-buffer-lines
+ :description
+ "Read specific lines from BUFFER by line number. This is more convenient than
+read_buffer when you want to extract lines by their line numbers rather than
+character positions.
+
+Lines are 1-indexed (first line is line 1). Both START_LINE and END_LINE are
+inclusive - they are both included in the result. For example, to read just
+line 5, use START_LINE=5 and END_LINE=5. To read lines 10-20, use START_LINE=10
+and END_LINE=20.
+
+If END_LINE exceeds the number of lines in the buffer, reads to the end of the
+buffer without error. This makes it easy to read 'from line N to the end' by
+using a large END_LINE value.
+
+The returned text includes newline characters (except possibly the last line if
+the buffer doesn't end with a newline). Use get_buffer_info to see the total
+buffer size, though this tool will tell you the total line count in its response."
+ :category "buffers"
+ :args (list (list :name "buffer"
+                   :type 'string
+                   :description "Name of the buffer to read lines from. This can be the return value of create_buffer or one of the names returned by list_buffers or list_visible_buffers.")
+             (list :name "start_line"
+                   :type 'integer
+                   :description "Starting line number (1-indexed, first line is 1). This line will be included in the result.")
+             (list :name "end_line"
+                   :type 'integer
+                   :description "Ending line number (1-indexed, inclusive). This line will be included in the result. If this exceeds the buffer's line count, reads to the end of the buffer.")))
 
 (provide 'gptel-buffers)
 ;;; gptel-buffers.el ends here

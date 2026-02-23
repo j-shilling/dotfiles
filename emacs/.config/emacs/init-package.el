@@ -56,6 +56,8 @@
                                     ibuffer
                                     magit
                                     magit-todos
+                                    gptel-magit
+                                    gptel-forge-prs
                                     forge
                                     helpful
                                     eglot-tempel

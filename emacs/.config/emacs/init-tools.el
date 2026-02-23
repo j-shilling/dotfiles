@@ -165,9 +165,19 @@
   :commands magit-todos-list
   :config (magit-todos-mode +1))
 
+(use-package gptel-magit
+  :if (package-installed-p 'gptel-magit)
+  :hook (magit-mode . gptel-magit-install))
+
 (use-package forge
   :if (package-installed-p 'forge)
   :after magit)
+
+(use-package gptel-forge-prs
+  :after forge
+  :if (package-installed-p 'gptel-forge-prs)
+  :config
+  (gptel-forge-prs-install))
 
 (use-package diff-hl
   :if (package-installed-p 'diff-hl)
