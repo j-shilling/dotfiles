@@ -12,7 +12,9 @@
     (password-store-get "anthropic-api-key"))
 
   :hook
-  ((gptel-post-response-functions . gptel-end-of-response))
+  ((gptel-post-response-functions . gptel-end-of-response)
+   (gptel-post-stream-hook . gptel-auto-scroll)
+   (gptel-mode-hook . gptel-highlight-mode))
 
   :config
 

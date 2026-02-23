@@ -190,7 +190,7 @@ be restricted by narrowing). Use get_buffer_info to check buffer bounds."
                                 (start . ,beg)
                                 (end . ,end)
                                 (bufferMin . ,buf-min)
-                                (bufferMax . ,buf-max)))))))
+                                (bufferMax . ,buf-max))))))))
 
 (defun gptel-buffers--insert-into-buffer (buffer text &optional position)
   "Insert TEXT into BUFFER.
