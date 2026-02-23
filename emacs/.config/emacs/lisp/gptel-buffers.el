@@ -186,6 +186,30 @@ the user to save changes."
         (structuredContent . ((message . ,msg)
                               (bufferName . ,buffer)))))))
 
+(defun gptel-buffers--rename-buffer (buffer new-name &optional unique)
+  "Rename BUFFER to NEW-NAME.
+If UNIQUE is non-nil, automatically make the name unique if it already
+exists by appending a suffix. If UNIQUE is nil and the name already
+exists, an error is raised.
+Returns the actual new name of the buffer."
+  (let ((b (get-buffer buffer)))
+    (unless (buffer-live-p b)
+      (error "Buffer %s is not live" buffer))
+    (with-current-buffer b
+      (let ((actual-name (if unique
+                             (generate-new-buffer-name new-name)
+                           (if (get-buffer new-name)
+                               (error "Buffer named %s already exists" new-name)
+                             new-name))))
+        (rename-buffer actual-name)
+        (let ((msg (format "Successfully renamed buffer %s to %s"
+                           buffer actual-name)))
+          `((content . (((type . "text")
+                         (text . ,msg))))
+            (structuredContent . ((message . ,msg)
+                                  (oldName . ,buffer)
+                                  (newName . ,actual-name)))))))))
+
 (defun gptel-buffers--get-buffer-info (buffer)
   "Get detailed information about BUFFER.
 Returns metadata including file name, modification status, size, major
@@ -377,6 +401,26 @@ with caution as this operation cannot be undone programmatically."
              (list :name "content"
                    :type 'string
                    :description "The new content to replace the buffer's current contents with.")))
+
+(gptel-make-tool
+ :name "rename_buffer"
+ :function #'gptel-buffers--rename-buffer
+ :description
+ "Rename BUFFER to NEW-NAME. If UNIQUE is true, automatically make the name
+unique if it already exists by appending a suffix (e.g., 'buffer<2>'). If
+UNIQUE is false and the name already exists, an error is raised. Returns
+the actual new name of the buffer."
+ :category "buffers"
+ :args (list (list :name "buffer"
+                   :type 'string
+                   :description "Name of the buffer to rename. This can be the return value of create_buffer or one of the names returned by list_buffers or list_visible_buffers.")
+             (list :name "new_name"
+                   :type 'string
+                   :description "The new name for the buffer.")
+             (list :name "unique"
+                   :type 'boolean
+                   :optional t
+                   :description "If true, automatically make the name unique if it already exists. If false (default), raise an error if the name is already in use.")))
 
 (provide 'gptel-buffers)
 ;;; gptel-buffers.el ends here
