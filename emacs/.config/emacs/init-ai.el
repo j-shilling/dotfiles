@@ -21,12 +21,18 @@
   (require 'init-ai-tools
            (expand-file-name "init-ai-tools.el" user-emacs-directory))
 
-  (setq gptel-backend (gptel-make-anthropic "Claude"
-                        :stream t
-                        :models '(claude-sonnet-4-5-20250929
-                                  claude-opus-4-6)
-                        :key #'init-get-anthropic-key)
-        gptel-model 'claude-sonnet-4-5-20250929
+  (defconst init-ai--claude
+    (gptel-make-anthropic "Claude"
+      :stream t
+      :models '(claude-sonnet-4-5-20250929
+                claude-opus-4-6)
+      :key #'init-get-anthropic-key))
+  (defconst init-ai--copilot
+    (gptel-make-gh-copilot "Copilot"
+      :models '(gpt-5.2)))
+
+  (setq gptel-backend init-ai--copilot
+        gptel-model 'gpt-5.2
         gptel-default-mode 'org-mode
         gptel-temperature 0.0
         gptel-cache t

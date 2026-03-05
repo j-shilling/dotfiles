@@ -29,6 +29,10 @@
   :hook
   ((after-init-hook . auto-revert-mode)))
 
+(use-package text-mode
+  :hook
+  ((text-mode-hook . auto-fill-mode)))
+
 (use-package multiple-cursors
   :if (package-installed-p 'multiple-cursors)
   :commands mc/sort-regions

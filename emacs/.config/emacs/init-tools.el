@@ -226,4 +226,9 @@
   :custom
   (transient-history-file (init-lib-cache-file "transient" "history.el")))
 
+(use-package xwidget
+  :if (featurep 'xwidget-internal)
+  :custom
+  (browse-url-browser-function 'xwidget-webkit-browse-url))
+
 ;;; init-tools.el ends here.
