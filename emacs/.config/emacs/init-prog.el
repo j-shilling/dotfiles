@@ -260,6 +260,13 @@
                '(rbs-mode
                  "steep" "langserver")))
 
+;; Golang
+
+(use-package go-ts-mode
+  :mode ("\\.go")
+  :hook
+  ((go-ts-mode-hook . eglot-ensure)))
+
 ;; Terraform
 
 (use-package terraform-mode

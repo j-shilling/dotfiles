@@ -39,7 +39,17 @@
         gptel-use-tools t
         gptel-include-tool-results t
         gptel-tools (nconc (gptel-get-tool "buffers")
-                           (gptel-get-tool "filesystem"))))
+                           (gptel-get-tool "filesystem")))
+
+  (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n"
+        (alist-get 'org-mode gptel-response-prefix-alist) "@response\n"))
+
+(use-package gptel-org
+  :if (package-installed-p 'gptel)
+  :custom
+  (gptel-org-branching-context t)
+  (gptel-org-validate-link #'always)
+  (gptel-org-ignore-elements '(property-drawer)))
 
 (use-package mcp
   :if (package-installed-p 'mcp)
