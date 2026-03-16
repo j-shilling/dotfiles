@@ -134,55 +134,7 @@ there is already a buffer called `NAME', then append a suffix to `NAME'
 ;;; xref
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun init-ai-tools--serialize-xref-location (loc)
-  (let* ((marker (xref-location-marker loc))
-         (buffer (marker-buffer marker))
-         (position (marker-position marker)))
-    `(("bufferName" . ,(buffer-name buffer))
-      ("fileName" . ,(buffer-file-name buffer))
-      ("position" . ,position))))
-
-(defun init-ai-tools--xref-find-definitions (buffer-name id)
-  (let ((xrefs (with-current-buffer (get-buffer buffer-name)
-                 (condition-case nil
-                     (funcall
-                      (xref--create-fetcher id 'definitions id))
-                   (error nil)))))
-    (json-encode
-     (mapcar #'init-ai-tools--serialize-xref-location
-             (mapcar #'xref-item-location xrefs)))))
-
-(gptel-make-tool
- :name "xref_find_definitions"
- :category "xref"
- :description
- "Search for definitions of IDENTIFIER and return a JSON array describing
-locations of all matching results. Each object in the array will contain
-a `bufferName' which provides the name of the buffer the definition can
-be found in, a `fileName' with the file that contains the definition,
-and `position' which is an integer indicating the starting point of the
-definition.
-
-If `bufferName' or `fileNmae' is null, that means there is no
-corresponding buffer or file.
-
-If no results are found, then this function returns `null'.'"
- :args
- '((:name "bufferName"
-          :type string
-          :description
-          "A name identifying which buffer to use to start the search. This defines
-which backend will be used (i.e. a buffer with JavaScript will use the
-JavaScript backend, but a buffer with lisp will use the lisp backend).
-This can be the return value of `create_buffer' or one of the names
-returned by `list_buffers', `list_visible_buffers', or similar tools.")
-   (:name "identifier"
-          :type string
-          :description
-          "The identifier to search for"))
- :function
- (lambda (buffer-name id)
-   (init-ai-tools--xref-find-definitions buffer-name id)))
+(require 'gptel-xref)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Project

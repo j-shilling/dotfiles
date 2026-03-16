@@ -33,12 +33,7 @@
 
   (add-to-list 'treesit-extra-load-path
                init-tree-sitter-grammars-directory)
-  ;; TODO:
-  ;; - https://github.com/tree-sitter/tree-sitter-c
-  ;; - https://github.com/tree-sitter-grammars/tree-sitter-csv
-  ;; - https://github.com/tree-sitter-grammars/tree-sitter-gitattributes
-  ;; - https://github.com/tree-sitter-grammars/tree-sitter-scss
-  ;; - https://github.com/tree-sitter-grammars/tree-sitter-xml
+
   (setq treesit-language-source-alist
         '((bash "https://github.com/tree-sitter/tree-sitter-bash" "v0.23.3")
           (css "https://github.com/tree-sitter/tree-sitter-css" "v0.23.2")

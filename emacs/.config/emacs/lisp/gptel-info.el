@@ -93,11 +93,11 @@ current buffer or find the first Info buffer."
                       (t (gptel-info--get-info-buffer)))))
     (unless info-buffer
       (error "No Info buffer found"))
-    
+
     (with-current-buffer info-buffer
       (unless (derived-mode-p 'Info-mode)
         (error "Buffer '%s' is not an Info buffer" (buffer-name info-buffer)))
-      
+
       (let* ((node-name Info-current-node)
              (file-name Info-current-file)
              (content (save-excursion
@@ -161,11 +161,11 @@ buffer or find the first Info buffer."
                       (t (gptel-info--get-info-buffer)))))
     (unless info-buffer
       (error "No Info buffer found"))
-    
+
     (with-current-buffer info-buffer
       (unless (derived-mode-p 'Info-mode)
         (error "Buffer '%s' is not an Info buffer" (buffer-name info-buffer)))
-      
+
       (let ((old-node Info-current-node)
             (old-file Info-current-file))
         (condition-case err
@@ -201,11 +201,11 @@ use the current buffer or find the first Info buffer."
                       (t (gptel-info--get-info-buffer)))))
     (unless info-buffer
       (error "No Info buffer found"))
-    
+
     (with-current-buffer info-buffer
       (unless (derived-mode-p 'Info-mode)
         (error "Buffer '%s' is not an Info buffer" (buffer-name info-buffer)))
-      
+
       (let ((references '())
             (case-fold-search t))
         (save-excursion
@@ -215,9 +215,9 @@ use the current buffer or find the first Info buffer."
               ;; Clean up whitespace
               (setq ref-name (replace-regexp-in-string "[ \n\t]+" " " ref-name))
               (push ref-name references))))
-        
+
         (setq references (nreverse references))
-        
+
         (let ((msg (if references
                        (format "Found %d reference(s) in node '%s':\n%s"
                                (length references)
