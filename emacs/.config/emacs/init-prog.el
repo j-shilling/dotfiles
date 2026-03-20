@@ -90,9 +90,11 @@
                 `(
                   :json ( :format (:enable nil)
                           :validate (:enable t)
-                          :schemas (
-                                    :fileMatch ["package.json"]
-                                    :url "https://www.schemastore.org/package.json"))
+                          :schemas [(
+                                     :fileMatch ["package.json"]
+                                                :url "https://www.schemastore.org/package.json")
+                                    (:fileMatch ["*.schema.json", "*.jschema"]
+                                                :url "https://json-schema.org/draft/2020-12/schema")])
                   :yaml ( :format (:enable t)
                           :validate t
                           :hover t

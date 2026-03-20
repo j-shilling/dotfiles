@@ -32,3 +32,5 @@
     path = "~/.config/git/config_cms"
 [includeIf "hasconfig:remote.*.url:https://*@github.com/CMS-Enterprise/**"]
     path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:https://*@github.com/CMSgov/**"]
+    path = "~/.config/git/config_cms"

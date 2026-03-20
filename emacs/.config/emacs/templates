@@ -5,3 +5,13 @@ ruby-base-mode
             "  " (p) n
             "  end" n
             "end")
+
+json-ts-mode
+
+(schema "{" n
+        "  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\"," n
+        "  \"$id\": \"" p "\"," n
+        "  \"title\": \"" p "\"," n
+        "  \"description\": \"" p "\"," n
+        "  \"type\": \"" p "\"" n
+        "}")
