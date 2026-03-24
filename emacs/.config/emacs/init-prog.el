@@ -93,8 +93,10 @@
                           :schemas [(
                                      :fileMatch ["package.json"]
                                                 :url "https://www.schemastore.org/package.json")
-                                    (:fileMatch ["*.schema.json", "*.jschema"]
-                                                :url "https://json-schema.org/draft/2020-12/schema")])
+                                    (:fileMatch ["*.schema.json" "*.jschema"]
+                                                :url "https://json-schema.org/draft/2020-12/schema")
+                                    (:fileMatch ["tsconfig.json" "tsconfig*.json"]
+                                                :url "https://www.schemastore.org/tsconfig.json")])
                   :yaml ( :format (:enable t)
                           :validate t
                           :hover t

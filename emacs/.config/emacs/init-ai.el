@@ -60,6 +60,7 @@
      ("mermaid" . (:command "npx" :args ("-y" "@peng-shawn/mermaid-mcp-server")))
      ("a11y" . (:command "npx" :args ("-y" "a11y-mcp")))
      ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp")))
+     ("zod" . (:url "https://mcp.inkeep.com/zod/mcp"))
      ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
      ("aws" . (:command "uvx" :args ("mcp-proxy-for-aws@latest" "https://aws-mcp.us-east-1.api.aws/mcp")))
      ("vitest" . (:command "npx" :args ("-y" "@madrus/vitest-mcp-server@latest")))

@@ -76,6 +76,7 @@
   (dired-recursive-copies 'always)
   (dired-recursive-deletes 'top)
   (dired-create-destination-dirs 'ask)
+  (dired-vc-rename-file t)
   :hook
   ((dired-mode-hook . dired-omit-mode)
    (dired-mode-hook . dired-hide-details-mode))
