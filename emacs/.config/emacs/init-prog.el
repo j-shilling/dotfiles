@@ -295,6 +295,6 @@
 
 (use-package dockerfile-ts-mode
   :if (package-installed-p 'dockerfile-ts-mode)
-  :mode (("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"))
+  :mode ("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"))
 
 ;;; init-prog.el ends here
