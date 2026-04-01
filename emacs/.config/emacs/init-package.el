@@ -51,6 +51,7 @@
                                     consult-eglot-embark
                                     multiple-cursors
                                     pass
+                                    makefile-executor
                                     wgrep
                                     diff-hl
                                     cape

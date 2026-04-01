@@ -4,6 +4,17 @@
 
 ;;; Code
 
+(use-package ai-code
+  :if (package-installed-p 'ai-code)
+  :config
+  (ai-code-set-backend 'codex)
+  (global-set-key (kbd "C-c a") #'ai-code-menu)
+  (setq ai-code-backends-infra-terminal-backend 'eat)
+  (ai-code-prompt-filepath-completion-mode 1)
+  (setq ai-code-auto-test-type 'ask-me)
+  (with-eval-after-load 'magit
+    (ai-code-magit-setup-transients)))
+
 (use-package gptel
   :if (package-installed-p 'gptel)
   :preface

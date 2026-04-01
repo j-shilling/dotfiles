@@ -232,4 +232,9 @@
   :custom
   (browse-url-browser-function 'xwidget-webkit-browse-url))
 
+(use-package makefile-executor
+  :if (package-installed-p 'makefile-executor)
+  :hook
+  ((makefile-mode-hook . makefile-executor-mode)))
+
 ;;; init-tools.el ends here.

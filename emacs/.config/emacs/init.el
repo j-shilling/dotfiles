@@ -44,6 +44,8 @@
   (toggle-debug-on-quit)
   (toggle-debug-on-error))
 
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
 (use-package emacs
   :custom
   (custom-file (init--state-file "custom.el"))
@@ -276,7 +278,5 @@
 (load (expand-file-name "./init-appearance.el" user-emacs-directory))
 (load (expand-file-name "./init-org.el" user-emacs-directory))
 (load (expand-file-name "./init-completion.el" user-emacs-directory))
-
-(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 ;;; init.el ends here
