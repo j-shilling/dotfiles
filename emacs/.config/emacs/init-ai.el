@@ -40,7 +40,7 @@
       :key #'init-get-anthropic-key))
   (defconst init-ai--copilot
     (gptel-make-gh-copilot "Copilot"
-      :models '(gpt-5.2)))
+      :models '(gpt-5.2 claude-sonnet-4.6 gpt-5.2-codex)))
 
   (setq gptel-backend init-ai--copilot
         gptel-model 'gpt-5.2
@@ -72,6 +72,7 @@
      ("a11y" . (:command "npx" :args ("-y" "a11y-mcp")))
      ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp")))
      ("zod" . (:url "https://mcp.inkeep.com/zod/mcp"))
+     ("nuxt" . (:url "https://nuxt.com/mcp"))
      ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
      ("aws" . (:command "uvx" :args ("mcp-proxy-for-aws@latest" "https://aws-mcp.us-east-1.api.aws/mcp")))
      ("vitest" . (:command "npx" :args ("-y" "@madrus/vitest-mcp-server@latest")))
