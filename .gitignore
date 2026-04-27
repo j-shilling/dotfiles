@@ -2,4 +2,5 @@
 .nrepl-port
 .aider*
 .claude/
+/.copilot/
 settings.local.json

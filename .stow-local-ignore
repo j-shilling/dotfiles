@@ -28,3 +28,12 @@
 \.claude/plugins/install-counts-cache\.json
 \.claude/plugins/known_marketplaces\.json
 \.claude/plugins/marketplaces
+
+# GitHub Copilot CLI ephemeral files
+\.copilot/config\.json
+\.copilot/command-history-state\.json
+\.copilot/logs
+\.copilot/session-state
+\.copilot/mcp-oauth-config
+\.copilot/installed-plugins
+\.copilot/ide

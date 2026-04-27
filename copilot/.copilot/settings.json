@@ -1,0 +1,28 @@
+{
+  "enabledPlugins": {
+    "awesome-copilot@awesome-copilot": true,
+    "project-planning@awesome-copilot": true,
+    "security-best-practices@awesome-copilot": true,
+    "figma@awesome-copilot": true
+  },
+  "model": "claude-opus-4.6",
+  "allowedUrls": [
+    "https://developer.hashicorp.com",
+    "https://nodejs.org"
+  ],
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
+    }
+  },
+  "showReasoning": false
+}
