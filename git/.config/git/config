@@ -28,6 +28,8 @@
 	sendmailcmd = msmtp --read-envelope-from
 [include]
     path = "~/.config/git/config_personal"
+[include]
+    path = "~/.config/git/config_local"
 [includeIf "hasconfig:remote.*.url:https://*@github.com/DSACMS/**"]
     path = "~/.config/git/config_cms"
 [includeIf "hasconfig:remote.*.url:https://*@github.com/CMS-Enterprise/**"]
