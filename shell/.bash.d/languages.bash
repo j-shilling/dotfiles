@@ -9,8 +9,17 @@ command -v pyenv >/dev/null && eval "$(pyenv init - bash)"
 
 # Node.js (NVM)
 export NVM_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    source "$NVM_DIR/nvm.sh"
+elif [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
+    export NVM_DIR="${HOME}/.nvm"
+    source "/opt/homebrew/opt/nvm/nvm.sh"
+fi
+if [[ -s "$NVM_DIR/bash_completion" ]]; then
+    source "$NVM_DIR/bash_completion"
+elif [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+fi
 
 # Node.js (pnpm)
 export PNPM_HOME="${HOME}/.local/share/pnpm"
