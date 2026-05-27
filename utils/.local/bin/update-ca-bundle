@@ -1,0 +1,87 @@
+#!/usr/bin/env sh
+set -eu
+
+cert_dir="${CERT_DIR:-${XDG_DATA_HOME:-${HOME}/.local/share}/certs}"
+zscaler_cert="${ZSCALER_CERT_PATH:-${cert_dir}/zscaler.pem}"
+bundle="${CERT_BUNDLE_PATH:-${cert_dir}/ca-bundle.pem}"
+
+find_public_bundle() {
+    if [ -n "${HOMEBREW_PREFIX:-}" ]; then
+        for path in \
+            "${HOMEBREW_PREFIX}/etc/openssl@3/cert.pem" \
+            "${HOMEBREW_PREFIX}/etc/ca-certificates/cert.pem"; do
+            if [ -r "$path" ] && [ "$path" != "$bundle" ]; then
+                printf '%s\n' "$path"
+                return 0
+            fi
+        done
+    fi
+
+    if command -v brew >/dev/null 2>&1; then
+        brew_prefix="$(brew --prefix 2>/dev/null || :)"
+        if [ -n "$brew_prefix" ]; then
+            for path in \
+                "${brew_prefix}/etc/openssl@3/cert.pem" \
+                "${brew_prefix}/etc/ca-certificates/cert.pem"; do
+                if [ -r "$path" ] && [ "$path" != "$bundle" ]; then
+                    printf '%s\n' "$path"
+                    return 0
+                fi
+            done
+        fi
+    fi
+
+    for path in \
+        /opt/homebrew/etc/openssl@3/cert.pem \
+        /opt/homebrew/etc/ca-certificates/cert.pem \
+        /usr/local/etc/openssl@3/cert.pem \
+        /usr/local/etc/ca-certificates/cert.pem \
+        /etc/ssl/cert.pem; do
+        if [ -r "$path" ] && [ "$path" != "$bundle" ]; then
+            printf '%s\n' "$path"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+if [ ! -d "$cert_dir" ]; then
+    printf 'Skipping CA bundle update; missing cert directory: %s\n' "$cert_dir" >&2
+    exit 0
+fi
+
+if [ ! -r "$zscaler_cert" ]; then
+    printf 'Skipping CA bundle update; missing Zscaler cert: %s\n' "$zscaler_cert" >&2
+    exit 0
+fi
+
+public_bundle="${PUBLIC_CA_BUNDLE:-}"
+if [ -z "$public_bundle" ]; then
+    public_bundle="$(find_public_bundle)" || {
+        printf 'Could not find a readable public CA bundle\n' >&2
+        exit 1
+    }
+fi
+
+if [ ! -r "$public_bundle" ]; then
+    printf 'Public CA bundle is not readable: %s\n' "$public_bundle" >&2
+    exit 1
+fi
+
+tmp="${bundle}.$$"
+trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
+{
+    cat "$public_bundle"
+    printf '\n'
+    cat "$zscaler_cert"
+    printf '\n'
+} >"$tmp"
+
+if [ -r "$bundle" ] && cmp -s "$tmp" "$bundle"; then
+    printf 'CA bundle already up to date: %s\n' "$bundle"
+else
+    mv "$tmp" "$bundle"
+    printf 'Updated CA bundle: %s\n' "$bundle"
+fi

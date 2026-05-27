@@ -8,6 +8,23 @@ export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_STATE_HOME="${HOME}/.local/state"
 export XDG_RUNTIME_DIR="/run/user/${UID}"
 
+# Certificate bundle overrides
+if [ -d "${XDG_DATA_HOME}/certs" ]; then
+    export CERT_DIR="${XDG_DATA_HOME}/certs"
+    export ZSCALER_CERT_PATH="${CERT_DIR}/zscaler.pem"
+    export CERT_PATH="${CERT_DIR}/ca-bundle.pem"
+
+    if [ -r "${CERT_PATH}" ]; then
+        export SSL_CERT_FILE="${CERT_PATH}"
+        export SSL_CERT_DIR="${CERT_DIR}"
+        export REQUESTS_CA_BUNDLE="${CERT_PATH}"
+    fi
+
+    if [ -r "${ZSCALER_CERT_PATH}" ]; then
+        export NODE_EXTRA_CA_CERTS="${ZSCALER_CERT_PATH}"
+    fi
+fi
+
 # Password store location
 export PASSWORD_STORE_DIR="${XDG_STATE_HOME}/password-store"
 

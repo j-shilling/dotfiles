@@ -24,3 +24,22 @@ export LSP_USE_PLISTS=true
 
 # direnv integration
 command -v direnv >/dev/null && eval "$(direnv hook bash)"
+
+# Keep the local CA bundle current after Homebrew changes.
+if command -v brew >/dev/null 2>&1; then
+    brew() {
+        command brew "$@"
+        local status=$?
+
+        case "$1" in
+            install|upgrade|reinstall|update|bundle)
+                if [ "$status" -eq 0 ] && command -v update-ca-bundle >/dev/null 2>&1; then
+                    update-ca-bundle >/dev/null 2>&1 \
+                        || printf 'update-ca-bundle failed; run it manually for details\n' >&2
+                fi
+                ;;
+        esac
+
+        return "$status"
+    }
+fi
