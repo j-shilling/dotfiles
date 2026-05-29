@@ -3,7 +3,7 @@
 	email = "shilling.jake@gmail.com"
 	signingkey = "0FCC8E6A96FF109F"
 [commit]
-    gpgsign = true
+    gpgsign = false
 [github]
 	user = j-shilling
 

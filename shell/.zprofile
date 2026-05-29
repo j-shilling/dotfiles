@@ -5,4 +5,5 @@ if [[ -f "${HOME}/.profile" ]]; then
     emulate sh -c '. "${HOME}/.profile"'
 fi
 
-export HISTFILE="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/history"
+eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+export PATH="$HOME/.tfenv/bin:$PATH"
