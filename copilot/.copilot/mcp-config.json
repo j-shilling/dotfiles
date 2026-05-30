@@ -12,7 +12,7 @@
         "hashicorp/terraform-mcp-server:0.5.1"
       ],
       "source": "user",
-      "sourcePath": "/home/jake/.copilot/mcp-config.json"
+      "sourcePath": "/Users/jake/.copilot/mcp-config.json"
     },
     "aws-mcp": {
       "tools": [
@@ -27,17 +27,7 @@
         "AWS_REGION=us-east-1"
       ],
       "source": "user",
-      "sourcePath": "/home/jake/.copilot/mcp-config.json"
-    },
-    "Linear": {
-      "tools": [
-        "*"
-      ],
-      "type": "http",
-      "url": "https://mcp.linear.app/mcp",
-      "headers": {},
-      "source": "user",
-      "sourcePath": "/home/jake/.copilot/mcp-config.json"
+      "sourcePath": "/Users/jake/.copilot/mcp-config.json"
     },
     "notion": {
       "tools": [
@@ -47,18 +37,20 @@
       "url": "https://mcp.notion.com/mcp",
       "headers": {},
       "source": "user",
-      "sourcePath": "/home/jake/.copilot/mcp-config.json"
+      "sourcePath": "/Users/jake/.copilot/mcp-config.json"
     },
     "playwright": {
-      "type": "local",
-      "command": "npx",
       "tools": [
         "*"
       ],
+      "type": "local",
+      "command": "npx",
       "args": [
         "@playwright/mcp@latest",
         "--browser=firefox"
-      ]
+      ],
+      "source": "user",
+      "sourcePath": "/Users/jake/.copilot/mcp-config.json"
     }
   }
 }
