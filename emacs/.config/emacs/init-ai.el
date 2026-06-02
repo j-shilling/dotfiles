@@ -41,6 +41,9 @@
   (defconst init-ai--copilot
     (gptel-make-gh-copilot "Copilot"
       :models '(gpt-5.2 claude-sonnet-4.6 gpt-5.2-codex)))
+  (defconst init-ai--ollama
+    (gptel-make-ollama "Ollama"
+      :models '(qwen3:8b deepseek-coder-v2:16b)))
 
   (setq gptel-backend init-ai--copilot
         gptel-model 'gpt-5.2
@@ -70,6 +73,7 @@
    `(("playwright" . (:command "npx" :args ("-y" "@playwright/mcp@latest")))
      ("mermaid" . (:command "npx" :args ("-y" "@peng-shawn/mermaid-mcp-server")))
      ("a11y" . (:command "npx" :args ("-y" "a11y-mcp")))
+     ("notion" . (:command "npx" :args ("-y" "mcp-remote" "https://mcp.notion.com/mcp")))
      ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp")))
      ("zod" . (:url "https://mcp.inkeep.com/zod/mcp"))
      ("nuxt" . (:url "https://nuxt.com/mcp"))
