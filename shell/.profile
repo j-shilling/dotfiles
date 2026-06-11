@@ -20,6 +20,19 @@ case "$(uname -s 2>/dev/null)" in
         ;;
 esac
 
+# Machine-specific secrets. Create this local file with NAME=value lines.
+if [ -z "${DOTFILES_SECRETS_LOADED:-}" ]; then
+    DOTFILES_SECRETS_FILE="${XDG_CONFIG_HOME:-${HOME}/.config}/shell/secrets.env"
+    if [ -r "${DOTFILES_SECRETS_FILE}" ]; then
+        DOTFILES_SECRETS_LOADED=1
+        case $- in
+            *a*) . "${DOTFILES_SECRETS_FILE}" ;;
+            *) set -a; . "${DOTFILES_SECRETS_FILE}"; set +a ;;
+        esac
+    fi
+    unset DOTFILES_SECRETS_FILE
+fi
+
 # Certificate bundle overrides
 if [ -d "${XDG_DATA_HOME}/certs" ]; then
     export CERT_DIR="${XDG_DATA_HOME}/certs"

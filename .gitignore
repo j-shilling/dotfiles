@@ -5,3 +5,5 @@
 /.copilot/
 settings.local.json
 .fallow/
+.config/shell/secrets.env
+.config/shell/secrets.env.*
