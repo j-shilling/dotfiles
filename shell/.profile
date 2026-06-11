@@ -6,7 +6,19 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_DATA_HOME="${HOME}/.local/share"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_STATE_HOME="${HOME}/.local/state"
-export XDG_RUNTIME_DIR="/run/user/${UID}"
+
+case "$(uname -s 2>/dev/null)" in
+    Darwin)
+        if [ -n "${TMPDIR:-}" ] && { [ -z "${XDG_RUNTIME_DIR:-}" ] || [ ! -d "${XDG_RUNTIME_DIR}" ]; }; then
+            export XDG_RUNTIME_DIR="${TMPDIR%/}"
+        fi
+        ;;
+    *)
+        if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
+            export XDG_RUNTIME_DIR="/run/user/${UID}"
+        fi
+        ;;
+esac
 
 # Certificate bundle overrides
 if [ -d "${XDG_DATA_HOME}/certs" ]; then
