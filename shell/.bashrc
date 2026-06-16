@@ -26,3 +26,6 @@ for config in "${HOME}/.bash.d"/*.bash; do
     [ -r "$config" ] && source "$config"
 done
 unset config
+
+# opencode
+export PATH=/home/jake/.opencode/bin:$PATH

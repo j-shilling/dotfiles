@@ -76,6 +76,7 @@
      ("notion" . (:command "npx" :args ("-y" "mcp-remote" "https://mcp.notion.com/mcp")))
      ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp")))
      ("zod" . (:url "https://mcp.inkeep.com/zod/mcp"))
+     ("notion" . (:command "mcp-remote" :args ("https://mcp.notion.com/sse")))
      ("nuxt" . (:url "https://nuxt.com/mcp"))
      ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
      ("aws" . (:command "uvx" :args ("mcp-proxy-for-aws@latest" "https://aws-mcp.us-east-1.api.aws/mcp")))

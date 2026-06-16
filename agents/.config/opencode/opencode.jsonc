@@ -1,0 +1,54 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "lsp": true,
+  "formatter": true,
+
+  "provider": {
+    "ollama": {
+      "name": "Ollama",
+      "api": "openai",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      }
+    }
+  },
+
+  "mcp": {
+    "grafana": {
+      "type": "remote",
+      "url": "https://mcp.grafana.com/mcp",
+      "headers": {
+        "X-Grafana-URL": "https://pathable.grafana.net"
+      }
+    },
+    "notion": {
+      "type": "remote",
+      "url": "https://mcp.notion.com/mcp",
+      "enabled": true
+    }
+  },
+
+  "tools": {
+    "notion_*": false,
+    "grafana_*": false
+  },
+
+  "agent": {
+    "grafana": {
+      "grafana_*": true,
+      "read": true,
+      "write": false,
+      "bash": false,
+      "edit": false
+    },
+    "notion-context": {
+      "tools": {
+        "notion_*": true,
+        "read": true,
+        "write": true,
+        "bash": false,
+        "edit": false
+      }
+    }
+  }
+}

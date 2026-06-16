@@ -279,6 +279,13 @@
   :hook
   ((terraform-mode-hook . eglot-ensure)))
 
+;; JSON
+
+(use-package json-ts-mode
+  :mode ("\\.json?c\\'")
+  :hook
+  ((json-mode-hook . eglot-ensure)))
+
 ;; YAML
 
 (use-package yaml-ts-mode
