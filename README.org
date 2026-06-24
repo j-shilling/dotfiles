@@ -13,6 +13,18 @@ the local Git config to the Homebrew specific config:
 ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
 #+end_src
 
+** Per-machine SSH key setup
+
+Generate an ed25519 key and upload it to GitHub for both authentication and
+commit signing:
+
+#+begin_src sh
+ssh-keygen -t ed25519 -C "shilling.jake@gmail.com" -f ~/.ssh/id_ed25519
+#+end_src
+
+Add the public key to GitHub at https://github.com/settings/keys. Add it as
+both an Authentication Key and a Signing Key (same key can be used for both).
+
 * Emacs
 
 #+begin_src sh

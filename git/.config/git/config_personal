@@ -1,9 +1,11 @@
 [user]
 	name = "Jake Shilling"
 	email = "shilling.jake@gmail.com"
-	signingkey = "0FCC8E6A96FF109F"
+	signingkey = "~/.ssh/id_ed25519.pub"
 [commit]
-    gpgsign = false
+    gpgsign = true
+[gpg]
+    format = ssh
 [github]
 	user = j-shilling
 
