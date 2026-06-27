@@ -77,7 +77,18 @@ vim ~/dotfiles/claude/.claude/agents/my-agent.md
 stow -R -d ~/dotfiles/ -t "${HOME}" --no-folding -v claude
 ```
 
+## Project context (dotfiles repo)
+
+When working in the dotfiles repository itself:
+
+- **[AGENTS.md](../AGENTS.md)** — canonical OAF manifest (Open Agent Format)
+- **[CLAUDE.md](../CLAUDE.md)** — thin bridge that imports `@AGENTS.md` for Claude Code
+- **[docs/agents/](../docs/agents/)** — progressive disclosure reference docs
+
+User-level preferences in `.claude/CLAUDE.md` (this package) apply across all projects and are separate from project context.
+
 ## See Also
 
 - [Claude Code Documentation](https://docs.claude.ai/claude-code)
-- Main dotfiles: `CLAUDE.md` in repository root
+- [Open Agent Format](https://openagentformat.com/)
+- [Harness mapping](../docs/agents/harness-mapping.md)

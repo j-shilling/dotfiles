@@ -1,0 +1,21 @@
+vendor: "j-shilling"
+server: "context7"
+version: "1.0.0"
+
+connection:
+  type: "stdio"
+  command: "npx"
+  args: ["-y", "@upstash/context7-mcp"]
+  timeout: 60
+
+auth:
+  type: "none"
+
+permissions:
+  allow_paths: []
+  deny_paths: []
+  read_only: true
+
+rate_limit:
+  requests_per_minute: 60
+  burst: 10

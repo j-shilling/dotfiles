@@ -1,0 +1,33 @@
+{
+  "vendor": "j-shilling",
+  "server": "playwright",
+  "version": "1.0.0",
+  "selectedTools": [
+    {
+      "name": "browser_navigate",
+      "enabled": true,
+      "description": "Navigate browser to a URL",
+      "required": true
+    },
+    {
+      "name": "browser_snapshot",
+      "enabled": true,
+      "description": "Capture accessibility snapshot of the page",
+      "required": true
+    },
+    {
+      "name": "browser_click",
+      "enabled": true,
+      "description": "Click an element on the page",
+      "required": false
+    },
+    {
+      "name": "browser_take_screenshot",
+      "enabled": true,
+      "description": "Take a screenshot of the current page",
+      "required": false
+    }
+  ],
+  "excludedTools": [],
+  "contextStrategy": "subset"
+}

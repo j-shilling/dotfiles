@@ -1,0 +1,21 @@
+vendor: "j-shilling"
+server: "playwright"
+version: "1.0.0"
+
+connection:
+  type: "stdio"
+  command: "npx"
+  args: ["-y", "@playwright/mcp@latest", "--browser=firefox"]
+  timeout: 120
+
+auth:
+  type: "none"
+
+permissions:
+  allow_paths: []
+  deny_paths: []
+  read_only: false
+
+rate_limit:
+  requests_per_minute: 30
+  burst: 5

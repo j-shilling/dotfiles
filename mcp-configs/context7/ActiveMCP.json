@@ -1,0 +1,21 @@
+{
+  "vendor": "j-shilling",
+  "server": "context7",
+  "version": "1.0.0",
+  "selectedTools": [
+    {
+      "name": "resolve-library-id",
+      "enabled": true,
+      "description": "Resolve a package name to a Context7 library ID",
+      "required": true
+    },
+    {
+      "name": "query-docs",
+      "enabled": true,
+      "description": "Fetch up-to-date library documentation",
+      "required": true
+    }
+  ],
+  "excludedTools": [],
+  "contextStrategy": "subset"
+}
