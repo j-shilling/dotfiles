@@ -10,9 +10,13 @@ license: "MIT"
 tags: ["dotfiles", "emacs", "stow", "linux"]
 
 skills:
-  - name: "stow-dotfiles"
+  - name: "gnu-stow"
     source: "local"
     version: "0.1.0"
+    required: false
+  - name: "stow-dotfiles"
+    source: "local"
+    version: "0.2.0"
     required: true
   - name: "emacs-config"
     source: "local"
@@ -150,7 +154,8 @@ See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for ign
 
 ## Tool Usage Patterns
 
-- **Stow changes**: activate the `stow-dotfiles` skill before adding files inside stow packages
+- **Stow CLI**: activate `gnu-stow` for stow/restow/unstow commands, flags, conflicts, and ignore-list semantics
+- **This repo's packages**: activate `stow-dotfiles` when adding files inside stow packages or running `make`
 - **Emacs edits**: activate `emacs-config` for `init-*.el` and `lisp/` work
 - **AI config**: activate `ai-integration` for `init-ai.el`, MCP, or `prompts/`
 - **MCP servers**: use configs in `mcp-configs/`; see [docs/agents/ai-integration.md](docs/agents/ai-integration.md)
@@ -161,7 +166,8 @@ See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for ign
 |-----------|-------------|
 | Edits under `emacs/.config/emacs/` | `j-shilling/emacs-maintainer` sub-agent |
 | Pre-commit review, stow safety checks | `j-shilling/config-reviewer` sub-agent |
-| Stow install/restow workflow | `stow-dotfiles` skill |
+| Stow CLI flags, conflicts, unstow/simulate | `gnu-stow` skill |
+| Stow install/restow in this repo | `stow-dotfiles` skill |
 | Deep Emacs module reference | `docs/agents/emacs-modules.md` |
 
 ## Progressive Disclosure

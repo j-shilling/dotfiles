@@ -1,5 +1,14 @@
 # Stow and Packages
 
+## Skills
+
+| Skill | Path | Use for |
+|-------|------|---------|
+| `gnu-stow` | [skills/gnu-stow/](../../skills/gnu-stow/) | Portable Stow CLI: flags, restow, unstow, conflicts, ignore lists |
+| `stow-dotfiles` | [skills/stow-dotfiles/](../../skills/stow-dotfiles/) | This repo's packages, Makefile, `.stow-local-ignore` |
+
+Deep CLI reference: [skills/gnu-stow/references/stow-cli.md](../../skills/gnu-stow/references/stow-cli.md).
+
 ## Quick reference
 
 ```bash

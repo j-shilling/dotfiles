@@ -1,68 +1,75 @@
 ---
 name: "stow-dotfiles"
 description: >
-  Install and restow GNU Stow dotfile packages in this repository. Use when
-  adding files inside stow packages, deploying config to $HOME, running make,
-  updating symlinks, or checking .stow-local-ignore rules — even if the user
-  only says "install dotfiles" or "deploy config".
+  Deploy and restow stow packages in this dotfiles repository. Use when editing
+  files inside emacs/, git/, shell/, utils/, agents/, claude/, or copilot/
+  packages, running make, checking .stow-local-ignore, or adding a new stow
+  package — even if the user only says "install dotfiles" or "deploy config".
 license: "MIT"
 metadata:
   author: "j-shilling"
-  version: "0.1.0"
+  version: "0.2.0"
 allowed-tools: ["bash", "read", "edit"]
 ---
 
-# Stow Dotfiles
+# Stow Dotfiles (this repo)
 
-## Package inventory
+For GNU Stow CLI semantics, flags, conflicts, and ignore-list rules, read the **`gnu-stow`** skill (`skills/gnu-stow/SKILL.md`).
 
-Stow packages defined in the [Makefile](Makefile):
+## Canonical command
 
-```
-emacs  git  shell  utils  agents  claude  copilot
-```
-
-Each package is a top-level directory whose contents mirror paths under `$HOME`.
-
-## Install all packages
-
-```bash
-make
-```
-
-`DOTFILES_DIR` defaults to `~/dotfiles`; `TARGET` defaults to `$HOME`.
-
-## Install or restow one package
+Matches the [Makefile](Makefile):
 
 ```bash
 stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R <package>
 ```
 
-Use `-R` to restow after adding or renaming files inside a package.
+Install all packages:
+
+```bash
+make
+```
+
+Variables: `DOTFILES_DIR` (default `~/dotfiles`), `TARGET` (default `$HOME`).
+
+## Packages
+
+| Package | Deploys to |
+|---------|------------|
+| `emacs` | `~/.config/emacs/` |
+| `git` | `~/.config/git/` |
+| `shell` | `~/` (`.bashrc`, `.zshrc`, etc.) |
+| `utils` | `~/.local/bin/` |
+| `agents` | `~/.config/opencode/` |
+| `claude` | `~/.claude/` |
+| `copilot` | `~/.copilot/` |
+
+## Workflow: add or edit a file
+
+1. Place file at the correct path inside the package (e.g. `emacs/.config/emacs/init-foo.el`)
+2. Confirm it is not excluded by [.stow-local-ignore](.stow-local-ignore)
+3. Restow: `stow -d ~/dotfiles -t ~ --no-folding -v -R <package>`
+4. Verify: `readlink <target-path>`
 
 ## Ignore rules
 
-Root [.stow-local-ignore](.stow-local-ignore) excludes:
+Root `.stow-local-ignore` excludes `.git`, `*.org`, Emacs backups, Claude/Copilot ephemeral files, `.aider*`. Package-level ignores exist (e.g. `git/.stow-local-ignore`).
 
-- `.git`, `*.org` source docs
-- Emacs backup patterns (`*.~*~`, `#*#`)
-- Claude/Copilot ephemeral files and caches
-- `.aider*` files
+## macOS git exception
 
-Package-level ignores exist (e.g. [git/.stow-local-ignore](git/.stow-local-ignore)).
+```bash
+ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
+```
 
-Before adding a new file inside a stow package, confirm it will not be excluded. Update ignore rules only when intentional.
+## Not stowed (repo root)
 
-## Adding a new file inside a package
+`AGENTS.md`, `CLAUDE.md`, `skills/`, `mcp-configs/`, `subagents/`, `docs/` — git-managed only, not symlinked to `$HOME`.
 
-1. Place the file at the correct path inside the package directory (e.g. `emacs/.config/emacs/init-foo.el`)
-2. Restow: `stow -R -d ~/dotfiles -t ~ --no-folding -v emacs`
-3. Verify the symlink at the target path
+## Adding a new package
 
-## OAF artifacts (not stowed)
+1. Create top-level directory mirroring `$HOME` paths
+2. Add name to `PKGS` in [Makefile](Makefile)
+3. Update `.stow-local-ignore` if needed
+4. `make <package>`
 
-These live at repo root and are **not** symlinked by stow:
-
-- `AGENTS.md`, `CLAUDE.md`, `skills/`, `mcp-configs/`, `subagents/`, `docs/`
-
-Do not move OAF definitions inside stow packages unless they target `$HOME`.
+See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for details.
