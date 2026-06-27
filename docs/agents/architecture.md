@@ -15,7 +15,9 @@ dotfiles/
 ├── docs/agents/           # Progressive disclosure reference (not stowed)
 ├── emacs/                 # stow → ~/.config/emacs/
 ├── git/                   # stow → ~/.config/git/
-├── shell/                 # stow → ~/ (.bashrc, .zshrc, etc.)
+├── shell/                 # stow → ~/ (.bashrc, .zshrc, direnv, gpg-agent, etc.)
+├── mail/                  # stow → ~/.config/{notmuch,msmtp,isync}/
+├── ssh/                   # stow → ~/.ssh/config
 ├── utils/                 # stow → ~/.local/bin/
 ├── agents/                # stow → ~/.config/opencode/
 ├── claude/                # stow → ~/.claude/
@@ -61,16 +63,21 @@ See [portability-and-overrides.md](portability-and-overrides.md) for the Linux/m
 `shell/` — bash and zsh with language runtime managers:
 
 - PyEnv (Python), NVM (Node.js), RVM (Ruby), GHCup (Haskell), Cargo (Rust), pnpm
+- direnv hooks, XDG user dirs, GPG agent config, `.mailcap`
 
 Runtime managers are sourced in `.bashrc` / `.zshrc`, not `.profile`.
 
 ## Email system
 
-Configured outside the main stow packages (in emacs tree or separate configs):
+`mail/.config/` — mbsync, notmuch, msmtp:
 
-- **mbsync** (isync) — Gmail → local Maildir
+- **mbsync** (isync) — Gmail → local Maildir at `~/mail/`
 - **notmuch** — indexing and search
 - **msmtp** — SMTP via Gmail with password-store
+
+## SSH configuration
+
+`ssh/.ssh/config` — host aliases and identity files. Private keys and `known_hosts` stay machine-local.
 
 ## XDG Base Directory compliance
 

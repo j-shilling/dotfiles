@@ -15,8 +15,8 @@ Account personal
 
 MaildirStore personal-local
 SubFolders Verbatim
-Path "/home/jake/mail/accounts/personal/"
-Inbox "/home/jake/mail/accounts/personal/inbox"
+Path "~/mail/accounts/personal/"
+Inbox "~/mail/accounts/personal/inbox"
 
 Channel personal-inbox
 Near ":personal-local:inbox"

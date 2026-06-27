@@ -9,3 +9,4 @@ settings.local.json
 .config/shell/secrets.env.*
 shell/.bash.d/secrets.bash
 shell/.zsh.d/secrets.zsh
+.ssh/known_hosts

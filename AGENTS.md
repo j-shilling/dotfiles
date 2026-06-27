@@ -109,7 +109,9 @@ Stow packages (see [Makefile](Makefile)):
 |---------|------------|-----------------|
 | `emacs` | `~/.config/emacs/` | Modular Emacs config, custom lisp, AI prompts |
 | `git` | `~/.config/git/` | Git config with conditional includes |
-| `shell` | `~/` | bash/zsh, language runtime managers |
+| `shell` | `~/` | bash/zsh, direnv, gpg-agent, `.mailcap`, language runtime managers |
+| `mail` | `~/.config/{notmuch,msmtp,isync}/` | mbsync, notmuch, msmtp email stack |
+| `ssh` | `~/.ssh/config` | SSH host config (keys stay local) |
 | `utils` | `~/.local/bin/` | Utility scripts |
 | `agents` | `~/.config/opencode/` | OpenCode harness overlay (not OAF definitions) |
 | `claude` | `~/.claude/` | Claude Code user settings |

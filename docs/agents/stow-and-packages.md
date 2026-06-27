@@ -22,7 +22,7 @@ make
 stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R <package>
 
 # Available packages
-emacs  git  shell  utils  agents  claude  copilot
+emacs  git  shell  mail  ssh  utils  agents  claude  copilot
 ```
 
 ## Makefile variables
@@ -50,9 +50,21 @@ ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
 
 ### shell
 
-Deploys dotfiles to `~/` (`.bashrc`, `.zshrc`, `.profile`, etc.)
+Deploys dotfiles to `~/` (`.bashrc`, `.zshrc`, `.profile`, `.mailcap`, `.config/direnv/`, `.config/user-dirs.*`, `.gnupg/gpg-agent.conf`, etc.)
 
 Language runtime managers (PyEnv, NVM, RVM, GHCup, Cargo, pnpm) are sourced here.
+
+### mail
+
+Deploys `mail/.config/{notmuch,msmtp,isync}/` → `~/.config/notmuch/`, `~/.config/msmtp/`, `~/.config/isync/`
+
+Email stack: mbsync (isync) → local Maildir, notmuch indexing, msmtp SMTP via password-store.
+
+### ssh
+
+Deploys `ssh/.ssh/config` → `~/.ssh/config`
+
+Private keys and `known_hosts` are excluded via `ssh/.stow-local-ignore` (machine-local).
 
 ### utils
 
@@ -78,21 +90,18 @@ Copilot CLI settings and MCP config. Ephemeral files excluded.
 
 ## Ignore rules
 
-Root `.stow-local-ignore` excludes:
+Package-level `.stow-local-ignore` files exclude machine-local or ephemeral files:
 
-- `.git`, `*.org` (source documentation)
-- Emacs backups (`*.~*~`, `#*#`)
-- Claude ephemeral: `.claude.json`, caches, history, sessions, plugins data
-- Copilot ephemeral: config state, logs, session state, OAuth config
-- `.aider*` files
-
-`git/.stow-local-ignore` has package-specific rules.
+- `git/.stow-local-ignore` — package-specific git rules
+- `shell/.stow-local-ignore` — `secrets.bash`, `secrets.zsh`
+- `ssh/.stow-local-ignore` — private keys, `known_hosts`
+- `claude/.stow-local-ignore`, `copilot/.stow-local-ignore` — ephemeral harness state
 
 ## Adding a new stow package
 
 1. Create a top-level directory mirroring `$HOME` paths
 2. Add the package name to `PKGS` in the Makefile
-3. Add any needed ignore rules to `.stow-local-ignore`
+3. Add any needed ignore rules to a package-level `.stow-local-ignore`
 4. Run `make <package>` or `stow -R ...`
 
 ## OAF artifacts (not stowed)

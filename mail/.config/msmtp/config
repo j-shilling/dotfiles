@@ -1,7 +1,7 @@
 defaults
 tls on
 auth on
-logfile /home/jake/.local/var/lib/log/msmtp.log
+logfile ~/.local/state/msmtp.log
 
 account personal-shilling.jake@gmail.com
 from shilling.jake@gmail.com

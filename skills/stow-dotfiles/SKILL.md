@@ -2,8 +2,8 @@
 name: "stow-dotfiles"
 description: >
   Deploy and restow stow packages in this dotfiles repository. Use when editing
-  files inside emacs/, git/, shell/, utils/, agents/, claude/, or copilot/
-  packages, running make, checking .stow-local-ignore, or adding a new stow
+  files inside emacs/, git/, shell/, mail/, ssh/, utils/, agents/, claude/, or copilot/
+  packages, running make, checking package .stow-local-ignore files, or adding a new stow
   package — even if the user only says "install dotfiles" or "deploy config".
 license: "MIT"
 metadata:
@@ -38,7 +38,9 @@ Variables: `DOTFILES_DIR` (default `~/dotfiles`), `TARGET` (default `$HOME`).
 |---------|------------|
 | `emacs` | `~/.config/emacs/` |
 | `git` | `~/.config/git/` |
-| `shell` | `~/` (`.bashrc`, `.zshrc`, etc.) |
+| `shell` | `~/` (`.bashrc`, `.zshrc`, `.mailcap`, direnv, gpg-agent, etc.) |
+| `mail` | `~/.config/{notmuch,msmtp,isync}/` |
+| `ssh` | `~/.ssh/config` |
 | `utils` | `~/.local/bin/` |
 | `agents` | `~/.config/opencode/` |
 | `claude` | `~/.claude/` |
@@ -47,13 +49,13 @@ Variables: `DOTFILES_DIR` (default `~/dotfiles`), `TARGET` (default `$HOME`).
 ## Workflow: add or edit a file
 
 1. Place file at the correct path inside the package (e.g. `emacs/.config/emacs/init-foo.el`)
-2. Confirm it is not excluded by [.stow-local-ignore](.stow-local-ignore)
+2. Confirm it is not excluded by the package's `.stow-local-ignore` if one exists
 3. Restow: `stow -d ~/dotfiles -t ~ --no-folding -v -R <package>`
 4. Verify: `readlink <target-path>`
 
 ## Ignore rules
 
-Root `.stow-local-ignore` excludes `.git`, `*.org`, Emacs backups, Claude/Copilot ephemeral files, `.aider*`. Package-level ignores exist (e.g. `git/.stow-local-ignore`, `shell/.stow-local-ignore` for `secrets.bash`/`secrets.zsh`).
+Package-level `.stow-local-ignore` files exclude machine-local or ephemeral files: `git/`, `shell/` (`secrets.bash`/`secrets.zsh`), `ssh/` (private keys, `known_hosts`), `claude/`, `copilot/`.
 
 ## Local overrides
 
@@ -79,7 +81,7 @@ ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
 
 1. Create top-level directory mirroring `$HOME` paths
 2. Add name to `PKGS` in [Makefile](Makefile)
-3. Update `.stow-local-ignore` if needed
+3. Add a package-level `.stow-local-ignore` if needed
 4. `make <package>`
 
 See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for details.

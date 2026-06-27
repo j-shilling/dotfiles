@@ -1,7 +1,9 @@
 to update run:
 
 #+begin_src sh
-stow -d /home/jake/dotfiles/ -t "${HOME}" --no-folding -v emacs
+make
+# or restow one package:
+stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R emacs
 #+end_src
 
 * Git
@@ -40,7 +42,7 @@ CC=gcc-14 \
       --with-imagemagick \
       --with-pgtk \
       --with-mailutils \
-      --with-modules --prefix=/home/jake/.local
+      --with-modules --prefix="${HOME}/.local"
 #+end_src
 
 ** deps
