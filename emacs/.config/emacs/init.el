@@ -148,7 +148,7 @@
   (set-language-environment "English")
 
   (setq-default indent-tabs-mode nil)
-  (setq-default tab-width 4)
+  (setq-default tab-width 2)
 
   (when IS-WSL
     ;; WSLg breaks copy-paste from Emacs into Windows

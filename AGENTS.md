@@ -176,7 +176,7 @@ See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for ign
 
 ## Git Conventions
 
-- Main branch: `main`
+- **Work directly on `main`** — this is a personal dotfiles repo synced between machines, not a collaborative project; do not create feature branches
 - Remote: `origin` (GitHub: j-shilling)
 - Editor: `emacsclient --reuse-frame`
 - Only commit when explicitly requested
