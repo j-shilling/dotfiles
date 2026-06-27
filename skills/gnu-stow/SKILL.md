@@ -118,4 +118,6 @@ Print operations to stderr. Levels 0–5; `-v` increments by one, `--verbose=N` 
 
 For full option tables, tree folding, ignore-list matching rules, and conflict details, read [`references/stow-cli.md`](references/stow-cli.md).
 
+For live version-specific lookup, use the **`unix-manuals`** skill (`skills/unix-manuals/SKILL.md`).
+
 Official docs: `man stow`, `info stow`, [GNU Stow manual](https://www.gnu.org/software/stow/manual/stow.html).

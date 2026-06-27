@@ -4,12 +4,16 @@ vendorKey: "j-shilling"
 agentKey: "dotfiles"
 version: "0.1.0"
 slug: "j-shilling/dotfiles"
-description: "Personal Linux dotfiles: Emacs, shell, git, and cross-tool agent config via GNU Stow"
+description: "Personal dotfiles: Emacs, shell, git, and cross-tool agent config via GNU Stow (Linux and macOS)"
 author: "@j-shilling"
 license: "MIT"
-tags: ["dotfiles", "emacs", "stow", "linux"]
+tags: ["dotfiles", "emacs", "stow", "linux", "macos"]
 
 skills:
+  - name: "unix-manuals"
+    source: "local"
+    version: "0.1.0"
+    required: false
   - name: "gnu-stow"
     source: "local"
     version: "0.1.0"
@@ -67,7 +71,7 @@ harnessConfig:
 
 # Agent Purpose
 
-Maintain a personal dotfiles repository that configures development environments across Linux machines. Agents working here should produce **stow-safe, modular, XDG-compliant** changes and respect the separation between shared repo config and machine-local secrets.
+Maintain a personal dotfiles repository that configures development environments across **Linux and macOS**, for both **personal and work** projects. Agents working here should produce **stow-safe, modular, XDG-compliant** changes, respect **local override files** for secrets and machine-specific settings, and prefer **open, cross-platform standards** (POSIX-leaning shell in shared paths; pragmatic use of platform tools when guarded).
 
 This manifest follows [Open Agent Format](https://openagentformat.com/) (OAF v0.8.0). Deep reference material lives in `docs/agents/`.
 
@@ -76,8 +80,26 @@ This manifest follows [Open Agent Format](https://openagentformat.com/) (OAF v0.
 - Edit configuration files inside stow packages without breaking symlink deployment
 - Keep Emacs config modular (`init-*.el` per domain)
 - Follow XDG Base Directory conventions for new paths
+- Support Linux, macOS, personal, and work contexts from one repo via local overrides
 - Minimize scope: focused diffs, no unrelated changes
 - Never commit secrets, credentials, or machine-specific tokens
+
+## Portability and Overrides
+
+Shared config is committed; local overrides are optional and never committed.
+
+| Context | Mechanism |
+|---------|-----------|
+| Linux / macOS | Platform checks (`IS-MAC`, `uname`, guarded paths); see Emacs `init-lib.el`, shell `.profile` |
+| Personal / work git | `config_personal` + conditional `includeIf` → `config_cms` |
+| Machine-specific git | `config_local` (e.g. macOS Homebrew symlink) |
+| Work-only shell secrets | `secrets.bash` / `secrets.zsh` in `~/.bash.d` / `~/.zsh.d` (local only) |
+| Emacs UI prefs | `custom.el` in XDG state dir |
+| Claude permissions | `settings.local.json` |
+
+**POSIX-leaning shell**: keep `.profile` POSIX-compliant; bash/zsh extensions belong in `.bash.d`/`.zsh.d`. Prefer portable constructs in shared code; do not assume GNU extensions without fallbacks or guards — but this is a guideline, not a hard rule.
+
+See [docs/agents/portability-and-overrides.md](docs/agents/portability-and-overrides.md) for the full override catalog and agent checklist.
 
 ## Repository Layout
 
@@ -141,19 +163,24 @@ See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for ign
 
 - Match existing naming and module organization in surrounding files
 - Use `init--state-file` and `init--cache-file` for new Emacs paths
-- Store API keys via `password-store`, not in repo files
+- Store API keys via `password-store` or local `secrets.*` override files, not in repo files
+- Put machine- or work-only values in documented override files (`config_local`, `secrets.bash`, etc.)
+- Prefer XDG, POSIX (in `.profile`), and guarded cross-platform paths over hardcoded Linux assumptions
+- Consult `man`/`info` (via `unix-manuals`) for niche CLI tools before guessing flags
 - Ask before creating git commits or force-pushing
 
 ### Don't
 
 - Run `git config` changes
 - Force-push to `main`
-- Commit `.env`, credentials, or OAuth tokens
+- Commit `.env`, credentials, OAuth tokens, or work-only secrets to shared files
+- Hardcode `/home/...` paths or Linux-only tool paths without macOS fallback or guards
 - Add files that violate `.stow-local-ignore` without updating ignore rules
 - Over-engineer: prefer the smallest correct diff
 
 ## Tool Usage Patterns
 
+- **Local CLI docs**: activate `unix-manuals` and consult `man`/`info` before guessing flags on niche tools
 - **Stow CLI**: activate `gnu-stow` for stow/restow/unstow commands, flags, conflicts, and ignore-list semantics
 - **This repo's packages**: activate `stow-dotfiles` when adding files inside stow packages or running `make`
 - **Emacs edits**: activate `emacs-config` for `init-*.el` and `lisp/` work
@@ -168,6 +195,7 @@ See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for ign
 | Pre-commit review, stow safety checks | `j-shilling/config-reviewer` sub-agent |
 | Stow CLI flags, conflicts, unstow/simulate | `gnu-stow` skill |
 | Stow install/restow in this repo | `stow-dotfiles` skill |
+| Unknown CLI flags, niche tool behavior | `unix-manuals` skill |
 | Deep Emacs module reference | `docs/agents/emacs-modules.md` |
 
 ## Progressive Disclosure
@@ -179,6 +207,7 @@ See [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) for ign
 | Stow packages and ignore rules | [docs/agents/stow-and-packages.md](docs/agents/stow-and-packages.md) |
 | GPTel, MCP servers, models | [docs/agents/ai-integration.md](docs/agents/ai-integration.md) |
 | Cross-tool harness mapping | [docs/agents/harness-mapping.md](docs/agents/harness-mapping.md) |
+| Portability, POSIX, local overrides | [docs/agents/portability-and-overrides.md](docs/agents/portability-and-overrides.md) |
 
 ## Git Conventions
 

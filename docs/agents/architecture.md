@@ -50,8 +50,11 @@ dotfiles/
 
 - `config` — main settings
 - `config_personal` — personal identity (default)
-- `config_cms` — work context (FunctorFactory)
+- `config_cms` — work context (CMS GitHub orgs, via `includeIf`)
 - `config_macos_homebrew` — macOS Homebrew overrides (symlinked as `config_local`)
+- `config_local` — machine-specific (not in repo; created per machine)
+
+See [portability-and-overrides.md](portability-and-overrides.md) for the Linux/macOS × personal/work model.
 
 ## Shell configuration
 

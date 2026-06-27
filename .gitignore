@@ -7,3 +7,5 @@ settings.local.json
 .fallow/
 .config/shell/secrets.env
 .config/shell/secrets.env.*
+shell/.bash.d/secrets.bash
+shell/.zsh.d/secrets.zsh

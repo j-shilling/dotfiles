@@ -53,7 +53,17 @@ Variables: `DOTFILES_DIR` (default `~/dotfiles`), `TARGET` (default `$HOME`).
 
 ## Ignore rules
 
-Root `.stow-local-ignore` excludes `.git`, `*.org`, Emacs backups, Claude/Copilot ephemeral files, `.aider*`. Package-level ignores exist (e.g. `git/.stow-local-ignore`).
+Root `.stow-local-ignore` excludes `.git`, `*.org`, Emacs backups, Claude/Copilot ephemeral files, `.aider*`. Package-level ignores exist (e.g. `git/.stow-local-ignore`, `shell/.stow-local-ignore` for `secrets.bash`/`secrets.zsh`).
+
+## Local overrides
+
+Machine- and work-specific files are never committed. See [portability-and-overrides.md](../portability-and-overrides.md).
+
+| Override | Location |
+|----------|----------|
+| Shell secrets | `~/.bash.d/secrets.bash`, `~/.zsh.d/secrets.zsh` (create locally; sourced from `security.*`) |
+| Git machine config | `~/.config/git/config_local` |
+| Git work identity | `config_cms` via `includeIf` on remote URL |
 
 ## macOS git exception
 

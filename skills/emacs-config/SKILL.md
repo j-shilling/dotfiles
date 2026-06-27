@@ -41,6 +41,12 @@ Add new domains as new `init-*.el` files; require them from `init.el`.
 3. Custom packages go in [lisp/](emacs/.config/emacs/lisp/) (markdown-ts-mode, terraform-ts-mode, erb-ts-mode, gptel-*)
 4. AI prompt templates go in [prompts/](emacs/.config/emacs/prompts/)
 5. Code snippet templates go in [templates/](emacs/.config/emacs/templates/)
+6. Platform branches: use `IS-MAC`, `IS-LINUX`, `IS-WSL` or `init-lib-*-p` — support Linux and macOS
+
+## Portability
+
+- Prefer XDG paths (`init--state-file`, `init--cache-file`) over hardcoded locations
+- See [docs/agents/portability-and-overrides.md](docs/agents/portability-and-overrides.md) for cross-platform and local override patterns
 
 ## After editing
 

@@ -4,10 +4,13 @@
 
 | Skill | Path | Use for |
 |-------|------|---------|
+| `unix-manuals` | [skills/unix-manuals/](../../skills/unix-manuals/) | How to consult `man`/`info` for niche CLI tools |
 | `gnu-stow` | [skills/gnu-stow/](../../skills/gnu-stow/) | Portable Stow CLI: flags, restow, unstow, conflicts, ignore lists |
 | `stow-dotfiles` | [skills/stow-dotfiles/](../../skills/stow-dotfiles/) | This repo's packages, Makefile, `.stow-local-ignore` |
 
 Deep CLI reference: [skills/gnu-stow/references/stow-cli.md](../../skills/gnu-stow/references/stow-cli.md).
+
+Portability and local overrides: [portability-and-overrides.md](portability-and-overrides.md).
 
 ## Quick reference
 

@@ -21,3 +21,6 @@ if [[ -z "$SSH_AUTH_SOCK" ]] && command -v ssh-agent >/dev/null 2>&1; then
         fi
     fi
 fi
+
+# Optional machine-local secrets (work-only env vars; never commit)
+[[ -r "${HOME}/.zsh.d/secrets.zsh" ]] && source "${HOME}/.zsh.d/secrets.zsh"
