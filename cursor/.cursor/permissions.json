@@ -1,0 +1,8 @@
+{
+  "mcpAllowlist": [
+    "figma:*",
+    "notion:*",
+    "plugin-figma-figma:*",
+    "plugin-notion-workspace-notion:*"
+  ]
+}

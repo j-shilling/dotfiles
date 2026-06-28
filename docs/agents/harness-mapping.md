@@ -10,7 +10,7 @@ How AI coding agents read configuration in this repository.
 
 | Tool | Reads | Bridge / overlay |
 |------|-------|------------------|
-| **Cursor** | `AGENTS.md` natively | None needed |
+| **Cursor** | `AGENTS.md` natively | [cursor/](../../cursor/) `settings.json` + `permissions.json` |
 | **Codex CLI** | `AGENTS.md` natively | [codex/.codex/](../../codex/.codex/) `config.toml` + local `config.local.toml` |
 | **OpenCode** | `AGENTS.md` + falls back to `CLAUDE.md` | [agents/.config/opencode/opencode.jsonc](../../agents/.config/opencode/opencode.jsonc) |
 | **Claude Code** | `CLAUDE.md` → `@AGENTS.md` import | User prefs: [claude/.claude/CLAUDE.md](../../claude/.claude/CLAUDE.md) (stowed) |
@@ -70,6 +70,27 @@ Stowed from `copilot/` package:
 - `mcp-config.json` — MCP servers (terraform, aws, notion, playwright)
 
 Ephemeral state (OAuth, sessions) excluded from git.
+
+## Cursor
+
+Stowed from `cursor/` package:
+
+- `.config/Cursor/User/settings.json` — editor preferences (window appearance, UI)
+- `.cursor/permissions.json` — MCP server allowlist
+
+Cursor reads `AGENTS.md` natively and supports `.cursor/rules/*.mdc` at both project
+and user level for AI behavior rules.
+
+Excluded from git (auto-generated or machine-local):
+
+- `argv.json` (unique `crash-reporter-id`)
+- `projects/`, `extensions/`, `plugins/`, `worktrees/` — agent state
+- `skills-cursor/` — cloud-synced by Cursor
+- `ai-tracking/`, `plans/`, `subagents/` — runtime state
+- `globalStorage/`, `workspaceStorage/` — VS Code-derived state
+
+Project-level `.cursor/rules/`, `.cursor/mcp.json`, and `.cursor/agents/` stay in
+each project repository (not stowed globally).
 
 ## Emacs gptel
 

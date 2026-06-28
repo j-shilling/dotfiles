@@ -74,6 +74,9 @@ harnessConfig:
   codex:
     config: "codex/.codex/config.toml"
     local-config: "codex/.codex/config.local.toml"
+  cursor:
+    config: "cursor/.config/Cursor/User/settings.json"
+    permissions: "cursor/.cursor/permissions.json"
 ---
 
 # Agent Purpose
@@ -124,6 +127,7 @@ Stow packages (see [Makefile](Makefile)):
 | `claude` | `~/.claude/` | Claude Code user settings |
 | `codex` | `~/.codex/` | Codex CLI harness overlay |
 | `copilot` | `~/.copilot/` | Copilot CLI settings and MCP config |
+| `cursor` | `~/.cursor/` + `~/.config/Cursor/` | Cursor editor settings and MCP allowlist |
 
 OAF artifacts at repo root (not stowed): `skills/`, `mcp-configs/`, `subagents/`, `docs/agents/`.
 
@@ -137,6 +141,7 @@ User-level AI harness config is stowed from dedicated packages. Each harness rea
 | Claude Code | `claude/` | `~/.claude/settings.json` (+ `CLAUDE.md` bridge at repo root) |
 | Codex CLI | `codex/` | `~/.codex/config.toml` (+ `config.local.toml` for secrets) |
 | Copilot CLI | `copilot/` | `~/.copilot/` |
+| Cursor | `cursor/` | `~/.cursor/` + `~/.config/Cursor/User/` |
 
 See [docs/agents/harness-mapping.md](docs/agents/harness-mapping.md).
 
