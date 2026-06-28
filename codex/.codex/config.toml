@@ -51,12 +51,7 @@ enabled = true
 [plugins."network-solutions@openai-curated"]
 enabled = true
 
-[profiles.ollama-launch]
-openai_base_url = "http://127.0.0.1:11434/v1/"
-model_provider = "ollama-launch"
-forced_login_method = "api"
-
-[model_providers.ollama-launch]
-name = "Ollama"
-base_url = "http://127.0.0.1:11434/v1/"
-wire_api = "responses"
+[model_providers.openrouter]
+name = "openrouter"
+base_url = "https://openrouter.ai/api/v1"
+env_key = "OPENROUTER_API_KEY"
