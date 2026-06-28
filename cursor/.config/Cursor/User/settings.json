@@ -1,5 +1,6 @@
 {
     "window.autoDetectColorScheme": true,
     "cursor.general.glassShowWarningNotifications": true,
+    "cursor.composer.model": "auto",
     "cursor.composer.subagentModel": "openrouter/pareto-code"
 }

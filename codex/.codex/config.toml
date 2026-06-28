@@ -1,6 +1,9 @@
 # Codex CLI baseline config (stowed from dotfiles).
 # Machine-specific secrets and project trust levels: config.local.toml (gitignored).
 
+model_provider = "openrouter"
+model = "openrouter/auto"
+
 [mcp_servers.linear]
 url = "https://mcp.linear.app/mcp"
 

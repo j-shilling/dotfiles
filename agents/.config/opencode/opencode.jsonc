@@ -3,7 +3,15 @@
   "lsp": true,
   "formatter": true,
 
+  "model": "openrouter/openrouter/auto",
+  "small_model": "openrouter/openrouter/auto",
+
   "provider": {
+    "openrouter": {
+      "options": {
+        "apiKey": "{env:OPENROUTER_API_KEY}"
+      }
+    },
     "ollama": {
       "name": "Ollama",
       "api": "openai",
@@ -45,6 +53,11 @@
   },
 
   "agent": {
+    "code": {
+      "mode": "subagent",
+      "model": "openrouter/pareto-code",
+      "description": "Focused code generation via pareto-optimized model. Use for code-heavy subtasks."
+    },
     "grafana": {
       "grafana_*": true,
       "read": true,
