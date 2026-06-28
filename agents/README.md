@@ -11,6 +11,7 @@ It is **not** where OAF agent definitions live. Those are at the repository root
 | `.config/opencode/opencode.jsonc` | `~/.config/opencode/opencode.jsonc` | OpenCode provider, MCP, agent tool policies |
 | `.config/opencode/skills/create-oaf-agent/` | `~/.config/opencode/skills/...` | Meta-skill for scaffolding OAF agents |
 | `.config/opencode/skills/create-agent-skill/` | `~/.config/opencode/skills/...` | Meta-skill for AgentSkills.io authoring |
+| `.config/opencode/skills/{stow-dotfiles,...}/` | `~/.config/opencode/skills/...` | Symlinks to root OAF `skills/` |
 
 ## Installation
 

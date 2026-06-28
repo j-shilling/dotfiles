@@ -11,7 +11,7 @@ How AI coding agents read configuration in this repository.
 | Tool | Reads | Bridge / overlay |
 |------|-------|------------------|
 | **Cursor** | `AGENTS.md` natively | None needed |
-| **Codex CLI** | `AGENTS.md` natively | None needed |
+| **Codex CLI** | `AGENTS.md` natively | [codex/.codex/](../../codex/.codex/) `config.toml` + local `config.local.toml` |
 | **OpenCode** | `AGENTS.md` + falls back to `CLAUDE.md` | [agents/.config/opencode/opencode.jsonc](../../agents/.config/opencode/opencode.jsonc) |
 | **Claude Code** | `CLAUDE.md` → `@AGENTS.md` import | User prefs: [claude/.claude/CLAUDE.md](../../claude/.claude/CLAUDE.md) (stowed) |
 | **Copilot CLI** | Project context varies | [copilot/.copilot/](../../copilot/.copilot/) settings + MCP |
@@ -37,6 +37,18 @@ The `agents/` stow package deploys to `~/.config/opencode/`:
 - `skills/create-agent-skill/` — meta-skill for AgentSkills.io authoring
 
 These meta-skills are harness-specific tooling, not duplicated in root `skills/`.
+
+Root OAF skills (`skills/`) are symlinked into `~/.config/opencode/skills/` for discovery alongside the meta-skills.
+
+## Codex CLI harness overlay
+
+The `codex/` stow package deploys to `~/.codex/`:
+
+- `config.toml` — plugins, shared MCP, Ollama profile
+- `config.local.toml` — secrets and project trust (gitignored; see `config.local.toml.example`)
+- `skills/` — symlinks to root `skills/`
+
+Codex reads `AGENTS.md` natively. Ephemeral state (auth, sessions, plugin cache) is excluded via `.stow-local-ignore`.
 
 ## Claude Code layers
 

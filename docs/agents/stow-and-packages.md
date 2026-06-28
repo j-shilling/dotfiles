@@ -22,7 +22,7 @@ make
 stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R <package>
 
 # Available packages
-emacs  git  shell  mail  ssh  utils  agents  claude  copilot
+emacs  git  shell  mail  ssh  utils  agents  claude  codex  copilot
 ```
 
 ## Makefile variables
@@ -82,6 +82,12 @@ Deploys `claude/.claude/` → `~/.claude/`
 
 User-level Claude Code settings. Ephemeral files excluded via `.stow-local-ignore`.
 
+### codex
+
+Deploys `codex/.codex/` → `~/.codex/`
+
+Codex CLI harness overlay: `config.toml`, skill symlinks to root `skills/`. Secrets and project trust in gitignored `config.local.toml`.
+
 ### copilot
 
 Deploys `copilot/.copilot/` → `~/.copilot/`
@@ -95,7 +101,7 @@ Package-level `.stow-local-ignore` files exclude machine-local or ephemeral file
 - `git/.stow-local-ignore` — package-specific git rules
 - `shell/.stow-local-ignore` — `secrets.bash`, `secrets.zsh`
 - `ssh/.stow-local-ignore` — private keys, `known_hosts`
-- `claude/.stow-local-ignore`, `copilot/.stow-local-ignore` — ephemeral harness state
+- `claude/.stow-local-ignore`, `codex/.stow-local-ignore`, `copilot/.stow-local-ignore` — ephemeral harness state
 
 ## Adding a new stow package
 

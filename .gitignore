@@ -1,7 +1,7 @@
 .guix-time-marker
 .nrepl-port
 .aider*
-.claude/
+/.claude/
 /.copilot/
 settings.local.json
 .fallow/
@@ -10,3 +10,4 @@ settings.local.json
 shell/.bash.d/secrets.bash
 shell/.zsh.d/secrets.zsh
 .ssh/known_hosts
+.codex/config.local.toml

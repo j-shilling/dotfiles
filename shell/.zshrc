@@ -34,4 +34,7 @@ done
 unset config
 
 # opencode
-export PATH=/Users/smta/.opencode/bin:$PATH
+for _opencode_bin in "$HOME/.opencode/bin" "$HOME/.local/bin/opencode"; do
+    [[ -d "$_opencode_bin" ]] && export PATH="$_opencode_bin:$PATH" && break
+done
+unset _opencode_bin

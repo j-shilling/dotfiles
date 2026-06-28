@@ -1,0 +1,23 @@
+# Copy to config.local.toml (gitignored) for machine-specific Codex settings.
+# cp config.local.toml.example config.local.toml
+
+# Work Grafana MCP (secrets stay local — rotate token if previously committed elsewhere)
+[mcp_servers.grafana]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.grafana.com/mcp"]
+
+[mcp_servers.grafana.env]
+GRAFANA_URL = "https://your-org.grafana.net"
+GRAFANA_SERVICE_ACCOUNT_TOKEN = "<set locally>"
+
+# Trusted project paths (add per machine)
+[projects."/home/jake/your-work-repo"]
+trust_level = "trusted"
+
+# CoachBridge or other work MCP blocks can be appended here,
+# or managed via project-local .codex/mcp/ snippets.
+
+# Filesystem MCP requires your home directory as an argument (set per machine)
+# [mcp_servers.filesystem]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-filesystem", "/home/you"]

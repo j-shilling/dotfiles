@@ -102,13 +102,38 @@ File: `init-ai-tools.el`
 3. **Prompt**: add `.md` file to `prompts/`
 4. **OAF MCP config**: add `mcp-configs/<name>/` with ActiveMCP.json + config.yaml, reference from root `AGENTS.md`
 
+## Cross-harness MCP inventory
+
+Document-only: each harness uses its native MCP config format. Update this table when adding or removing servers.
+
+| Server | OAF `mcp-configs/` | Emacs | OpenCode | Claude | Codex | Copilot |
+|--------|-------------------|-------|----------|--------|-------|---------|
+| playwright | yes | yes | yes | plugin | yes | yes |
+| context7 | yes | yes | yes | plugin | yes (baseline); work override in `config.local.toml` | — |
+| filesystem | yes | yes | — (needs `$HOME` arg; not in shared config) | — | `config.local.toml` | — |
+| notion | — | yes | yes | — | yes | yes |
+| figma | — | — | — | plugin | yes | plugin |
+| linear | — | — | — | — | yes | — |
+| grafana | — | — | yes | plugin | `config.local.toml` | — |
+| terraform | — | yes | — | — | `config.local.toml` (work) | yes |
+| aws | — | yes | — | — | `config.local.toml` (work) | yes |
+| mermaid | — | yes | — | — | — | — |
+| a11y | — | yes | — | — | — | — |
+| nuxt | — | yes | — | — | — | — |
+| fetch | — | yes | — | — | — | — |
+| vitest | — | yes | — | — | — | — |
+| zod | — | yes | — | — | — | — |
+
+Claude MCP servers are configured in ephemeral `~/.claude.json` (OAuth, sessions) — not stowed.
+
 ## Cross-harness notes
 
 | Harness | AI config location |
 |---------|-------------------|
 | Emacs gptel | `init-ai.el` (this document) |
-| Claude Code | User plugins in `claude/.claude/settings.json` |
+| Claude Code | `claude/.claude/settings.json` + plugins |
 | OpenCode | `agents/.config/opencode/opencode.jsonc` |
+| Codex CLI | `codex/.codex/config.toml` + `config.local.toml` |
 | Copilot CLI | `copilot/.copilot/mcp-config.json` |
 | Cursor | Reads root `AGENTS.md`; MCP via Cursor settings |
 

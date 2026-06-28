@@ -65,8 +65,15 @@ agents:
 harnessConfig:
   claude-code:
     progressive-disclosure: true
+    config: "claude/.claude/settings.json"
+    local-config: "claude/.claude/settings.local.json"
+    bridge: "CLAUDE.md"
   opencode:
     config: "agents/.config/opencode/opencode.jsonc"
+    skills: "skills/"
+  codex:
+    config: "codex/.codex/config.toml"
+    local-config: "codex/.codex/config.local.toml"
 ---
 
 # Agent Purpose
@@ -115,9 +122,23 @@ Stow packages (see [Makefile](Makefile)):
 | `utils` | `~/.local/bin/` | Utility scripts |
 | `agents` | `~/.config/opencode/` | OpenCode harness overlay (not OAF definitions) |
 | `claude` | `~/.claude/` | Claude Code user settings |
+| `codex` | `~/.codex/` | Codex CLI harness overlay |
 | `copilot` | `~/.copilot/` | Copilot CLI settings and MCP config |
 
 OAF artifacts at repo root (not stowed): `skills/`, `mcp-configs/`, `subagents/`, `docs/agents/`.
+
+### Harness overlays
+
+User-level AI harness config is stowed from dedicated packages. Each harness reads root `AGENTS.md` for project context; overlays hold MCP, plugins, and tool policies:
+
+| Harness | Package | Overlay path |
+|---------|---------|--------------|
+| OpenCode | `agents/` | `~/.config/opencode/opencode.jsonc` |
+| Claude Code | `claude/` | `~/.claude/settings.json` (+ `CLAUDE.md` bridge at repo root) |
+| Codex CLI | `codex/` | `~/.codex/config.toml` (+ `config.local.toml` for secrets) |
+| Copilot CLI | `copilot/` | `~/.copilot/` |
+
+See [docs/agents/harness-mapping.md](docs/agents/harness-mapping.md).
 
 ## Build and Deploy
 

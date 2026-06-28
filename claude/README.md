@@ -7,8 +7,8 @@ This stow package manages Claude Code configuration files that should be shared 
 - **`.claude/settings.json`** - User-level Claude Code settings
 - **`.claude/settings.local.json`** - Local overrides for permissions and machine-specific settings
 - **`.claude/CLAUDE.md`** - Personal user-level context provided to Claude across all projects
-- **`.claude/agents/`** - Custom subagents available across all projects
-- **`.claude/hooks/`** - User-level hook scripts
+- **`.claude/agents/`** - Custom subagents available across all projects (OAF wrappers + personal agents)
+- **`.claude/hooks/`** - User-level hook scripts (optional)
 
 ## Installation
 
@@ -26,6 +26,7 @@ The following ephemeral/sensitive files are excluded via `.stow-local-ignore`:
 - Cache directories and history files
 - Session snapshots and debugging data
 - Plugin marketplace data
+- `.credentials.json`
 
 These files are managed by Claude Code and should not be version controlled.
 
@@ -34,19 +35,27 @@ These files are managed by Claude Code and should not be version controlled.
 The `enabledPlugins` section in `settings.json` contains all installed plugins. When you stow this package on a new machine, Claude Code will prompt you to install these plugins automatically.
 
 Currently enabled plugins:
-- **frontend-design** - Production-grade frontend interfaces
-- **context7** - Context management
-- **github** - GitHub integration
-- **feature-dev** - Guided feature development
-- **code-review** - PR code review
-- **commit-commands** - Git commit/push/PR workflows
-- **typescript-lsp** - TypeScript language server
-- **security-guidance** - Security best practices
-- **playwright** - Browser automation
-- **agent-sdk-dev** - Claude Agent SDK development
-- **figma** - Figma design integration
+
+**claude-plugins-official:** frontend-design, context7, github, feature-dev, code-review, commit-commands, typescript-lsp, security-guidance, playwright, agent-sdk-dev, figma
+
+**anthropic-agent-skills:** document-skills, example-skills
+
+**claude-code-workflows:** accessibility-compliance, agent-orchestration, api-testing-observability, backend-api-security, backend-development, cicd-automation, cloud-infrastructure, code-documentation, context-management, database-design, database-migrations, deployment-strategies, developer-essentials, documentation-generation, full-stack-orchestration, functional-programming, javascript-typescript, observability-monitoring, security-compliance, security-scanning, tdd-workflows, team-collaboration
+
+**fallow-skills:** fallow
+
+**grafana-skills:** grafana-plugins, grafana-cloud, grafana-core
 
 To install plugins, run `/plugin` in Claude Code. The configuration will be automatically updated.
+
+## Subagents
+
+OAF sub-agents from `subagents/` have thin Claude wrappers in `.claude/agents/`:
+
+- `emacs-maintainer.md` — delegates to `subagents/emacs-maintainer/AGENTS.md`
+- `config-reviewer.md` — delegates to `subagents/config-reviewer/AGENTS.md`
+
+Personal agents (e.g. `effect-*-writer.md`) may exist only on specific machines under `~/.claude/agents/` and are not stowed.
 
 ## Configuration Hierarchy
 
@@ -64,6 +73,8 @@ MCP server configuration should be stored in:
 
 - **User-level**: `~/.claude.json` (not in stow, contains credentials)
 - **Project-level**: `.mcp.json` in each repository (checked into git)
+
+See [ai-integration.md](../docs/agents/ai-integration.md) for the cross-harness MCP inventory table.
 
 ## Adding Custom Subagents
 

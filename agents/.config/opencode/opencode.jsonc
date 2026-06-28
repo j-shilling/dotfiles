@@ -14,6 +14,17 @@
   },
 
   "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest", "--browser=firefox"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@upstash/context7-mcp"],
+      "enabled": true
+    },
+    // filesystem MCP requires $HOME as a final command arg — not portable in shared config
     "grafana": {
       "type": "remote",
       "url": "https://mcp.grafana.com/mcp",
