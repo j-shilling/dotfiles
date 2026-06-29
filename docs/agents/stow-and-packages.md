@@ -77,14 +77,23 @@ Deploys into multiple target directories:
 | Target | Content |
 |--------|---------|
 | `~/.claude/` | Claude Code user settings (`settings.json`, `CLAUDE.md`) |
-| `~/.codex/` | Codex CLI harness overlay (`config.toml`, skill symlinks) |
+| `~/.codex/` | Codex global guidance (`AGENTS.md`); runtime config stays local |
 | `~/.copilot/` | Copilot CLI settings and MCP config (`settings.json`, `mcp-config.json`) |
 | `~/.cursor/` | Cursor permissions (`permissions.json`) |
 | `~/.config/agents/` | User-level OAF directory (`AGENTS.md`, skills, subagents, MCP config symlinks) |
 | `~/.config/opencode/` | OpenCode harness overlay (`opencode.jsonc`) |
 | `~/.config/Cursor/User/` | Cursor editor settings (`settings.json`) |
 
-Consolidated package replacing the old separate `claude`, `codex`, `copilot`, and `cursor` packages (plus OpenCode from the original `agents` package).
+Consolidated package replacing the old separate `claude`, `codex`, `copilot`,
+and `cursor` packages, plus OpenCode from the original `agents` package.
+
+The Codex portion is intentionally narrow: it deploys
+`agents/.codex/AGENTS.md` to `~/.codex/AGENTS.md`. The live
+`~/.codex/config.toml`, profile files, auth, sessions, caches, app state,
+project trust, and plugin state are machine-local and excluded from Stow. Do
+not use `--adopt` for Codex config or state on the work laptop. User-level
+portable skills and plugin marketplace metadata belong under `~/.agents` when
+present.
 
 ## Ignore rules
 

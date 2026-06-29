@@ -1,66 +1,65 @@
-# Codex CLI Configuration
+# Codex Global Guidance
 
-This stow package deploys the **Codex CLI harness overlay** to `~/.codex/`.
-
-## Contents
+The `agents` stow package deploys one global Codex instruction file:
 
 | Path (in repo) | Deploys to | Purpose |
 |----------------|------------|---------|
-| `.codex/config.toml` | `~/.codex/config.toml` | Shared plugins, MCP, Ollama profile |
-| `.codex/config.local.toml.example` | (documentation) | Template for secrets and project trust |
-| `.codex/skills/*` | `~/.codex/skills/*` | Symlinks to root OAF `skills/` |
+| `agents/.codex/AGENTS.md` | `~/.codex/AGENTS.md` | Global Codex guidance and `~/.agents` routing |
+
+The package intentionally does **not** track Codex runtime configuration.
+`~/.codex/config.toml` is machine-local. On this work laptop it can contain
+work-account settings, Codex desktop/app state, trusted project paths, plugin
+marketplace state, feature flags, hook trust, and other settings that should not
+be copied into this shared dotfiles repo.
+
+Use `$HOME/.agents` for portable user-level agent assets when present:
+
+- `$HOME/.agents/skills/*/SKILL.md` - user-level reusable skills
+- `$HOME/.agents/plugins/marketplace.json` - personal plugin marketplace
+- `$HOME/.agents/agents` or `$HOME/.agents/subagents` - cross-harness agent
+  source material, adapted to Codex-supported custom agents when needed
 
 ## Installation
 
 ```bash
-stow -d ~/dotfiles -t "${HOME}" --no-folding -v codex
-# or: make codex
+stow -d ~/dotfiles -t "${HOME}" --no-folding -v agents
+# or: make agents
 ```
 
-If `~/.codex/config.toml` already exists as a regular file, back it up and remove it before the first stow:
+Run a dry-run first when changing this package:
 
 ```bash
-cp ~/.codex/config.toml ~/.codex/config.toml.pre-stow-backup
-mv ~/.codex/config.toml ~/.codex/config.toml.bak
-make codex
-# Merge any needed sections from the backup into config.local.toml
+stow -d ~/dotfiles -t "${HOME}" --no-folding -v -n -R agents
 ```
 
-## Local overrides
+Do not use `--adopt` for this package on the work laptop. The existing
+`~/.codex/config.toml` should remain a regular local file managed by Codex and
+manual local edits, not a Stow symlink.
 
-Copy and edit secrets locally (never committed):
+Keep local `~/.codex` state for:
 
-```bash
-cp ~/dotfiles/codex/.codex/config.local.toml.example ~/.codex/config.local.toml
-```
-
-Codex merges `config.toml` with `config.local.toml`. Use local config for:
-
+- Work OpenAI / ChatGPT account model settings
+- Codex desktop/app settings
+- Installed plugin and marketplace state
 - Grafana or other MCP credentials
 - `[projects."..."]` trust levels
-- Work-project MCP blocks (e.g. CoachBridge `.codex/mcp/`)
-
-## Skills
-
-Root OAF skills in `skills/` are symlinked into `~/.codex/skills/` for discovery. Project-specific skills stay in each repo's `.codex/skills/`.
+- Work-project MCP blocks
 
 ## What's NOT included
 
-Excluded via `.stow-local-ignore`:
+Excluded via `agents/.stow-local-ignore`:
 
+- `config.toml` (machine-local live Codex settings)
+- `*.config.toml` profile files and `config.local.toml` (machine secrets)
 - `auth.json`, sessions, cache, plugins cache, SQLite state
-- `config.local.toml` (machine secrets)
+- `skills/` (use `$HOME/.agents/skills` instead)
 
-## Project context (dotfiles repo)
+## Project Context
 
-- **[AGENTS.md](../AGENTS.md)** — canonical OAF manifest (Codex reads natively)
-- **[docs/agents/harness-mapping.md](../docs/agents/harness-mapping.md)** — cross-harness mapping
+- **[AGENTS.md](../../AGENTS.md)** - canonical OAF manifest (Codex reads natively)
+- **[docs/agents/harness-mapping.md](../../docs/agents/harness-mapping.md)** - cross-harness mapping
 
-## Security note
+## See Also
 
-If a Grafana service account token was ever stored in a committed config file, rotate it in Grafana Cloud and keep the new value only in `config.local.toml`.
-
-## See also
-
-- [Harness mapping](../docs/agents/harness-mapping.md)
-- [Portability and overrides](../docs/agents/portability-and-overrides.md)
+- [Harness mapping](../../docs/agents/harness-mapping.md)
+- [Portability and overrides](../../docs/agents/portability-and-overrides.md)

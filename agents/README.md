@@ -1,17 +1,22 @@
 # Agents Stow Package
 
-This stow package deploys the **OpenCode harness overlay** to `~/.config/opencode/`.
-
-It is **not** where OAF agent definitions live. Those are at the repository root.
+This stow package deploys user-level AI harness configuration for Claude Code,
+Codex, Copilot CLI, Cursor, OpenCode, and the user-level OAF directory.
 
 ## What this package contains
 
 | Path (in repo) | Deploys to | Purpose |
 |----------------|------------|---------|
+| `.claude/` | `~/.claude/` | Claude Code user settings and bridge instructions |
+| `.codex/AGENTS.md` | `~/.codex/AGENTS.md` | Global Codex guidance; runtime config stays local |
+| `.copilot/` | `~/.copilot/` | Copilot CLI settings and MCP config |
+| `.cursor/permissions.json` | `~/.cursor/permissions.json` | Cursor permission allowlist |
+| `.config/Cursor/User/settings.json` | `~/.config/Cursor/User/settings.json` | Cursor editor settings |
+| `.config/agents/` | `~/.config/agents/` | User-level OAF manifest, meta-skills, MCP, and sub-agent links |
 | `.config/opencode/opencode.jsonc` | `~/.config/opencode/opencode.jsonc` | OpenCode provider, MCP, agent tool policies |
-| `.config/opencode/skills/create-oaf-agent/` | `~/.config/opencode/skills/...` | Meta-skill for scaffolding OAF agents |
-| `.config/opencode/skills/create-agent-skill/` | `~/.config/opencode/skills/...` | Meta-skill for AgentSkills.io authoring |
-| `.config/opencode/skills/{stow-dotfiles,...}/` | `~/.config/opencode/skills/...` | Symlinks to root OAF `skills/` |
+
+The package intentionally does not track `~/.codex/config.toml`, Codex profile
+files, auth, sessions, plugin cache, or other machine-local Codex state.
 
 ## Installation
 
@@ -20,9 +25,9 @@ stow -d ~/dotfiles -t "${HOME}" --no-folding -v agents
 # or: make agents
 ```
 
-## OAF definitions (repo root, not stowed)
+## Project-Level OAF Definitions
 
-Cross-tool agent configuration lives outside this package:
+Project-level cross-tool agent configuration lives outside this package:
 
 | Path | Purpose |
 |------|---------|
@@ -33,7 +38,9 @@ Cross-tool agent configuration lives outside this package:
 | [subagents/](../subagents/) | OAF sub-agent definitions |
 | [docs/agents/](../docs/agents/) | Reference documentation |
 
-OpenCode reads `AGENTS.md` natively and uses `opencode.jsonc` as a harness overlay.
+OpenCode reads `AGENTS.md` natively and uses `opencode.jsonc` as a harness
+overlay. Codex reads the repo root `AGENTS.md` for project context and
+`~/.codex/AGENTS.md` for global guidance.
 
 ## See Also
 

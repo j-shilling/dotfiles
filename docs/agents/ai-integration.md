@@ -109,14 +109,14 @@ Document-only: each harness uses its native MCP config format. Update this table
 | Server | OAF `mcp-configs/` | Emacs | OpenCode | Claude | Codex | Copilot |
 |--------|-------------------|-------|----------|--------|-------|---------|
 | playwright | yes | yes | yes | plugin | yes | yes |
-| context7 | yes | yes | yes | plugin | yes (baseline); work override in `config.local.toml` | — |
-| filesystem | yes | yes | — (needs `$HOME` arg; not in shared config) | — | `config.local.toml` | — |
+| context7 | yes | yes | yes | plugin | local `~/.codex/config.toml` or plugin | — |
+| filesystem | yes | yes | — (needs `$HOME` arg; not in shared config) | — | local `~/.codex/config.toml` | — |
 | notion | — | yes | yes | — | yes | yes |
 | figma | — | — | — | plugin | yes | plugin |
 | linear | — | — | — | — | yes | — |
-| grafana | — | — | yes | plugin | `config.local.toml` | — |
-| terraform | — | yes | — | — | `config.local.toml` (work) | yes |
-| aws | — | yes | — | — | `config.local.toml` (work) | yes |
+| grafana | — | — | yes | plugin | local work Codex config | — |
+| terraform | — | yes | — | — | local work Codex config | yes |
+| aws | — | yes | — | — | local work Codex config | yes |
 | mermaid | — | yes | — | — | — | — |
 | a11y | — | yes | — | — | — | — |
 | nuxt | — | yes | — | — | — | — |
@@ -131,10 +131,10 @@ Claude MCP servers are configured in ephemeral `~/.claude.json` (OAuth, sessions
 | Harness | AI config location |
 |---------|-------------------|
 | Emacs gptel | `init-ai.el` (this document) |
-| Claude Code | `claude/.claude/settings.json` + plugins |
+| Claude Code | `agents/.claude/settings.json` + plugins |
 | OpenCode | `agents/.config/opencode/opencode.jsonc` |
-| Codex CLI | `codex/.codex/config.toml` + `config.local.toml` |
-| Copilot CLI | `copilot/.copilot/mcp-config.json` |
+| Codex CLI | local `~/.codex/config.toml`; stowed `~/.codex/AGENTS.md`; user skills/plugins under `~/.agents` |
+| Copilot CLI | `agents/.copilot/mcp-config.json` |
 | Cursor | Reads root `AGENTS.md`; MCP via Cursor settings |
 
 See [harness-mapping.md](harness-mapping.md) for how each tool reads the OAF manifest.

@@ -13,14 +13,14 @@ Two OAF manifests work together:
 
 ## Tool-by-tool mapping
 
-| Tool | Reads | Bridge / overlay (from `agents/` package) |
-|------|-------|-------------------------------------------|
-| **Cursor** | `AGENTS.md` natively | `~/.config/Cursor/User/settings.json` + `~/.cursor/permissions.json` |
-| **Codex CLI** | `AGENTS.md` natively | `~/.codex/config.toml` + local `config.local.toml` |
-| **OpenCode** | `AGENTS.md` + falls back to `CLAUDE.md` | `~/.config/opencode/opencode.jsonc` (points at `~/.config/agents/skills/`) |
-| **Claude Code** | `CLAUDE.md` → `@AGENTS.md` import | User prefs: `~/.claude/CLAUDE.md` + `~/.claude/settings.json` |
-| **Copilot CLI** | Project context varies | `~/.copilot/settings.json` + `mcp-config.json` |
-| **Emacs gptel** | Own config | `init-ai.el` — separate harness |
+| Tool | Reads | Bridge / overlay |
+|------|-------|------------------|
+| **Cursor** | `AGENTS.md` natively | [Cursor settings](../../agents/.config/Cursor/User/settings.json) + [permissions](../../agents/.cursor/permissions.json) |
+| **Codex CLI** | `AGENTS.md` natively | [global guidance](../../agents/.codex/AGENTS.md); live `~/.codex/config.toml` stays local |
+| **OpenCode** | `AGENTS.md` + falls back to `CLAUDE.md` | [agents/.config/opencode/opencode.jsonc](../../agents/.config/opencode/opencode.jsonc) |
+| **Claude Code** | `CLAUDE.md` -> `@AGENTS.md` import | User prefs: [agents/.claude/CLAUDE.md](../../agents/.claude/CLAUDE.md) + [settings](../../agents/.claude/settings.json) |
+| **Copilot CLI** | Project context varies | [agents/.copilot/](../../agents/.copilot/) settings + MCP |
+| **Emacs gptel** | Own config | [init-ai.el](../../emacs/.config/emacs/init-ai.el) - separate harness |
 
 ## File roles
 
@@ -35,6 +35,10 @@ docs/agents/           ← Progressive disclosure reference
 ```
 
 ## User-level OAF directory (`~/.config/agents/`)
+
+User-level portable Codex assets belong under `~/.agents` when present:
+`~/.agents/skills`, `~/.agents/plugins/marketplace.json`, and any cross-harness
+agent source material in `~/.agents/agents` or `~/.agents/subagents`.
 
 The `~/.config/agents/` directory is the canonical user-level OAF home, deployed from the `agents/` package:
 
@@ -53,9 +57,25 @@ The `~/.config/agents/` directory is the canonical user-level OAF home, deployed
 
 - **OpenCode**: `opencode.jsonc` references `~/.config/agents/skills/` in its `skills.dirs` array
 - **Claude Code**: `~/.claude/CLAUDE.md` references `~/.config/agents/AGENTS.md` alongside `@AGENTS.md`
-- **Codex CLI**: Reads root `AGENTS.md` natively; Codex-specific config in `~/.codex/config.toml`
+- **Codex CLI**: Reads root `AGENTS.md` natively, reads `~/.codex/AGENTS.md` for global guidance, and keeps runtime config in local `~/.codex/config.toml`
 - **Cursor**: Reads root `AGENTS.md` natively; can also discover `~/.config/agents/` through skill discovery
 - **Copilot CLI**: Does not support OAF; uses native `~/.copilot/settings.json` and `mcp-config.json`
+
+User-level meta-skills live under `~/.config/agents/skills/`. Root repo skills
+remain under `skills/` for project-level dotfiles work.
+
+## Codex global guidance
+
+The unified `agents/` stow package deploys one file to `~/.codex/`:
+
+- `AGENTS.md` - global Codex guidance that points Codex at `~/.agents` for
+  portable user-level skills, plugin marketplace metadata, and agent source
+  material when present.
+
+Codex reads `AGENTS.md` natively. The live `~/.codex/config.toml`, profile
+files such as `~/.codex/work.config.toml`, auth, sessions, plugin cache, SQLite
+state, memories, history, and logs are machine-local and excluded from Stow.
+Do not use Stow `--adopt` on Codex config or state.
 
 ## Claude Code layers
 
@@ -78,13 +98,13 @@ Config at `~/.config/opencode/opencode.jsonc`:
 - Skills discovery via `~/.config/agents/skills/` and `.opencode/skills/`
 - OpenCode also discovers `~/.config/agents/agents/` for user-level agent definitions
 
-## Codex CLI harness overlay
+## Codex CLI
 
-Config at `~/.codex/config.toml`:
+Global guidance at `~/.codex/AGENTS.md`:
 
-- Model provider, MCP servers, plugins
-- `config.local.toml` for secrets and project trust (gitignored)
+- Points Codex at portable user-level assets under `~/.agents`
 - Reads root `AGENTS.md` natively for project context
+- Leaves model providers, MCP servers, plugins, profiles, secrets, and project trust in local `~/.codex/config.toml` and related profile files
 
 ## Copilot CLI
 

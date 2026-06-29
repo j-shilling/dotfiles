@@ -72,8 +72,10 @@ harnessConfig:
     config: "agents/.config/opencode/opencode.jsonc"
     skills: "skills/"
   codex:
-    config: "agents/.codex/config.toml"
-    local-config: "agents/.codex/config.local.toml"
+    global-instructions: "agents/.codex/AGENTS.md"
+    local-config: "~/.codex/config.toml (not tracked)"
+    user-skills: "~/.agents/skills"
+    personal-marketplace: "~/.agents/plugins/marketplace.json"
   cursor:
     config: "agents/.config/Cursor/User/settings.json"
     permissions: "agents/.cursor/permissions.json"
@@ -123,22 +125,25 @@ Stow packages (see [Makefile](Makefile)):
 | `mail` | `~/.config/{notmuch,msmtp,isync}/` | mbsync, notmuch, msmtp email stack |
 | `ssh` | `~/.ssh/config` | SSH host config (keys stay local) |
 | `utils` | `~/.local/bin/` | Utility scripts |
-| `agents` | `~/.claude/`, `~/.codex/`, `~/.copilot/`, `~/.cursor/`, `~/.config/agents/`, `~/.config/opencode/`, `~/.config/Cursor/User/` | Consolidated AI harness configs (Claude Code, Codex CLI, Copilot CLI, Cursor, OpenCode) + user-level OAF directory |
+| `agents` | `~/.claude/`, `~/.codex/`, `~/.copilot/`, `~/.cursor/`, `~/.config/agents/`, `~/.config/opencode/`, `~/.config/Cursor/User/` | Consolidated AI harness configs and user-level OAF directory; Codex only stows global guidance, while runtime config stays local |
 
 OAF artifacts at repo root (not stowed): `skills/`, `mcp-configs/`, `subagents/`, `docs/agents/`.
 User-level OAF artifacts are stowed from `agents/.config/agents/` to `~/.config/agents/`.
 
 ### Harness overlays (single `agents` package)
 
-User-level AI harness config is stowed from the unified `agents` package. Each harness reads root `AGENTS.md` for project context; overlays hold MCP, plugins, and tool policies:
+User-level AI harness config is stowed from the unified `agents` package when it
+is safe to share. Codex runtime settings stay local; only global Codex guidance
+is stowed to `~/.codex/AGENTS.md`. Portable Codex skills and plugin marketplace
+metadata live under `~/.agents` when present.
 
 | Harness | Overlay path | Adaptor |
 |---------|--------------|---------|
-| OpenCode | `~/.config/opencode/opencode.jsonc` | Direct — reads `~/.config/agents/skills/` for user-level skills |
-| Claude Code | `~/.claude/settings.json` + `~/.claude/CLAUDE.md` | Bridge — `CLAUDE.md` references `~/.config/agents/AGENTS.md` |
-| Codex CLI | `~/.codex/config.toml` (+ `config.local.toml` for secrets) | Native — reads root `AGENTS.md` |
-| Copilot CLI | `~/.copilot/settings.json` + `mcp-config.json` | Native format (no OAF adaptor yet) |
-| Cursor | `~/.config/Cursor/User/settings.json` + `~/.cursor/permissions.json` | Native — reads root `AGENTS.md` |
+| OpenCode | `~/.config/opencode/opencode.jsonc` | Direct - reads `~/.config/agents/skills/` for user-level skills |
+| Claude Code | `~/.claude/settings.json` + `~/.claude/CLAUDE.md` | Bridge - `CLAUDE.md` references `~/.config/agents/AGENTS.md` |
+| Codex CLI | `~/.codex/AGENTS.md`; local `~/.codex/config.toml` is not tracked | Native - reads root `AGENTS.md` |
+| Copilot CLI | `~/.copilot/settings.json` + `mcp-config.json` | Native format; no OAF adaptor yet |
+| Cursor | `~/.config/Cursor/User/settings.json` + `~/.cursor/permissions.json` | Native - reads root `AGENTS.md` |
 
 See [docs/agents/harness-mapping.md](docs/agents/harness-mapping.md).
 

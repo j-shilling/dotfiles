@@ -16,13 +16,18 @@
 ^\.claude/\.credentials\.json$
 
 # === Runtime caches (from codex) ===
+^\.codex/config\.toml$
+^\.codex/.*\.config\.toml$
+^\.codex/config\.local\.toml$
+^\.codex/auth\.json$
+^\.codex/skills(/|$)
 ^\.codex/cache/
 ^\.codex/sessions/
 ^\.codex/plugins/
 ^\.codex/.*\.sqlite$
 ^\.codex/.*\.sqlite-.*$
 ^\.codex/history\.jsonl$
-^\.codex/^log$
+^\.codex/log$
 ^\.codex/memories/
 ^\.codex/shell_snapshots/
 ^\.codex/\.tmp/
@@ -46,8 +51,6 @@
 
 # === Local overrides ===
 ^\.claude/settings\.local\.json$
-^\.codex/config\.local\.toml$
-^\.codex/auth\.json$
 ^\.codex/\.tmp$
 ^\.cursor/\.cursor/permissions\.local\.json$
 ^\.config/Cursor/User/settings\.local\.json$
