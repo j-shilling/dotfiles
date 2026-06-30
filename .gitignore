@@ -11,3 +11,4 @@ shell/.bash.d/secrets.bash
 shell/.zsh.d/secrets.zsh
 .ssh/known_hosts
 .codex/config.local.toml
+# Consolidated via agents/ package (claude, codex, copilot, cursor, opencode)

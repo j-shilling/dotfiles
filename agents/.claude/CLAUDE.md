@@ -20,3 +20,10 @@ This is my personal user-level context for Claude Code across all projects.
 - XDG Base Directory compliance for all configurations
 - Modular organization: split large configs into focused files
 - Literate programming: documentation lives alongside code
+
+## OAF User-Level Config
+
+User-level agents, skills, and MCP configs follow the Open Agent Format (OAF) and are
+discoverable at `~/.config/agents/AGENTS.md`. This provides meta-skills for creating
+OAF agents and AgentSkills.io skill definitions, composed with the project-level
+`AGENTS.md` in the dotfiles repo.

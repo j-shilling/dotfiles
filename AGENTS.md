@@ -65,18 +65,18 @@ agents:
 harnessConfig:
   claude-code:
     progressive-disclosure: true
-    config: "claude/.claude/settings.json"
-    local-config: "claude/.claude/settings.local.json"
+    config: "agents/.claude/settings.json"
+    local-config: "agents/.claude/settings.local.json"
     bridge: "CLAUDE.md"
   opencode:
     config: "agents/.config/opencode/opencode.jsonc"
     skills: "skills/"
   codex:
-    config: "codex/.codex/config.toml"
-    local-config: "codex/.codex/config.local.toml"
+    config: "agents/.codex/config.toml"
+    local-config: "agents/.codex/config.local.toml"
   cursor:
-    config: "cursor/.config/Cursor/User/settings.json"
-    permissions: "cursor/.cursor/permissions.json"
+    config: "agents/.config/Cursor/User/settings.json"
+    permissions: "agents/.cursor/permissions.json"
 ---
 
 # Agent Purpose
@@ -123,25 +123,22 @@ Stow packages (see [Makefile](Makefile)):
 | `mail` | `~/.config/{notmuch,msmtp,isync}/` | mbsync, notmuch, msmtp email stack |
 | `ssh` | `~/.ssh/config` | SSH host config (keys stay local) |
 | `utils` | `~/.local/bin/` | Utility scripts |
-| `agents` | `~/.config/opencode/` | OpenCode harness overlay (not OAF definitions) |
-| `claude` | `~/.claude/` | Claude Code user settings |
-| `codex` | `~/.codex/` | Codex CLI harness overlay |
-| `copilot` | `~/.copilot/` | Copilot CLI settings and MCP config |
-| `cursor` | `~/.cursor/` + `~/.config/Cursor/` | Cursor editor settings and MCP allowlist |
+| `agents` | `~/.claude/`, `~/.codex/`, `~/.copilot/`, `~/.cursor/`, `~/.config/agents/`, `~/.config/opencode/`, `~/.config/Cursor/User/` | Consolidated AI harness configs (Claude Code, Codex CLI, Copilot CLI, Cursor, OpenCode) + user-level OAF directory |
 
 OAF artifacts at repo root (not stowed): `skills/`, `mcp-configs/`, `subagents/`, `docs/agents/`.
+User-level OAF artifacts are stowed from `agents/.config/agents/` to `~/.config/agents/`.
 
-### Harness overlays
+### Harness overlays (single `agents` package)
 
-User-level AI harness config is stowed from dedicated packages. Each harness reads root `AGENTS.md` for project context; overlays hold MCP, plugins, and tool policies:
+User-level AI harness config is stowed from the unified `agents` package. Each harness reads root `AGENTS.md` for project context; overlays hold MCP, plugins, and tool policies:
 
-| Harness | Package | Overlay path |
-|---------|---------|--------------|
-| OpenCode | `agents/` | `~/.config/opencode/opencode.jsonc` |
-| Claude Code | `claude/` | `~/.claude/settings.json` (+ `CLAUDE.md` bridge at repo root) |
-| Codex CLI | `codex/` | `~/.codex/config.toml` (+ `config.local.toml` for secrets) |
-| Copilot CLI | `copilot/` | `~/.copilot/` |
-| Cursor | `cursor/` | `~/.cursor/` + `~/.config/Cursor/User/` |
+| Harness | Overlay path | Adaptor |
+|---------|--------------|---------|
+| OpenCode | `~/.config/opencode/opencode.jsonc` | Direct — reads `~/.config/agents/skills/` for user-level skills |
+| Claude Code | `~/.claude/settings.json` + `~/.claude/CLAUDE.md` | Bridge — `CLAUDE.md` references `~/.config/agents/AGENTS.md` |
+| Codex CLI | `~/.codex/config.toml` (+ `config.local.toml` for secrets) | Native — reads root `AGENTS.md` |
+| Copilot CLI | `~/.copilot/settings.json` + `mcp-config.json` | Native format (no OAF adaptor yet) |
+| Cursor | `~/.config/Cursor/User/settings.json` + `~/.cursor/permissions.json` | Native — reads root `AGENTS.md` |
 
 See [docs/agents/harness-mapping.md](docs/agents/harness-mapping.md).
 
@@ -152,6 +149,16 @@ Install all packages:
 ```bash
 make
 # equivalent to: stow -d ~/dotfiles -t ~ --no-folding -v -R <pkg> for each package
+```
+
+**Note:** The old `claude`, `codex`, `copilot`, and `cursor` packages have been consolidated into the single `agents` package. If upgrading, unstow the old packages first:
+
+```bash
+stow -d ~/dotfiles -t ~ --no-folding -v -D claude
+stow -d ~/dotfiles -t ~ --no-folding -v -D codex
+stow -d ~/dotfiles -t ~ --no-folding -v -D copilot
+stow -d ~/dotfiles -t ~ --no-folding -v -D cursor
+make agents
 ```
 
 Install or restow a single package:

@@ -30,8 +30,8 @@ Override files are **optional**, **gitignored or stow-ignored**, and **sourced c
 | Shell | `.profile`, `.bash.d/*`, `.zsh.d/*` | `secrets.bash`, `secrets.zsh` | Work-only API keys/env; create on machine, never commit |
 | Shell | `.profile` | — | Keep POSIX-compliant; sets XDG vars on both platforms |
 | Emacs | `init-*.el` | `custom.el` in XDG state dir | Via `(custom-file (init--state-file "custom.el"))` |
-| Claude Code | `settings.json` (stowed) | `settings.local.json` | Permissions and machine overrides |
-| Codex CLI | `config.toml` (stowed) | `config.local.toml` | MCP secrets, project trust, work MCP blocks |
+| Claude Code | `agents/.claude/settings.json` (stowed) | `agents/.claude/settings.local.json` | Permissions and machine overrides |
+| Codex CLI | `agents/.codex/config.toml` (stowed) | `agents/.codex/config.local.toml` | MCP secrets, project trust, work MCP blocks |
 | API keys | — | `password-store`, env | Never in repo; `init-ai.el` uses password-store |
 
 ### Git local setup (macOS)

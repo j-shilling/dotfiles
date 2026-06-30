@@ -22,7 +22,7 @@ make
 stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R <package>
 
 # Available packages
-emacs  git  shell  mail  ssh  utils  agents  claude  codex  copilot
+emacs  git  shell  mail  ssh  utils  agents
 ```
 
 ## Makefile variables
@@ -72,27 +72,19 @@ Deploys `utils/.local/bin/` → `~/.local/bin/`
 
 ### agents
 
-Deploys `agents/.config/opencode/` → `~/.config/opencode/`
+Deploys into multiple target directories:
 
-This is the **OpenCode harness overlay**, not OAF agent definitions. OAF manifests live at repo root.
+| Target | Content |
+|--------|---------|
+| `~/.claude/` | Claude Code user settings (`settings.json`, `CLAUDE.md`) |
+| `~/.codex/` | Codex CLI harness overlay (`config.toml`, skill symlinks) |
+| `~/.copilot/` | Copilot CLI settings and MCP config (`settings.json`, `mcp-config.json`) |
+| `~/.cursor/` | Cursor permissions (`permissions.json`) |
+| `~/.config/agents/` | User-level OAF directory (`AGENTS.md`, skills, subagents, MCP config symlinks) |
+| `~/.config/opencode/` | OpenCode harness overlay (`opencode.jsonc`) |
+| `~/.config/Cursor/User/` | Cursor editor settings (`settings.json`) |
 
-### claude
-
-Deploys `claude/.claude/` → `~/.claude/`
-
-User-level Claude Code settings. Ephemeral files excluded via `.stow-local-ignore`.
-
-### codex
-
-Deploys `codex/.codex/` → `~/.codex/`
-
-Codex CLI harness overlay: `config.toml`, skill symlinks to root `skills/`. Secrets and project trust in gitignored `config.local.toml`.
-
-### copilot
-
-Deploys `copilot/.copilot/` → `~/.copilot/`
-
-Copilot CLI settings and MCP config. Ephemeral files excluded.
+Consolidated package replacing the old separate `claude`, `codex`, `copilot`, and `cursor` packages (plus OpenCode from the original `agents` package).
 
 ## Ignore rules
 
@@ -101,7 +93,7 @@ Package-level `.stow-local-ignore` files exclude machine-local or ephemeral file
 - `git/.stow-local-ignore` — package-specific git rules
 - `shell/.stow-local-ignore` — `secrets.bash`, `secrets.zsh`
 - `ssh/.stow-local-ignore` — private keys, `known_hosts`
-- `claude/.stow-local-ignore`, `codex/.stow-local-ignore`, `copilot/.stow-local-ignore` — ephemeral harness state
+- `agents/.stow-local-ignore` — ephemeral harness state for all consolidated agent configs
 
 ## Adding a new stow package
 

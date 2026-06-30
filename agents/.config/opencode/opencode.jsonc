@@ -3,6 +3,13 @@
   "lsp": true,
   "formatter": true,
 
+  "skills": {
+    "dirs": [
+      "~/.config/agents/skills/",
+      ".opencode/skills/"
+    ]
+  },
+
   "model": "openrouter/openrouter/auto",
   "small_model": "openrouter/openrouter/auto",
 

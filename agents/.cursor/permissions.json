@@ -1,0 +1,35 @@
+{
+  "allowed": [
+    "read",
+    "edit",
+    "glob",
+    "grep",
+    "bash"
+  ],
+  "mcpServers": {
+    "playwright": {
+      "tools": ["*"],
+      "allowAutoApproval": false
+    },
+    "context7": {
+      "tools": ["*"],
+      "allowAutoApproval": false
+    },
+    "notion": {
+      "tools": ["*"],
+      "allowAutoApproval": false
+    },
+    "mermaid": {
+      "tools": ["*"],
+      "allowAutoApproval": false
+    },
+    "a11y": {
+      "tools": ["*"],
+      "allowAutoApproval": false
+    },
+    "filesystem": {
+      "tools": ["*"],
+      "allowAutoApproval": false
+    }
+  }
+}

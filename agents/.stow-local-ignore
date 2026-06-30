@@ -1,0 +1,60 @@
+# === Runtime caches (from claude) ===
+^\.claude/cache/
+^\.claude/sessions/
+^\.claude/plugins/
+^\.claude/file-history/
+^\.claude/debug/
+^\.claude/downloads/
+^\.claude/paste-cache/
+^\.claude/plans/
+^\.claude/projects/
+^\.claude/security/
+^\.claude/session-env/
+^\.claude/shell-snapshots/
+^\.claude/stats-cache\.json$
+^\.claude/history\.jsonl$
+^\.claude/\.credentials\.json$
+
+# === Runtime caches (from codex) ===
+^\.codex/cache/
+^\.codex/sessions/
+^\.codex/plugins/
+^\.codex/.*\.sqlite$
+^\.codex/.*\.sqlite-.*$
+^\.codex/history\.jsonl$
+^\.codex/^log$
+^\.codex/memories/
+^\.codex/shell_snapshots/
+^\.codex/\.tmp/
+
+# === Runtime caches (from cursor) ===
+^\.cursor/extensions/
+^\.cursor/plugins/
+^\.cursor/projects/
+^\.cursor/worktrees/
+^\.cursor/skills-cursor/
+^\.cursor/ai-tracking/
+^\.cursor/plans/
+^\.cursor/subagents/
+^\.cursor/globalStorage/
+^\.cursor/workspaceStorage/
+^\.cursor/agent-transcripts/
+
+# === Runtime caches (from copilot) ===
+^\.copilot/OAuth/
+^\.copilot/sessions/
+
+# === Local overrides ===
+^\.claude/settings\.local\.json$
+^\.codex/config\.local\.toml$
+^\.codex/auth\.json$
+^\.codex/\.tmp$
+^\.cursor/\.cursor/permissions\.local\.json$
+^\.config/Cursor/User/settings\.local\.json$
+
+# === README.md files ===
+README\.md$
+^\.claude/README\.md$
+^\.codex/README\.md$
+^\.copilot/README\.md$
+^\.cursor/README\.md$

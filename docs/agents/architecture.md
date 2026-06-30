@@ -19,9 +19,8 @@ dotfiles/
 ├── mail/                  # stow → ~/.config/{notmuch,msmtp,isync}/
 ├── ssh/                   # stow → ~/.ssh/config
 ├── utils/                 # stow → ~/.local/bin/
-├── agents/                # stow → ~/.config/opencode/
-├── claude/                # stow → ~/.claude/
-└── copilot/               # stow → ~/.copilot/
+├── agents/                # stow → ~/.claude/, ~/.codex/, ~/.copilot/, ~/.cursor/,
+│                         #         ~/.config/agents/, ~/.config/opencode/, ~/.config/Cursor/User/
 ```
 
 ## Emacs configuration
