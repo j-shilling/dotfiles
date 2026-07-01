@@ -52,6 +52,7 @@ dotfiles/
 - `config` — main settings
 - `config_personal` — personal identity (default)
 - `config_cms` — work context (CMS GitHub orgs, via `includeIf`)
+- `config_github_https_gh` — optional GitHub HTTPS credential helper and SSH-to-HTTPS rewrite via `gh`
 - `config_macos_homebrew` — macOS Homebrew overrides (symlinked as `config_local`)
 - `config_local` — machine-specific (not in repo; created per machine)
 

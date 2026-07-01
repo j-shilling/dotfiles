@@ -66,11 +66,21 @@ Machine- and work-specific files are never committed. See [portability-and-overr
 | Shell secrets | `~/.bash.d/secrets.bash`, `~/.zsh.d/secrets.zsh` (create locally; sourced from `security.*`) |
 | Git machine config | `~/.config/git/config_local` |
 | Git work identity | `config_cms` via `includeIf` on remote URL |
+| GitHub HTTPS via `gh` | `config_github_https_gh` included or symlinked from `config_local` |
 
 ## macOS git exception
 
 ```bash
 ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
+```
+
+## GitHub HTTPS via gh
+
+For machines where GitHub SSH is blocked:
+
+```bash
+ln -sf "$(pwd)/git/.config/git/config_github_https_gh" ~/.config/git/config_local
+gh auth login --hostname github.com
 ```
 
 ## Not stowed (repo root)

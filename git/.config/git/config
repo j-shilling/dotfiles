@@ -30,15 +30,27 @@
     path = "~/.config/git/config_personal"
 [include]
     path = "~/.config/git/config_local"
+[includeIf "hasconfig:remote.*.url:https://github.com/DSACMS/**"]
+    path = "~/.config/git/config_cms"
 [includeIf "hasconfig:remote.*.url:https://*@github.com/DSACMS/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:git@github.com:DSACMS/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/DSACMS/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:https://github.com/CMS-Enterprise/**"]
     path = "~/.config/git/config_cms"
 [includeIf "hasconfig:remote.*.url:https://*@github.com/CMS-Enterprise/**"]
     path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:git@github.com:CMS-Enterprise/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/CMS-Enterprise/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:https://github.com/CMSgov/**"]
+    path = "~/.config/git/config_cms"
 [includeIf "hasconfig:remote.*.url:https://*@github.com/CMSgov/**"]
     path = "~/.config/git/config_cms"
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+[includeIf "hasconfig:remote.*.url:git@github.com:CMSgov/**"]
+    path = "~/.config/git/config_cms"
+[includeIf "hasconfig:remote.*.url:ssh://git@github.com/CMSgov/**"]
+    path = "~/.config/git/config_cms"

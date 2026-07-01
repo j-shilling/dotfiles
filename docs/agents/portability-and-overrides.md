@@ -14,8 +14,8 @@ This dotfiles repo is shared across **Linux and macOS**, and across **personal a
 
 | | Personal | Work |
 |---|----------|------|
-| **Linux** | Default git identity (`config_personal`) | `includeIf` → `config_cms` when remote URL matches CMS orgs |
-| **macOS** | Same + optional Homebrew git overrides | Same work git rules; brew paths in zsh |
+| **Linux** | Default git identity (`config_personal`) | `includeIf` → `config_cms` when remote URL matches CMS orgs; optional GitHub HTTPS profile for restricted networks |
+| **macOS** | Same + optional Homebrew git overrides | Same work git rules; brew paths in zsh; optional GitHub HTTPS profile for restricted networks |
 
 Emacs uses `IS-MAC`, `IS-LINUX`, `IS-WSL` (and `init-lib-*-p` in `init-lib.el`) for platform branches.
 
@@ -25,7 +25,7 @@ Override files are **optional**, **gitignored or stow-ignored**, and **sourced c
 
 | Domain | Shared (committed) | Local override | Notes |
 |--------|---------------------|----------------|-------|
-| Git | `config`, `config_personal` | `config_local` | Machine-specific (e.g. macOS Homebrew `config_macos_homebrew` → `config_local` symlink) |
+| Git | `config`, `config_personal`, reusable profiles | `config_local` | Machine-specific includes or symlinks, such as `config_github_https_gh` for restricted networks |
 | Git (work) | — | `config_cms` | Loaded via `includeIf` on remote URL, not by machine |
 | Shell | `.profile`, `.bash.d/*`, `.zsh.d/*` | `secrets.bash`, `secrets.zsh` | Work-only API keys/env; create on machine, never commit |
 | Shell | `.profile` | — | Keep POSIX-compliant; sets XDG vars on both platforms |
@@ -34,11 +34,28 @@ Override files are **optional**, **gitignored or stow-ignored**, and **sourced c
 | Codex CLI | `agents/.codex/AGENTS.md` guidance bridge (stowed) | `~/.codex/config.toml`, `~/.codex/*.config.toml`, `~/.agents/*` | Runtime settings stay local; portable skills/plugins may be shared via `~/.agents` |
 | API keys | — | `password-store`, env | Never in repo; `init-ai.el` uses password-store |
 
-### Git local setup (macOS)
+### Git local setup
+
+For macOS with Homebrew-specific Git behavior:
 
 ```bash
 ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
 ```
+
+For machines where GitHub SSH is blocked but HTTPS is allowed, use GitHub CLI
+as Git's HTTPS credential helper and rewrite GitHub SSH remotes to HTTPS:
+
+```bash
+ln -sf "$(pwd)/git/.config/git/config_github_https_gh" ~/.config/git/config_local
+gh auth login --hostname github.com
+```
+
+The `config_github_https_gh` profile stores no token. It configures Git to ask
+`gh auth git-credential` through `PATH`, so it works whether `gh` comes from
+Homebrew, apt, or another install source.
+
+If a machine needs multiple local Git profiles, make `~/.config/git/config_local`
+a local-only file with explicit includes instead of a symlink.
 
 ### Shell secrets (work machines)
 

@@ -48,6 +48,13 @@ On macOS with Homebrew:
 ln -sf "$(pwd)/git/.config/git/config_macos_homebrew" ~/.config/git/config_local
 ```
 
+On machines where GitHub SSH is blocked, use GitHub CLI over HTTPS:
+
+```bash
+ln -sf "$(pwd)/git/.config/git/config_github_https_gh" ~/.config/git/config_local
+gh auth login --hostname github.com
+```
+
 ### shell
 
 Deploys dotfiles to `~/` (`.bashrc`, `.zshrc`, `.profile`, `.mailcap`, `.config/direnv/`, `.config/user-dirs.*`, `.gnupg/gpg-agent.conf`, etc.)
