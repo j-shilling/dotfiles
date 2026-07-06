@@ -6,6 +6,12 @@ make
 stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R emacs
 #+end_src
 
+On macOS, install the default packages plus optional iTerm profiles:
+
+#+begin_src sh
+make macos
+#+end_src
+
 * Git
 
 On macOS machines using Homebrew, run this from the dotfiles repo root to link
@@ -26,6 +32,26 @@ ssh-keygen -t ed25519 -C "shilling.jake@gmail.com" -f ~/.ssh/id_ed25519
 
 Add the public key to GitHub at https://github.com/settings/keys. Add it as
 both an Authentication Key and a Signing Key (same key can be used for both).
+
+* iTerm2
+
+Install the optional iTerm package on macOS:
+
+#+begin_src sh
+make iterm
+#+end_src
+
+This adds an iTerm2 dynamic profile named =Default + Command Meta= that inherits
+from the local =Default= profile. Select that profile in iTerm to make these
+terminal-session bindings work:
+
+- =Cmd-f= sends =M-f= / forward word
+- =Cmd-b= sends =M-b= / backward word
+- =Cmd-d= sends =M-d= / kill word
+- =Cmd-Delete= sends =M-DEL= / backward kill word
+
+To verify the raw terminal input, run =cat -v= in an iTerm session using the
+profile. Pressing =Cmd-f= should print =^[f=.
 
 * Emacs
 

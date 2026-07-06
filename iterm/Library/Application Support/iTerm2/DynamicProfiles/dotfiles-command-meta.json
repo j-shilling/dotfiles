@@ -1,0 +1,27 @@
+{
+  "Profiles": [
+    {
+      "Name": "Default + Command Meta",
+      "Guid": "C5266D2B-7709-4192-8C68-43B01A3001CC",
+      "Dynamic Profile Parent Name": "Default",
+      "Keyboard Map": {
+        "0x62-0x100000": {
+          "Action": 10,
+          "Text": "b"
+        },
+        "0x64-0x100000": {
+          "Action": 10,
+          "Text": "d"
+        },
+        "0x66-0x100000": {
+          "Action": 10,
+          "Text": "f"
+        },
+        "0x7f-0x100000": {
+          "Action": 11,
+          "Text": "0x1b 0x7f"
+        }
+      }
+    }
+  ]
+}

@@ -23,6 +23,9 @@ stow -d ~/dotfiles -t "${HOME}" --no-folding -v -R <package>
 
 # Available packages
 emacs  git  shell  mail  ssh  utils  agents
+
+# Optional macOS package
+iterm
 ```
 
 ## Makefile variables
@@ -31,6 +34,9 @@ emacs  git  shell  mail  ssh  utils  agents
 |----------|---------|---------|
 | `DOTFILES_DIR` | `~/dotfiles` | Stow source directory |
 | `TARGET` | `$HOME` | Stow target directory |
+
+`make` installs only the cross-platform default packages. `make macos` installs
+the default packages plus optional macOS application profiles.
 
 ## Package details
 
@@ -60,6 +66,24 @@ gh auth login --hostname github.com
 Deploys dotfiles to `~/` (`.bashrc`, `.zshrc`, `.profile`, `.mailcap`, `.config/direnv/`, `.config/user-dirs.*`, `.gnupg/gpg-agent.conf`, etc.)
 
 Language runtime managers (PyEnv, NVM, RVM, GHCup, Cargo, pnpm) are sourced here.
+
+### iterm
+
+Optional macOS package. Deploys iTerm2 dynamic profiles from
+`iterm/Library/Application Support/iTerm2/DynamicProfiles/` to
+`~/Library/Application Support/iTerm2/DynamicProfiles/`.
+
+The included `Default + Command Meta` profile inherits from the local iTerm
+`Default` profile and remaps selected `Command` chords to terminal Meta
+sequences:
+
+- `Cmd-f` → `M-f` / forward word
+- `Cmd-b` → `M-b` / backward word
+- `Cmd-d` → `M-d` / kill word
+- `Cmd-Delete` → `M-DEL` / backward kill word
+
+Select the `Default + Command Meta` profile in iTerm for these mappings to take
+effect. To verify raw input, run `cat -v`; pressing `Cmd-f` should print `^[f`.
 
 ### mail
 
