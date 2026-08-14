@@ -61,6 +61,15 @@
 
 (use-package exec-path-from-shell
   :if (package-installed-p 'exec-path-from-shell)
+  :custom
+  (exec-path-from-shell-variables '("PATH"
+                                    "MANPATH"
+                                    "PASSWORD_STORE_DIR"
+                                    "XDG_CONFIG_HOME"
+                                    "XDG_DATA_HOME"
+                                    "XDG_CACHE_HOME"
+                                    "XDG_STATE_HOME"
+                                    "SSH_AUTH_SOCK"))
   :hook
   ((after-init-hook . exec-path-from-shell-initialize)))
 
@@ -145,11 +154,23 @@
 
 (use-package auth-source-pass
   :hook
-  ((after-init-hook . auth-source-pass-enable)))
+  ((after-init-hook . auth-source-pass-enable))
+  :custom
+  (auth-source-pass-filename
+   (or
+    (if (package-installed-p 'exec-path-from-shell)
+        (progn
+        (require 'exec-path-from-shell)
+        (exec-path-from-shell-getenv "PASSWORD_STORE_DIR"))
+      (getenv "PASSWORD_STORE_DIR"))
+    "~/.password-store")))
 
 (use-package emacs
   :custom
   (epa-pinentry-mode 'loopback))
+
+(use-package pass
+  :if (package-installed-p 'pass))
 
 ;;;;;;;;;;;;;;;;;;
 ;;; git

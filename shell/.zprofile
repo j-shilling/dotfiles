@@ -1,5 +1,10 @@
 # Zsh login shell initialization
 
+# Source POSIX profile first (XDG variables, basic PATH)
+if [ -f ~/.profile ]; then
+    source ~/.profile
+fi
+
 if [[ -z "${DOTFILES_ZSH_ENV_LOADED:-}" ]]; then
     typeset -g DOTFILES_ZSH_ENV_LOADED=1
 

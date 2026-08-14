@@ -86,6 +86,12 @@
                   :initializationOptions
                   (:typescript (:tsdk "./node_modules/typescript/lib")))))
 
+  (setq init-prog--yaml-schemas
+        '(https://www.schemastore.org/github-workflow.json ["**/.github/workflows/*.yml"]
+          https://www.schemastore.org/pre-commit-config.json [".pre-commit-config.yaml" ".pre-commit-config.yml"]
+          https://www.schemastore.org/openapi-3.X.json ["openapi.yaml" "openapi.yml"]
+          https://json.schemastore.org/yamllint.json ["/*.yml"]))
+
   (setq-default eglot-workspace-configuration
                 `(
                   :json ( :format (:enable nil)
@@ -101,10 +107,7 @@
                           :validate t
                           :hover t
                           :completion t
-                          :schemas (
-                                    https://www.schemastore.org/github-workflow.json ["**/.github/workflows/*.yml"]
-                                    https://www.schemastore.org/pre-commit-config.json [".pre-commit-config.yaml" ".pre-commit-config.yml"]
-                                    https://json.schemastore.org/yamllint.json ["/*.yml"])
+                          :schemas ,init-prog--yaml-schemas
                           :schemaStore (:enable t))
                   :terraform ( :path ,(executable-find "terraform")
                                :validation (:enableEnhancedValidation nil)

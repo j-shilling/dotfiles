@@ -33,6 +33,10 @@ elif [[ -f /opt/homebrew/opt/fzf/shell/completion.zsh ]]; then
     source /opt/homebrew/opt/fzf/shell/completion.zsh 2>/dev/null
 fi
 
+if [[ -f /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh ]]; then
+    source /opt/homebrew/opt/fzf-tab/share/fzf-tab/fzf-tab.zsh 2>/dev/null
+fi
+
 # direnv integration
 command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
 
