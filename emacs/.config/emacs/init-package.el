@@ -85,7 +85,9 @@
                                     ob-mermaid
                                     org
                                     org-modern
-                                    org-roam))
+                                    org-roam
+                                    citar
+                                    citar-embark))
 
 (setopt package-vc-selected-packages
         '((org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent.git")))
