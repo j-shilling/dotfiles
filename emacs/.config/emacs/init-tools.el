@@ -87,16 +87,45 @@
   (dired-create-destination-dirs 'ask)
   (dired-vc-rename-file t)
   :hook
-  ((dired-mode-hook . dired-omit-mode)
-   (dired-mode-hook . dired-hide-details-mode))
+  ((dired-mode-hook . dired-hide-details-mode))
   :config
-  (if (init-lib-mac-p)
-      (when-let ((gls (executable-find "gls")))
-        (setopt dired-use-ls-dired t
-                insert-directory-program gls
-                dired-listing-switches "-aBhl  --group-directories-first"))
-    (setopt dired-use-ls-dired t
-            dired-listing-switches "-aBhl  --group-directories-first")))
+  (defvar init-tools--base-dired-listing-switches
+    '("-A" ; show almost all, hidden files without . and ..
+      "-h" ; human readable file sizes
+      "-l" ; long format w/ permissions etc
+      ))
+
+  (defvar init-tools--gnu-dired-listing-switches
+    '("--ignore-backups"
+      "--group-directories-first"))
+
+  (defun init-tools--config-dired-ls ()
+  "Decides whether to use GNU ls extensions and configures affected dired
+options."
+  (let ((use-gnu-ls))
+    (when (init-lib-linux-p)
+      ;; Assume GNU on linux
+      (setq use-gnu-ls t))
+    (when (init-lib-mac-p)
+      ;; Look for gls on mac
+      (when-let* ((gls (executable-find "gls")))
+        (setopt insert-directory-program gls)
+        (setq use-gnu-ls t)))
+
+    (setopt dired-listing-switches
+            (string-join (if use-gnu-ls
+                             `(,@init-tools--base-dired-listing-switches
+                               ,@init-tools--gnu-dired-listing-switches)
+                           init-tools--base-dired-listing-switches)
+                         " "))
+    (setopt dired-use-ls-dired use-gnu-ls)))
+
+  (init-tools--config-dired-ls))
+
+(use-package dired-x
+  :after dired
+  :hook
+  ((dired-mode-hook . dired-omit-mode)))
 
 (use-package all-the-icons-dired
   :if (package-installed-p 'all-the-icons-dired)
