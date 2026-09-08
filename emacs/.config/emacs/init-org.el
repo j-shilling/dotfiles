@@ -39,7 +39,7 @@
   (org-adapt-indentation nil)
   (org-startup-indented nil)
   (org-pretty-entities t)
-  (org-ellipsis "...")
+  (org-ellipsis "…")
   (org-hide-emphasis-markers t)
   (org-log-into-drawer t)
   (org-default-notes-file (init-org--org-directory-file "todo.org")))
@@ -65,8 +65,17 @@
 (use-package org-modern
   :if (package-installed-p 'org-modern)
   :after (org)
-  :config
-  (global-org-modern-mode))
+  :custom
+  (org-modern-hide-stars 'leading)
+  (org-modern-table nil)
+  (org-modern-list
+   '((?- . "–")
+     (?* . "•")
+     (?+ . "‣")))
+  (org-modern-star 'replace)
+  :hook
+  ((org-mode-hook . org-modern-mode)
+   (org-agenda-finalize-hook . org-modern-mode)))
 
 (use-package org-entities
   :custom
