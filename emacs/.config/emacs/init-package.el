@@ -87,7 +87,9 @@
                                     org-modern
                                     org-roam
                                     citar
-                                    citar-embark))
+                                    citar-embark
+                                    haskell-mode
+                                    cabal-mode))
 
 (setopt package-vc-selected-packages
         '((org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent.git")))

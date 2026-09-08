@@ -274,6 +274,16 @@
   :hook
   ((go-ts-mode-hook . eglot-ensure)))
 
+;; Haskell
+
+(use-package haskell-mode
+  :if (package-installed-p 'haskell-mode)
+  :mode ("\\.hs" "\\lhs")
+  :config
+  (setq haskell-process-type 'cabal-repl)
+  :hook
+  ((haskell-mode-hook . eglot-ensure)))
+
 ;; Terraform
 
 (use-package terraform-mode
