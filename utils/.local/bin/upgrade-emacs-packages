@@ -1,0 +1,4 @@
+#!/usr/bin/env -S emacs --script
+;; -*- lexical-binding: t; mode: emacs-lisp; -*-
+
+(package-upgrade-all nil)
